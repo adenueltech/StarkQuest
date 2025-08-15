@@ -1,0 +1,42 @@
+[
+  {
+    "name": "submit_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "proposal",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "review_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "application_index",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "status",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "complete_bounty",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "submission",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  }
+]

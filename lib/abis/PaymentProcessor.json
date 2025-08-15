@@ -1,0 +1,14 @@
+[
+  {
+    "name": "distribute_payment",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "hunter",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  }
+]

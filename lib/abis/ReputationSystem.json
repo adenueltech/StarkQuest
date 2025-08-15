@@ -1,0 +1,19 @@
+[
+  {
+    "name": "get_user_reputation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "reputation",
+        "type": "core::integer::u256"
+      }
+    ],
+    "state_mutability": "view"
+  }
+]

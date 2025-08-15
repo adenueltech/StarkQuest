@@ -1,0 +1,39 @@
+[
+  {
+    "name": "create_bounty",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "title",
+        "type": "core::felt252"
+      },
+      {
+        "name": "description",
+        "type": "core::felt252"
+      },
+      {
+        "name": "category",
+        "type": "core::felt252"
+      },
+      {
+        "name": "reward_token",
+        "type": "core::felt252"
+      },
+      {
+        "name": "reward_amount",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "deadline",
+        "type": "core::integer::u256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "bounty_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "external"
+  }
+]
