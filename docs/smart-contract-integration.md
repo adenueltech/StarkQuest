@@ -1,6 +1,6 @@
-# StarkQuest Smart Contract Integration Guide
+# StarkEarn Smart Contract Integration Guide
 
-This document provides guidance for smart contract developers working on the StarkQuest platform. It outlines how the frontend integrates with the smart contracts and what is expected from the contract implementations.
+This document provides guidance for smart contract developers working on the StarkEarn platform. It outlines how the frontend integrates with the smart contracts and what is expected from the contract implementations.
 
 ## Table of Contents
 
@@ -15,50 +15,60 @@ This document provides guidance for smart contract developers working on the Sta
 
 ## Overview
 
-The StarkQuest frontend is designed to work with a set of smart contracts deployed on StarkNet. The frontend uses starknet.js to interact with these contracts, and expects specific functions, events, and data structures to be available.
+The StarkEarn frontend is designed to work with a set of smart contracts deployed on StarkNet. The frontend uses starknet.js to interact with these contracts, and expects specific functions, events, and data structures to be available.
 
 ## Contract Architecture
 
-The StarkQuest smart contract system consists of several interconnected contracts:
+The StarkEarn smart contract system consists of several interconnected contracts:
 
 ### 1. BountyRegistry
+
 The central registry that keeps track of all bounties in the system.
 
 **Key Responsibilities:**
+
 - Maintains a list of all bounty addresses
 - Provides search and filtering capabilities
 - Tracks global statistics
 
 ### 2. BountyFactory
+
 Factory contract responsible for creating new bounty instances using the clone pattern for gas efficiency.
 
 **Key Responsibilities:**
+
 - Creates new bounty contracts
 - Sets initial parameters
 - Registers new bounties in the BountyRegistry
 
 ### 3. Bounty (Individual Contract)
+
 Each bounty has its own contract instance with the following functionality.
 
 **Key Responsibilities:**
+
 - Bounty details management
 - Application handling
 - Submission and review process
 - Payment distribution
 
 ### 4. PaymentProcessor
+
 Handles all payment-related operations including escrow and distribution.
 
 **Key Responsibilities:**
+
 - Token escrow management
 - Payment distribution to bounty hunters
 - Refunds to creators
 - Platform fee collection
 
 ### 5. ReputationSystem
+
 Manages reputation scores for both creators and hunters.
 
 **Key Responsibilities:**
+
 - Tracking user reputation
 - Updating scores based on bounty completion
 - Providing reputation-based access controls
@@ -66,6 +76,7 @@ Manages reputation scores for both creators and hunters.
 ## Frontend Integration Points
 
 ### Wallet Connection
+
 The frontend connects to StarkNet wallets (ArgentX, Braavos) using the injected provider pattern:
 
 ```javascript
@@ -78,15 +89,16 @@ if (starknet) {
 ```
 
 ### Contract Interaction
+
 The frontend uses starknet.js to interact with contracts:
 
 ```javascript
-import { Contract, Account, RpcProvider } from 'starknet';
-import bountyFactoryAbi from '../abis/BountyFactory.json';
+import { Contract, Account, RpcProvider } from "starknet";
+import bountyFactoryAbi from "../abis/BountyFactory.json";
 
 // Initialize provider
 const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+  nodeUrl: "https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID",
 });
 
 // Initialize contract
@@ -99,8 +111,8 @@ const bountyFactory = new Contract(
 // Call contract function
 const { transaction_hash } = await account.execute({
   contractAddress: bountyFactoryAddress,
-  entrypoint: 'create_bounty',
-  calldata: [title, description, category, rewardToken, rewardAmount, deadline]
+  entrypoint: "create_bounty",
+  calldata: [title, description, category, rewardToken, rewardAmount, deadline],
 });
 ```
 
@@ -109,6 +121,7 @@ const { transaction_hash } = await account.execute({
 The frontend expects the following ABI structures for each contract:
 
 ### BountyRegistry ABI
+
 ```json
 [
   {
@@ -144,6 +157,7 @@ The frontend expects the following ABI structures for each contract:
 ```
 
 ### BountyFactory ABI
+
 ```json
 [
   {
@@ -187,6 +201,7 @@ The frontend expects the following ABI structures for each contract:
 ```
 
 ### Bounty ABI
+
 ```json
 [
   {
@@ -233,6 +248,7 @@ The frontend expects the following ABI structures for each contract:
 ```
 
 ### PaymentProcessor ABI
+
 ```json
 [
   {
@@ -251,6 +267,7 @@ The frontend expects the following ABI structures for each contract:
 ```
 
 ### ReputationSystem ABI
+
 ```json
 [
   {
@@ -278,6 +295,7 @@ The frontend expects the following ABI structures for each contract:
 The frontend listens for specific events to update the UI and trigger notifications. Contracts should emit the following events:
 
 ### BountyCreated
+
 Emitted when a new bounty is created.
 
 ```cairo
@@ -290,6 +308,7 @@ event BountyCreated {
 ```
 
 ### ApplicationSubmitted
+
 Emitted when a hunter submits an application.
 
 ```cairo
@@ -301,6 +320,7 @@ event ApplicationSubmitted {
 ```
 
 ### ApplicationReviewed
+
 Emitted when a creator reviews an application.
 
 ```cairo
@@ -312,6 +332,7 @@ event ApplicationReviewed {
 ```
 
 ### BountyCompleted
+
 Emitted when a bounty is marked as completed.
 
 ```cairo
@@ -323,6 +344,7 @@ event BountyCompleted {
 ```
 
 ### PaymentDistributed
+
 Emitted when payment is distributed to a hunter.
 
 ```cairo
@@ -344,6 +366,7 @@ Contracts should implement clear error messages for common failure scenarios:
 5. **Already Completed**: When trying to complete an already completed bounty
 
 Example error implementation in Cairo:
+
 ```cairo
 // Check if deadline has passed
 if (get_block_timestamp() > deadline) {
@@ -354,6 +377,7 @@ if (get_block_timestamp() > deadline) {
 ## Deployment Considerations
 
 ### Contract Addresses
+
 The frontend expects contract addresses to be configured in `lib/config.ts`:
 
 ```typescript
@@ -361,11 +385,12 @@ export const CONTRACT_ADDRESSES = {
   BOUNTY_REGISTRY: "0x...",
   BOUNTY_FACTORY: "0x...",
   PAYMENT_PROCESSOR: "0x...",
-  REPUTATION_SYSTEM: "0x..."
+  REPUTATION_SYSTEM: "0x...",
 };
 ```
 
 ### Network Configuration
+
 The frontend supports both Goerli testnet and mainnet:
 
 ```typescript
@@ -373,36 +398,44 @@ export const NETWORK = "goerli"; // or "mainnet" for production
 ```
 
 ### Token Addresses
+
 Common token addresses should be configured:
 
 ```typescript
 export const TOKEN_ADDRESSES = {
   STRK: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  ETH: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
+  ETH: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
 };
 ```
 
 ## Testing
 
 ### Unit Tests
+
 All contracts should have comprehensive unit tests covering:
+
 - Happy path scenarios
 - Edge cases
 - Error conditions
 - Security vulnerabilities
 
 ### Integration Tests
+
 Test the interaction between different contracts:
+
 - Bounty creation and registration
 - Application submission and review
 - Payment processing
 - Reputation updates
 
 ### Test Coverage
+
 Aim for at least 90% test coverage for all critical functions.
 
 ### Testing Tools
+
 Recommended testing tools:
+
 - starknet-devnet for local testing
 - pytest for Python-based tests
 - cairo-test for Cairo-specific tests
@@ -412,18 +445,23 @@ Recommended testing tools:
 For frontend developers working with these contracts:
 
 ### Data Types
+
 - Use `cairo.felt` for string conversion
 - Use `cairo.uint256` for large numbers
 - Use `CallData.compile()` for calldata preparation
 
 ### Error Handling
+
 Frontend error handling expects:
+
 - Clear error messages from contracts
 - Proper transaction rejection handling
 - User-friendly error display
 
 ### Loading States
+
 Implement loading states for:
+
 - Wallet connection
 - Transaction submission
 - Transaction confirmation
@@ -432,43 +470,55 @@ Implement loading states for:
 ## Security Considerations
 
 ### Reentrancy Protection
+
 All external calls that transfer funds should be protected against reentrancy attacks.
 
 ### Access Control
+
 Ensure only authorized parties can perform sensitive operations:
+
 - Only creators can review applications
 - Only selected hunters can complete bounties
 - Only contract owners can update platform parameters
 
 ### Deadline Validation
+
 Always check that deadlines haven't passed before allowing certain operations.
 
 ### Payment Validation
+
 Validate all payment amounts and ensure escrow balances are sufficient.
 
 ### Integer Overflow
+
 Use safe math operations for all numeric calculations.
 
 ## Future Enhancements
 
 ### Multi-signature Escrow
+
 Implement multi-sig for large bounty payments.
 
 ### Dispute Resolution
+
 Add arbitration mechanisms for contested bounties.
 
 ### Token Staking
+
 Allow users to stake tokens for reputation boosting.
 
 ### Cross-chain Compatibility
+
 Enable bounties payable in multiple token standards.
 
 ### DAO Governance
+
 Implement community governance for platform parameters.
 
 ## Support and Contact
 
 For questions about the smart contract integration or to report issues:
-- GitHub: https://github.com/starkquest/contracts
-- Discord: https://discord.gg/starkquest
-- Email: contracts@starkquest.io
+
+- GitHub: https://github.com/StarkEarn/contracts
+- Discord: https://discord.gg/StarkEarn
+- Email: contracts@StarkEarn.io

@@ -1,14 +1,20 @@
-import { Header } from "@/components/header"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { User, Bell, Shield, Wallet, Globe } from "lucide-react"
+import { Header } from "@/components/header";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { User, Bell, Shield, Wallet, Globe } from "lucide-react";
 
 export default function SettingsPage() {
   return (
@@ -18,7 +24,9 @@ export default function SettingsPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Settings</h1>
-          <p className="text-muted-foreground">Manage your account preferences and settings</p>
+          <p className="text-muted-foreground">
+            Manage your account preferences and settings
+          </p>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
@@ -37,7 +45,9 @@ export default function SettingsPage() {
                   <User className="h-5 w-5" />
                   Profile Information
                 </CardTitle>
-                <CardDescription>Update your public profile information</CardDescription>
+                <CardDescription>
+                  Update your public profile information
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-6">
@@ -47,7 +57,9 @@ export default function SettingsPage() {
                   </Avatar>
                   <div>
                     <Button variant="outline">Change Avatar</Button>
-                    <p className="text-sm text-muted-foreground mt-2">JPG, PNG or GIF. Max size 2MB.</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      JPG, PNG or GIF. Max size 2MB.
+                    </p>
                   </div>
                 </div>
 
@@ -58,7 +70,11 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" defaultValue="john@example.com" />
+                    <Input
+                      id="email"
+                      type="email"
+                      defaultValue="john@example.com"
+                    />
                   </div>
                 </div>
 
@@ -74,7 +90,13 @@ export default function SettingsPage() {
                 <div className="space-y-2">
                   <Label>Skills</Label>
                   <div className="flex flex-wrap gap-2">
-                    {["React", "TypeScript", "Cairo", "Smart Contracts", "UI/UX"].map((skill) => (
+                    {[
+                      "React",
+                      "TypeScript",
+                      "Cairo",
+                      "Smart Contracts",
+                      "UI/UX",
+                    ].map((skill) => (
                       <Badge key={skill} variant="secondary">
                         {skill}
                       </Badge>
@@ -85,7 +107,9 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <Button className="bg-starknet-blue hover:bg-starknet-blue/90">Save Changes</Button>
+                <Button className="bg-starknet-blue hover:bg-starknet-blue/90">
+                  Save Changes
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -97,7 +121,9 @@ export default function SettingsPage() {
                   <Bell className="h-5 w-5" />
                   Notification Preferences
                 </CardTitle>
-                <CardDescription>Choose what notifications you want to receive</CardDescription>
+                <CardDescription>
+                  Choose what notifications you want to receive
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 {[
@@ -106,7 +132,11 @@ export default function SettingsPage() {
                     description: "Get notified when bounties match your skills",
                     enabled: true,
                   },
-                  { title: "Application Updates", description: "Updates on your bounty applications", enabled: true },
+                  {
+                    title: "Application Updates",
+                    description: "Updates on your bounty applications",
+                    enabled: true,
+                  },
                   {
                     title: "Payment Notifications",
                     description: "Notifications about payments and earnings",
@@ -114,15 +144,22 @@ export default function SettingsPage() {
                   },
                   {
                     title: "Community Updates",
-                    description: "News and updates from the StarkQuest community",
+                    description:
+                      "News and updates from the StarkEarn community",
                     enabled: false,
                   },
-                  { title: "Marketing Emails", description: "Product updates and promotional content", enabled: false },
+                  {
+                    title: "Marketing Emails",
+                    description: "Product updates and promotional content",
+                    enabled: false,
+                  },
                 ].map((notification, i) => (
                   <div key={i} className="flex items-center justify-between">
                     <div className="space-y-1">
                       <p className="font-medium">{notification.title}</p>
-                      <p className="text-sm text-muted-foreground">{notification.description}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {notification.description}
+                      </p>
                     </div>
                     <Switch defaultChecked={notification.enabled} />
                   </div>
@@ -145,7 +182,9 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Two-Factor Authentication</p>
-                      <p className="text-sm text-muted-foreground">Add an extra layer of security</p>
+                      <p className="text-sm text-muted-foreground">
+                        Add an extra layer of security
+                      </p>
                     </div>
                     <Button variant="outline">Enable 2FA</Button>
                   </div>
@@ -153,7 +192,9 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Change Password</p>
-                      <p className="text-sm text-muted-foreground">Update your account password</p>
+                      <p className="text-sm text-muted-foreground">
+                        Update your account password
+                      </p>
                     </div>
                     <Button variant="outline">Change Password</Button>
                   </div>
@@ -161,7 +202,9 @@ export default function SettingsPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Active Sessions</p>
-                      <p className="text-sm text-muted-foreground">Manage your active login sessions</p>
+                      <p className="text-sm text-muted-foreground">
+                        Manage your active login sessions
+                      </p>
                     </div>
                     <Button variant="outline">View Sessions</Button>
                   </div>
@@ -177,7 +220,9 @@ export default function SettingsPage() {
                   <Wallet className="h-5 w-5" />
                   Wallet Settings
                 </CardTitle>
-                <CardDescription>Manage your connected wallets and payment preferences</CardDescription>
+                <CardDescription>
+                  Manage your connected wallets and payment preferences
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -188,10 +233,14 @@ export default function SettingsPage() {
                       </div>
                       <div>
                         <p className="font-medium">ArgentX Wallet</p>
-                        <p className="text-sm text-muted-foreground">0x1234...5678</p>
+                        <p className="text-sm text-muted-foreground">
+                          0x1234...5678
+                        </p>
                       </div>
                     </div>
-                    <Badge className="bg-green-100 text-green-800">Connected</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      Connected
+                    </Badge>
                   </div>
 
                   <Button variant="outline" className="w-full bg-transparent">
@@ -223,7 +272,9 @@ export default function SettingsPage() {
                   <Globe className="h-5 w-5" />
                   General Preferences
                 </CardTitle>
-                <CardDescription>Customize your StarkQuest experience</CardDescription>
+                <CardDescription>
+                  Customize your StarkEarn experience
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
@@ -273,12 +324,14 @@ export default function SettingsPage() {
                   </div>
                 </div>
 
-                <Button className="bg-starknet-orange hover:bg-starknet-orange/90">Save Preferences</Button>
+                <Button className="bg-starknet-orange hover:bg-starknet-orange/90">
+                  Save Preferences
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

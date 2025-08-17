@@ -1,6 +1,6 @@
-# StarkQuest Backend Integration Guide
+# StarkEarn Backend Integration Guide
 
-This document provides guidance for backend developers working on the StarkQuest platform. It outlines the backend integration points, required services, and implementation recommendations.
+This document provides guidance for backend developers working on the StarkEarn platform. It outlines the backend integration points, required services, and implementation recommendations.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document provides guidance for backend developers working on the StarkQuest
 
 ## Overview
 
-The StarkQuest backend serves several critical functions that complement the smart contracts:
+The StarkEarn backend serves several critical functions that complement the smart contracts:
 
 1. **Event Monitoring**: Listen to blockchain events and index relevant data
 2. **User Management**: Store user profile information not on the blockchain
@@ -29,26 +29,31 @@ The StarkQuest backend serves several critical functions that complement the sma
 The backend should be designed as a microservices architecture with the following components:
 
 ### Event Listener Service
+
 - Monitors StarkNet for contract events
 - Processes and stores relevant data
 - Handles event processing failures
 
 ### User Service
+
 - Manages user profile information
 - Handles user preferences and settings
 - Manages social connections
 
 ### Search Service
+
 - Indexes bounty content and user profiles
 - Provides search capabilities
 - Handles search analytics
 
 ### Notification Service
+
 - Sends email and in-app notifications
 - Manages notification preferences
 - Tracks notification delivery
 
 ### Analytics Service
+
 - Collects platform usage data
 - Generates reports and insights
 - Handles data aggregation
@@ -58,33 +63,38 @@ The backend should be designed as a microservices architecture with the followin
 ### 1. Event Monitoring Service
 
 #### Purpose
+
 Monitor blockchain events to keep the backend synchronized with on-chain state.
 
 #### Implementation
+
 ```javascript
 // Example event monitoring implementation
-import { RpcProvider } from 'starknet';
+import { RpcProvider } from "starknet";
 
 const provider = new RpcProvider({
-  nodeUrl: process.env.STARKNET_RPC_URL
+  nodeUrl: process.env.STARKNET_RPC_URL,
 });
 
 // Monitor BountyCreated events
-provider.getEvents({
-  from_block: 'latest',
-  to_block: 'latest',
-  address: process.env.BOUNTY_REGISTRY_ADDRESS,
-  keys: [['BountyCreated']]
-}).then(events => {
-  // Process new bounties
-  events.forEach(event => {
-    // Index bounty data
-    // Send notifications
+provider
+  .getEvents({
+    from_block: "latest",
+    to_block: "latest",
+    address: process.env.BOUNTY_REGISTRY_ADDRESS,
+    keys: [["BountyCreated"]],
+  })
+  .then((events) => {
+    // Process new bounties
+    events.forEach((event) => {
+      // Index bounty data
+      // Send notifications
+    });
   });
-});
 ```
 
 #### Events to Monitor
+
 1. **BountyCreated** - Index new bounties for search
 2. **ApplicationSubmitted** - Track application statistics
 3. **ApplicationReviewed** - Update application status
@@ -94,9 +104,11 @@ provider.getEvents({
 ### 2. User Management Service
 
 #### Purpose
+
 Store user profile information that isn't stored on the blockchain.
 
 #### Data Model
+
 ```javascript
 // User profile model
 {
@@ -126,15 +138,19 @@ Store user profile information that isn't stored on the blockchain.
 ### 3. Search Indexing Service
 
 #### Purpose
+
 Index content for fast search capabilities.
 
 #### Implementation
+
 Use a search engine like Elasticsearch or Typesense to index:
+
 - Bounty titles and descriptions
 - User skills and expertise
 - Tags and categories
 
 #### Index Structure
+
 ```javascript
 // Bounty index
 {
@@ -165,9 +181,11 @@ Use a search engine like Elasticsearch or Typesense to index:
 ### 4. Notification Service
 
 #### Purpose
+
 Send notifications to users based on platform activity.
 
 #### Notification Types
+
 1. **New Bounty** - Notify relevant users of new bounties
 2. **Application Received** - Notify bounty creators of new applications
 3. **Application Accepted/Rejected** - Notify bounty hunters of application status
@@ -175,6 +193,7 @@ Send notifications to users based on platform activity.
 5. **Payment Received** - Notify when payment is distributed
 
 #### Implementation
+
 ```javascript
 // Example notification sending
 const sendNotification = async (userId, type, data) => {
@@ -184,7 +203,7 @@ const sendNotification = async (userId, type, data) => {
     type,
     data,
     read: false,
-    createdAt: new Date()
+    createdAt: new Date(),
   });
 
   // Send email if user has email notifications enabled
@@ -200,42 +219,53 @@ const sendNotification = async (userId, type, data) => {
 ### User Management
 
 #### GET /api/users/:walletAddress
+
 Get user profile information
 
 #### PUT /api/users/:walletAddress
+
 Update user profile information
 
 #### GET /api/users/:walletAddress/bounties
+
 Get user's bounties
 
 #### GET /api/users/:walletAddress/applications
+
 Get user's applications
 
 ### Search
 
 #### GET /api/search/bounties
+
 Search bounties
 
 #### GET /api/search/users
+
 Search users
 
 ### Notifications
 
 #### GET /api/notifications
+
 Get user notifications
 
 #### PUT /api/notifications/:id/read
+
 Mark notification as read
 
 #### DELETE /api/notifications/:id
+
 Delete notification
 
 ### Analytics
 
 #### GET /api/analytics/platform
+
 Get platform statistics
 
 #### GET /api/analytics/user/:walletAddress
+
 Get user statistics
 
 ## Data Storage
@@ -243,6 +273,7 @@ Get user statistics
 ### Database Schema
 
 #### Users Table
+
 ```sql
 CREATE TABLE users (
   wallet_address VARCHAR(255) PRIMARY KEY,
@@ -256,6 +287,7 @@ CREATE TABLE users (
 ```
 
 #### User Skills Table
+
 ```sql
 CREATE TABLE user_skills (
   id SERIAL PRIMARY KEY,
@@ -266,6 +298,7 @@ CREATE TABLE user_skills (
 ```
 
 #### User Social Links Table
+
 ```sql
 CREATE TABLE user_social_links (
   id SERIAL PRIMARY KEY,
@@ -277,6 +310,7 @@ CREATE TABLE user_social_links (
 ```
 
 #### Notifications Table
+
 ```sql
 CREATE TABLE notifications (
   id SERIAL PRIMARY KEY,
@@ -292,21 +326,25 @@ CREATE TABLE notifications (
 ## Security Considerations
 
 ### Authentication
+
 - Use wallet-based authentication
 - Validate all requests with wallet signatures
 - Implement rate limiting
 
 ### Data Validation
+
 - Validate all input data
 - Sanitize user-provided content
 - Implement proper error handling
 
 ### API Security
+
 - Use HTTPS for all API endpoints
 - Implement proper CORS policies
 - Validate API keys for external access
 
 ### Database Security
+
 - Use parameterized queries to prevent SQL injection
 - Implement proper database user permissions
 - Regularly update database software
@@ -314,21 +352,25 @@ CREATE TABLE notifications (
 ## Deployment
 
 ### Environment Requirements
+
 - Node.js 16+
 - PostgreSQL or compatible database
 - Redis for caching
 - Elasticsearch or Typesense for search
 
 ### Configuration
+
 Set the following environment variables:
+
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/starkquest
+DATABASE_URL=postgresql://user:password@localhost:5432/StarkEarn
 REDIS_URL=redis://localhost:6379
 ELASTICSEARCH_URL=http://localhost:9200
 STARKNET_RPC_URL=https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID
 ```
 
 ### Deployment Options
+
 1. **Docker**: Use provided Dockerfile
 2. **Cloud Platforms**: Deploy to AWS, Google Cloud, or Azure
 3. **Kubernetes**: Use provided Kubernetes manifests
@@ -336,23 +378,28 @@ STARKNET_RPC_URL=https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID
 ## Monitoring and Maintenance
 
 ### Health Checks
+
 Implement health check endpoints for:
+
 - Database connectivity
 - Redis connectivity
 - StarkNet node connectivity
 - Search engine connectivity
 
 ### Logging
+
 - Implement structured logging
 - Log all important events
 - Use appropriate log levels
 
 ### Performance Monitoring
+
 - Monitor API response times
 - Track database query performance
 - Monitor event processing latency
 
 ### Backup and Recovery
+
 - Implement regular database backups
 - Test backup restoration procedures
 - Implement disaster recovery plan
@@ -360,11 +407,13 @@ Implement health check endpoints for:
 ## Integration with Smart Contracts
 
 ### Data Synchronization
+
 - Keep backend data synchronized with blockchain state
 - Handle event processing failures gracefully
 - Implement data reconciliation procedures
 
 ### Error Handling
+
 - Handle smart contract errors appropriately
 - Implement retry mechanisms for failed transactions
 - Log all blockchain interactions
@@ -372,16 +421,19 @@ Implement health check endpoints for:
 ## Future Enhancements
 
 ### Caching
+
 - Implement Redis caching for frequently accessed data
 - Cache search results
 - Cache user profiles
 
 ### Real-time Updates
+
 - Implement WebSocket connections for real-time updates
 - Push notifications to connected clients
 - Implement presence tracking
 
 ### Advanced Analytics
+
 - Implement machine learning for bounty recommendations
 - Track user behavior patterns
 - Generate predictive analytics
@@ -389,6 +441,7 @@ Implement health check endpoints for:
 ## Support and Contact
 
 For questions about the backend implementation or to report issues:
-- GitHub: https://github.com/starkquest/backend
-- Discord: https://discord.gg/starkquest
-- Email: backend@starkquest.io
+
+- GitHub: https://github.com/StarkEarn/backend
+- Discord: https://discord.gg/StarkEarn
+- Email: backend@StarkEarn.io

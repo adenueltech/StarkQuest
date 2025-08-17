@@ -1,7 +1,13 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { ArrowRight, Code, Briefcase, Star } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ArrowRight, Code, Briefcase, Star } from "lucide-react";
+import Link from "next/link";
 
 export default function GetStartedPage() {
   return (
@@ -9,7 +15,9 @@ export default function GetStartedPage() {
       {/* Header */}
       <div className="bg-gradient-to-br from-starknet-blue to-starknet-pink py-20">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Welcome to StarkQuest</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Welcome to StarkEarn
+          </h1>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             Choose your path and start building on the StarkNet ecosystem today
           </p>
@@ -69,7 +77,9 @@ export default function GetStartedPage() {
                   <Briefcase className="h-8 w-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl">I'm a Project Owner</CardTitle>
-                <CardDescription className="text-base">Post bounties and find talented contributors</CardDescription>
+                <CardDescription className="text-base">
+                  Post bounties and find talented contributors
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-3">
@@ -108,23 +118,31 @@ export default function GetStartedPage() {
       {/* Community Stats */}
       <div className="py-16 bg-muted/50">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-12">Join Our Growing Community</h2>
+          <h2 className="text-3xl font-bold mb-12">
+            Join Our Growing Community
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
             <div>
-              <div className="text-3xl font-bold text-starknet-blue mb-2">5,000+</div>
+              <div className="text-3xl font-bold text-starknet-blue mb-2">
+                5,000+
+              </div>
               <div className="text-muted-foreground">Active Contributors</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-starknet-pink mb-2">1,200+</div>
+              <div className="text-3xl font-bold text-starknet-pink mb-2">
+                1,200+
+              </div>
               <div className="text-muted-foreground">Open Bounties</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-starknet-orange mb-2">$2.5M+</div>
+              <div className="text-3xl font-bold text-starknet-orange mb-2">
+                $2.5M+
+              </div>
               <div className="text-muted-foreground">Rewards Distributed</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

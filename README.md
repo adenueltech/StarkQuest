@@ -1,6 +1,6 @@
-# StarkQuest - Decentralized Bounty Platform
+# StarkEarn - Decentralized Bounty Platform
 
-StarkQuest is a decentralized bounty platform built on StarkNet that connects project creators with skilled developers, designers, and other contributors. This repository contains the frontend implementation of the platform.
+StarkEarn is a decentralized bounty platform built on StarkNet that connects project creators with skilled developers, designers, and other contributors. This repository contains the frontend implementation of the platform.
 
 ## Table of Contents
 
@@ -15,7 +15,8 @@ StarkQuest is a decentralized bounty platform built on StarkNet that connects pr
 
 ## Project Overview
 
-StarkQuest allows users to:
+StarkEarn allows users to:
+
 - Connect their StarkNet wallet (ArgentX or Braavos)
 - Create bounties with rewards in STRK, ETH, or other tokens
 - Apply for bounties as a contributor
@@ -26,6 +27,7 @@ StarkQuest allows users to:
 ## Frontend Architecture
 
 The frontend is built with:
+
 - Next.js 13+ (App Router)
 - TypeScript
 - TailwindCSS
@@ -35,18 +37,22 @@ The frontend is built with:
 ### Key Components
 
 1. **Wallet Integration** (`components/wallet-connect.tsx`)
+
    - Connects to StarkNet wallets
    - Manages wallet state and authentication
 
 2. **Authentication** (`contexts/auth-context.tsx`)
+
    - Wallet-based authentication
    - User session management
 
 3. **Bounty Creation** (`app/post-bounty/page.tsx`)
+
    - Form for creating new bounties
    - Integrates with smart contracts
 
 4. **Bounty Management** (`app/bounties/`)
+
    - Browse and search bounties
    - Apply for bounties
 
@@ -61,20 +67,24 @@ The frontend integrates with several smart contracts. These contracts need to be
 ### Required Smart Contracts
 
 1. **BountyRegistry**
+
    - Tracks all bounties in the system
    - Provides search and filtering capabilities
    - Located in `lib/abis/BountyRegistry.json`
 
 2. **BountyFactory**
+
    - Factory contract for creating new bounties
    - Located in `lib/abis/BountyFactory.json`
 
 3. **Bounty (Individual Contract)**
+
    - Each bounty has its own contract instance
    - Handles applications, submissions, and payments
    - Located in `lib/abis/Bounty.json`
 
 4. **PaymentProcessor**
+
    - Handles payments and escrow
    - Located in `lib/abis/PaymentProcessor.json`
 
@@ -85,6 +95,7 @@ The frontend integrates with several smart contracts. These contracts need to be
 ### Integration Service
 
 The `lib/services/starknet.ts` file contains all blockchain interaction logic:
+
 - Wallet connection
 - Contract initialization
 - Function calls to smart contracts
@@ -92,22 +103,27 @@ The `lib/services/starknet.ts` file contains all blockchain interaction logic:
 ### Key Integration Points
 
 1. **Wallet Connection** (`components/wallet-connect.tsx`)
+
    - Connects to StarkNet wallets
    - Gets user account information
 
 2. **Bounty Creation** (`app/post-bounty/page.tsx`)
+
    - Calls `create_bounty` function on BountyFactory contract
    - Requires connected wallet
 
 3. **Bounty Application** (Not yet implemented in UI)
+
    - Will call `submit_application` function on individual Bounty contracts
    - Requires connected wallet
 
 4. **Application Review** (Not yet implemented in UI)
+
    - Will call `review_application` function on individual Bounty contracts
    - Requires connected wallet
 
 5. **Bounty Completion** (Not yet implemented in UI)
+
    - Will call `complete_bounty` function on individual Bounty contracts
    - Requires connected wallet
 
@@ -120,6 +136,7 @@ The `lib/services/starknet.ts` file contains all blockchain interaction logic:
 While most functionality is handled by smart contracts, some features require backend services:
 
 ### Event Monitoring
+
 - Monitor blockchain events for:
   - New bounties
   - New applications
@@ -128,23 +145,29 @@ While most functionality is handled by smart contracts, some features require ba
 - Index data for fast queries
 
 ### Notification System
+
 - Send notifications based on blockchain events
 - Email or in-app notifications
 
 ### Data Indexing
+
 - Index relevant data for fast queries
 - Cache frequently accessed information
 
 ### API Endpoints Needed
+
 1. **User Profile Management**
+
    - Update user profile information
    - Store social media links and skills
 
 2. **Search Indexing**
+
    - Index bounty content for search
    - Index user skills and expertise
 
 3. **Notifications**
+
    - Store and manage user notifications
    - Send email notifications
 
@@ -155,6 +178,7 @@ While most functionality is handled by smart contracts, some features require ba
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 16+
 - pnpm package manager
 - StarkNet wallet (ArgentX or Braavos)
@@ -162,17 +186,20 @@ While most functionality is handled by smart contracts, some features require ba
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
-cd starkquest-frontend
+cd StarkEarn-frontend
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Run the development server:
+
 ```bash
 pnpm dev
 ```
@@ -182,6 +209,7 @@ pnpm dev
 ### Environment Variables
 
 Create a `.env.local` file with the following variables:
+
 ```env
 # StarkNet RPC endpoint
 NEXT_PUBLIC_STARKNET_RPC_URL=https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID
@@ -198,11 +226,13 @@ NEXT_PUBLIC_REPUTATION_SYSTEM_ADDRESS=0x...
 ### Adding New Features
 
 1. **UI Components**
+
    - Add new components to the `components/` directory
    - Use shadcn/ui components when possible
    - Follow existing styling patterns
 
 2. **Pages**
+
    - Add new pages to the `app/` directory
    - Follow Next.js App Router conventions
 
@@ -226,7 +256,7 @@ NEXT_PUBLIC_REPUTATION_SYSTEM_ADDRESS=0x...
 ## Folder Structure
 
 ```
-starkquest-frontend/
+StarkEarn-frontend/
 ├── app/                    # Next.js app router pages
 │   ├── bounties/          # Bounty browsing and management
 │   ├── dashboard/         # User dashboards
@@ -266,14 +296,17 @@ starkquest-frontend/
 For the smart contract developer:
 
 1. **Contract Addresses**
+
    - Update contract addresses in `lib/config.ts`
    - Update environment variables in `.env.local`
 
 2. **ABI Compatibility**
+
    - Ensure deployed contract ABIs match the JSON files in `lib/abis/`
    - Update ABIs if contract interfaces change
 
 3. **Event Emission**
+
    - Emit events for all important state changes
    - Follow event naming conventions in the existing ABI files
 
@@ -286,16 +319,19 @@ For the smart contract developer:
 For the backend developer:
 
 1. **Event Monitoring**
+
    - Monitor all events emitted by smart contracts
    - Index data for fast queries
    - Handle event processing failures gracefully
 
 2. **API Design**
+
    - Follow RESTful API principles
    - Use consistent naming conventions
    - Implement proper error handling and validation
 
 3. **Data Storage**
+
    - Store only data that cannot be retrieved from the blockchain
    - Implement proper database indexing
    - Ensure data consistency with blockchain state
@@ -308,15 +344,19 @@ For the backend developer:
 ## Future Enhancements
 
 1. **Multi-signature Escrow**
+
    - Implement multi-sig for large bounty payments
 
 2. **Dispute Resolution**
+
    - Add arbitration mechanisms for contested bounties
 
 3. **Token Staking**
+
    - Allow users to stake tokens for reputation boosting
 
 4. **Cross-chain Compatibility**
+
    - Enable bounties payable in multiple token standards
 
 5. **DAO Governance**

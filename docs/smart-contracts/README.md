@@ -1,8 +1,9 @@
-# StarkQuest Smart Contracts Documentation
+# StarkEarn Smart Contracts Documentation
 
-This document provides comprehensive guidance for smart contract developers working on the StarkQuest platform. It outlines the contract architecture, key functionalities, and integration points.
+This document provides comprehensive guidance for smart contract developers working on the StarkEarn platform. It outlines the contract architecture, key functionalities, and integration points.
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Contract Architecture](#contract-architecture)
 3. [Core Contracts](#core-contracts)
@@ -16,11 +17,11 @@ This document provides comprehensive guidance for smart contract developers work
 
 ## Overview
 
-StarkQuest is a decentralized bounty platform built on StarkNet that connects project creators with skilled developers, designers, and other contributors. The platform uses smart contracts to handle bounty creation, application management, payment escrow, and reward distribution.
+StarkEarn is a decentralized bounty platform built on StarkNet that connects project creators with skilled developers, designers, and other contributors. The platform uses smart contracts to handle bounty creation, application management, payment escrow, and reward distribution.
 
 ## Contract Architecture
 
-The StarkQuest smart contract system consists of several interconnected contracts:
+The StarkEarn smart contract system consists of several interconnected contracts:
 
 1. **BountyRegistry** - Main registry for all bounties
 2. **BountyFactory** - Factory contract for creating new bounties
@@ -32,43 +33,53 @@ The StarkQuest smart contract system consists of several interconnected contract
 ## Core Contracts
 
 ### BountyRegistry
+
 The central registry that keeps track of all bounties in the system.
 
 Key responsibilities:
+
 - Maintains a list of all bounty addresses
 - Provides search and filtering capabilities
 - Tracks global statistics
 
 ### BountyFactory
+
 Factory contract responsible for creating new bounty instances using the clone pattern for gas efficiency.
 
 Key responsibilities:
+
 - Creates new bounty contracts
 - Sets initial parameters
 - Registers new bounties in the BountyRegistry
 
 ### Bounty (Individual Contract)
+
 Each bounty has its own contract instance with the following functionality:
 
 Key responsibilities:
+
 - Bounty details management
 - Application handling
 - Submission and review process
 - Payment distribution
 
 ### PaymentProcessor
+
 Handles all payment-related operations including escrow and distribution.
 
 Key responsibilities:
+
 - Token escrow management
 - Payment distribution to bounty hunters
 - Refunds to creators
 - Platform fee collection
 
 ### ReputationSystem
+
 Manages reputation scores for both creators and hunters.
 
 Key responsibilities:
+
 - Tracking user reputation
 - Updating scores based on bounty completion
 - Providing reputation-based access controls
@@ -76,6 +87,7 @@ Key responsibilities:
 ## Data Structures
 
 ### Bounty Structure
+
 ```cairo
 struct Bounty {
     felt creator;
@@ -93,6 +105,7 @@ struct Bounty {
 ```
 
 ### Application Structure
+
 ```cairo
 struct Application {
     felt hunter;
@@ -103,6 +116,7 @@ struct Application {
 ```
 
 ### BountyStatus Enum
+
 ```cairo
 enum BountyStatus {
     Open,
@@ -114,6 +128,7 @@ enum BountyStatus {
 ```
 
 ### ApplicationStatus Enum
+
 ```cairo
 enum ApplicationStatus {
     Pending,
@@ -126,6 +141,7 @@ enum ApplicationStatus {
 ## Key Functions
 
 ### Bounty Creation
+
 ```cairo
 func create_bounty(
     title: felt,
@@ -140,6 +156,7 @@ func create_bounty(
 ```
 
 ### Application Submission
+
 ```cairo
 func submit_application(proposal: felt) {
     // Implementation details
@@ -147,6 +164,7 @@ func submit_application(proposal: felt) {
 ```
 
 ### Application Review
+
 ```cairo
 func review_application(
     application_index: felt,
@@ -157,6 +175,7 @@ func review_application(
 ```
 
 ### Bounty Completion
+
 ```cairo
 func complete_bounty(submission: felt) {
     // Implementation details
@@ -164,6 +183,7 @@ func complete_bounty(submission: felt) {
 ```
 
 ### Payment Distribution
+
 ```cairo
 func distribute_payment(hunter: felt) {
     // Implementation details
@@ -173,7 +193,9 @@ func distribute_payment(hunter: felt) {
 ## Events
 
 ### BountyCreated
+
 Emitted when a new bounty is created.
+
 ```cairo
 event BountyCreated {
     bounty_address: felt,
@@ -184,7 +206,9 @@ event BountyCreated {
 ```
 
 ### ApplicationSubmitted
+
 Emitted when a hunter submits an application.
+
 ```cairo
 event ApplicationSubmitted {
     bounty_address: felt,
@@ -194,7 +218,9 @@ event ApplicationSubmitted {
 ```
 
 ### ApplicationReviewed
+
 Emitted when a creator reviews an application.
+
 ```cairo
 event ApplicationReviewed {
     bounty_address: felt,
@@ -204,7 +230,9 @@ event ApplicationReviewed {
 ```
 
 ### BountyCompleted
+
 Emitted when a bounty is marked as completed.
+
 ```cairo
 event BountyCompleted {
     bounty_address: felt,
@@ -214,7 +242,9 @@ event BountyCompleted {
 ```
 
 ### PaymentDistributed
+
 Emitted when payment is distributed to a hunter.
+
 ```cairo
 event PaymentDistributed {
     bounty_address: felt,
@@ -228,6 +258,7 @@ event PaymentDistributed {
 1. **Reentrancy Protection**: All external calls that transfer funds should be protected against reentrancy attacks.
 
 2. **Access Control**: Ensure only authorized parties can perform sensitive operations:
+
    - Only creators can review applications
    - Only selected hunters can complete bounties
    - Only contract owners can update platform parameters
@@ -241,11 +272,13 @@ event PaymentDistributed {
 ## Deployment
 
 ### Prerequisites
+
 - StarkNet CLI installed
 - Cairo compiler
 - Testnet account with STRK tokens
 
 ### Deployment Steps
+
 1. Deploy the BountyRegistry contract
 2. Deploy the BountyFactory contract, linking it to the registry
 3. Deploy the PaymentProcessor contract
@@ -253,6 +286,7 @@ event PaymentDistributed {
 5. Update contract references as needed
 
 ### Example Deployment Script
+
 ```bash
 # Deploy BountyRegistry
 starknet deploy --contract BountyRegistry.json
@@ -270,25 +304,31 @@ starknet deploy --contract ReputationSystem.json
 ## Testing
 
 ### Unit Tests
+
 All contracts should have comprehensive unit tests covering:
+
 - Happy path scenarios
 - Edge cases
 - Error conditions
 - Security vulnerabilities
 
 ### Integration Tests
+
 Test the interaction between different contracts:
+
 - Bounty creation and registration
 - Application submission and review
 - Payment processing
 - Reputation updates
 
 ### Test Coverage
+
 Aim for at least 90% test coverage for all critical functions.
 
 ## Integration Guide
 
 ### Frontend Integration
+
 To integrate with the frontend, developers should:
 
 1. **Connect to StarkNet**: Use starknet.js to connect to the network
@@ -297,9 +337,10 @@ To integrate with the frontend, developers should:
 4. **Call Functions**: Use the contract methods to interact with the blockchain
 
 ### Example Frontend Integration
+
 ```javascript
-import { Contract, Account } from 'starknet';
-import bountyRegistryAbi from './abis/BountyRegistry.json';
+import { Contract, Account } from "starknet";
+import bountyRegistryAbi from "./abis/BountyRegistry.json";
 
 // Initialize contract
 const bountyRegistry = new Contract(
@@ -314,12 +355,13 @@ const bountyCount = await bountyRegistry.get_bounty_count();
 // Write data
 const { transaction_hash } = await account.execute({
   contractAddress: bountyFactoryAddress,
-  entrypoint: 'create_bounty',
-  calldata: [title, description, category, rewardToken, rewardAmount, deadline]
+  entrypoint: "create_bounty",
+  calldata: [title, description, category, rewardToken, rewardAmount, deadline],
 });
 ```
 
 ### Backend Integration
+
 For backend services, use starknet.js with a full node connection:
 
 1. **Node Connection**: Connect to a StarkNet full node
@@ -328,25 +370,28 @@ For backend services, use starknet.js with a full node connection:
 4. **Notification System**: Send notifications based on events
 
 ### Example Backend Integration
+
 ```javascript
-import { RpcProvider } from 'starknet';
+import { RpcProvider } from "starknet";
 
 const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-mainnet.infura.io/v3/YOUR_API_KEY'
+  nodeUrl: "https://starknet-mainnet.infura.io/v3/YOUR_API_KEY",
 });
 
 // Listen for events
-provider.getEvents({
-  from_block: 'latest',
-  to_block: 'latest',
-  address: bountyRegistryAddress,
-  keys: [['BountyCreated']]
-}).then(events => {
-  // Process new bounties
-  events.forEach(event => {
-    console.log('New bounty created:', event);
+provider
+  .getEvents({
+    from_block: "latest",
+    to_block: "latest",
+    address: bountyRegistryAddress,
+    keys: [["BountyCreated"]],
+  })
+  .then((events) => {
+    // Process new bounties
+    events.forEach((event) => {
+      console.log("New bounty created:", event);
+    });
   });
-});
 ```
 
 ## Future Enhancements
@@ -360,9 +405,10 @@ provider.getEvents({
 ## Contact and Support
 
 For questions about the smart contracts or to report issues:
-- GitHub: https://github.com/starkquest/contracts
-- Discord: https://discord.gg/starkquest
-- Email: contracts@starkquest.io
+
+- GitHub: https://github.com/StarkEarn/contracts
+- Discord: https://discord.gg/StarkEarn
+- Email: contracts@StarkEarn.io
 
 ## License
 

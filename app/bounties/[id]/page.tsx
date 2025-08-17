@@ -1,12 +1,22 @@
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { Textarea } from "@/components/ui/textarea"
-import { PaymentModal } from "@/components/payment-modal"
-import { Calendar, Users, Star, Clock, ArrowLeft, ExternalLink, MessageSquare, Heart, Share2 } from "lucide-react"
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { PaymentModal } from "@/components/payment-modal";
+import {
+  Calendar,
+  Users,
+  Star,
+  Clock,
+  ArrowLeft,
+  ExternalLink,
+  MessageSquare,
+  Heart,
+  Share2,
+} from "lucide-react";
 
 // Mock bounty detail data
 const bountyDetail = {
@@ -90,7 +100,7 @@ const bountyDetail = {
       appliedAt: "2024-01-17",
     },
   ],
-}
+};
 
 export default function BountyDetailPage() {
   return (
@@ -112,17 +122,28 @@ export default function BountyDetailPage() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <Badge className="bg-starknet-blue/10 text-starknet-blue border-starknet-blue/20" variant="outline">
+                    <Badge
+                      className="bg-starknet-blue/10 text-starknet-blue border-starknet-blue/20"
+                      variant="outline"
+                    >
                       {bountyDetail.category}
                     </Badge>
-                    <Badge className="bg-orange-100 text-orange-800" variant="secondary">
+                    <Badge
+                      className="bg-orange-100 text-orange-800"
+                      variant="secondary"
+                    >
                       {bountyDetail.difficulty}
                     </Badge>
-                    <Badge className="bg-green-100 text-green-800" variant="secondary">
+                    <Badge
+                      className="bg-green-100 text-green-800"
+                      variant="secondary"
+                    >
                       {bountyDetail.status}
                     </Badge>
                   </div>
-                  <h1 className="text-3xl font-bold mb-2">{bountyDetail.title}</h1>
+                  <h1 className="text-3xl font-bold mb-2">
+                    {bountyDetail.title}
+                  </h1>
                 </div>
 
                 <div className="flex items-center space-x-2">
@@ -166,7 +187,9 @@ export default function BountyDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="prose prose-sm max-w-none">
-                  <div className="whitespace-pre-wrap">{bountyDetail.description}</div>
+                  <div className="whitespace-pre-wrap">
+                    {bountyDetail.description}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -185,27 +208,42 @@ export default function BountyDetailPage() {
                     <div className="flex items-start space-x-3">
                       <Avatar className="h-8 w-8">
                         <AvatarImage
-                          src={application.applicant.avatar || "/placeholder.svg"}
+                          src={
+                            application.applicant.avatar || "/placeholder.svg"
+                          }
                           alt={application.applicant.name}
                         />
-                        <AvatarFallback>{application.applicant.name.charAt(0)}</AvatarFallback>
+                        <AvatarFallback>
+                          {application.applicant.name.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-medium">{application.applicant.name}</span>
+                          <span className="font-medium">
+                            {application.applicant.name}
+                          </span>
                           <div className="flex items-center space-x-1">
                             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs text-muted-foreground">{application.applicant.reputation}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {application.applicant.reputation}
+                            </span>
                           </div>
                           <span className="text-xs text-muted-foreground">
-                            {application.applicant.completedBounties} bounties completed
+                            {application.applicant.completedBounties} bounties
+                            completed
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">{application.proposal}</p>
-                        <span className="text-xs text-muted-foreground">Applied {application.appliedAt}</span>
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {application.proposal}
+                        </p>
+                        <span className="text-xs text-muted-foreground">
+                          Applied {application.appliedAt}
+                        </span>
                       </div>
                     </div>
-                    {index < bountyDetail.applications.length - 1 && <Separator className="mt-4" />}
+                    {index < bountyDetail.applications.length - 1 && (
+                      <Separator className="mt-4" />
+                    )}
                   </div>
                 ))}
               </CardContent>
@@ -225,7 +263,10 @@ export default function BountyDetailPage() {
                 </div>
                 <PaymentModal
                   trigger={
-                    <Button className="w-full bg-starknet-orange hover:bg-starknet-orange/90" size="lg">
+                    <Button
+                      className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+                      size="lg"
+                    >
                       Apply for Bounty
                     </Button>
                   }
@@ -233,7 +274,7 @@ export default function BountyDetailPage() {
                   description="Submit your application and pay the application fee"
                   amount="0.1"
                   currency="STRK"
-                  recipient="StarkQuest Platform"
+                  recipient="StarkEarn Platform"
                   onConfirm={() => console.log("Application submitted")}
                 />
               </CardContent>
@@ -251,29 +292,45 @@ export default function BountyDetailPage() {
                       src={bountyDetail.poster.avatar || "/placeholder.svg"}
                       alt={bountyDetail.poster.name}
                     />
-                    <AvatarFallback>{bountyDetail.poster.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>
+                      {bountyDetail.poster.name.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-medium">{bountyDetail.poster.name}</div>
+                    <div className="font-medium">
+                      {bountyDetail.poster.name}
+                    </div>
                     <div className="flex items-center space-x-1">
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm text-muted-foreground">{bountyDetail.poster.reputation}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {bountyDetail.poster.reputation}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Bounties Posted:</span>
+                    <span className="text-muted-foreground">
+                      Bounties Posted:
+                    </span>
                     <span>{bountyDetail.poster.completedBounties}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Rewards:</span>
-                    <span>{bountyDetail.poster.totalRewardsGiven.toLocaleString()} STRK</span>
+                    <span className="text-muted-foreground">
+                      Total Rewards:
+                    </span>
+                    <span>
+                      {bountyDetail.poster.totalRewardsGiven.toLocaleString()}{" "}
+                      STRK
+                    </span>
                   </div>
                 </div>
 
-                <Button variant="outline" className="w-full mt-4 bg-transparent">
+                <Button
+                  variant="outline"
+                  className="w-full mt-4 bg-transparent"
+                >
                   <ExternalLink className="mr-2 h-4 w-4" />
                   View Profile
                 </Button>
@@ -293,13 +350,15 @@ export default function BountyDetailPage() {
                   />
                   <PaymentModal
                     trigger={
-                      <Button className="w-full bg-starknet-blue hover:bg-starknet-blue/90">Submit Application</Button>
+                      <Button className="w-full bg-starknet-blue hover:bg-starknet-blue/90">
+                        Submit Application
+                      </Button>
                     }
                     title="Submit Application"
                     description="Pay application fee to submit your proposal"
                     amount="0.1"
                     currency="STRK"
-                    recipient="StarkQuest Platform"
+                    recipient="StarkEarn Platform"
                     onConfirm={() => console.log("Quick application submitted")}
                   />
                 </div>
@@ -309,5 +368,5 @@ export default function BountyDetailPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
