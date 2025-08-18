@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Target, PlusCircle, Trophy, User, LogIn } from "lucide-react"
+import { Home, Target, PlusCircle, Trophy, User, ArrowLeftRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const BASE_TABS = [
@@ -19,11 +19,11 @@ export default function MobileTabBar({ loggedIn }: { loggedIn: boolean }) {
   const TABS = loggedIn 
     ? [
         ...BASE_TABS,
-        { href: "/profile", label: "Profile", icon: User },
+        { href: "/dashboard", label: "Profile", icon: User },
       ]
     : [
         ...BASE_TABS,
-        { href: "/login", label: "Login", icon: LogIn },
+        { href: "/swap", label: "Swap", icon: ArrowLeftRight },
       ]
 
   return (

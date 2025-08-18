@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, Trophy, User } from "lucide-react";
+import { Home, PlusCircle, Trophy, User, LogOut, ArrowLeftRight } from "lucide-react";
 
 export default function MobileBottomTab({ loggedIn }: { loggedIn: boolean }) {
   const pathname = usePathname();
@@ -9,14 +9,16 @@ export default function MobileBottomTab({ loggedIn }: { loggedIn: boolean }) {
     ? [
         { href: "/bounties", icon: <Home />, label: "Bounties" },
         { href: "/post-bounty", icon: <PlusCircle />, label: "Post" },
+        { href: "/swap", icon: <ArrowLeftRight />, label: "Swap" },
         { href: "/leaderboard", icon: <Trophy />, label: "Leader" },
         { href: "/profile", icon: <User />, label: "Profile" },
       ]
     : [
         { href: "/bounties", icon: <Home />, label: "Bounties" },
         { href: "/post-bounty", icon: <PlusCircle />, label: "Post" },
+        { href: "/swap", icon: <ArrowLeftRight />, label: "Swap" },
         { href: "/leaderboard", icon: <Trophy />, label: "Leader" },
-        { href: "/signup", icon: <User />, label: "Login/Sign Up" },
+        { href: "/signup", icon: <User />, label: "Login" },
       ];
 
   return (

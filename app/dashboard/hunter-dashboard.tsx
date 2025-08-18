@@ -80,7 +80,7 @@ const hunterDashboardData = {
   ],
 }
 
-export default function HunterDashboard() {
+function HunterDashboard() {
   const { user } = useAuth()
   
   return (
@@ -480,3 +480,6 @@ export default function HunterDashboard() {
     </div>
   )
 }
+
+// Make sure to use default export
+export default HunterDashboard
