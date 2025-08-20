@@ -272,3 +272,44 @@ export const getUserReputation = async (userAddress: string) => {
     throw new Error(`Failed to get user reputation: ${(error as Error).message}`);
   }
 };
+
+// Get bounty details
+export const getBountyDetails = async (bountyAddress: string) => {
+  try {
+    // Create contract instance for the specific bounty
+    const bountyContract = new Contract(
+      bountyAbi,
+      bountyAddress,
+      provider
+    );
+    
+    const details = await bountyContract.get_bounty_details();
+    return details;
+  } catch (error) {
+    throw new Error(`Failed to get bounty details: ${(error as Error).message}`);
+  }
+};
+
+// Get all bounties
+export const getAllBounties = async () => {
+  if (!bountyRegistry) {
+    initializeContracts();
+  }
+  
+  try {
+    // Get bounty count
+    const count = await bountyRegistry?.get_bounty_count();
+    const bountyCount = parseInt(count.toString());
+    
+    // Get all bounty addresses
+    const bountyAddresses = [];
+    for (let i = 1; i <= bountyCount; i++) {
+      const address = await bountyRegistry?.get_bounty_address(i);
+      bountyAddresses.push(address);
+    }
+    
+    return bountyAddresses;
+  } catch (error) {
+    throw new Error(`Failed to get bounties: ${(error as Error).message}`);
+  }
+};
