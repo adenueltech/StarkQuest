@@ -11,6 +11,8 @@ export class EventMonitor {
   private lastProcessedBlock: number = 0;
   private isRunning: boolean = false;
 
+  // eeef
+
   // Start monitoring events
   async start() {
     if (this.isRunning) {
