@@ -55,7 +55,7 @@ export default function HomePage() {
                 className="border-starknet-orange text-starknet-orange hover:bg-starknet-orange hover:text-white bg-transparent w-full sm:w-auto min-w-[160px]"
                 asChild
               >
-                <Link href="/post-bounty">Post a Bounty</Link>
+                <Link href="/post-bounty">Create Bounty</Link>
               </Button>
             </div>
           </div>
