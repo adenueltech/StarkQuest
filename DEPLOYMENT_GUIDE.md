@@ -1,204 +1,92 @@
-# StarkQuest Smart Contract Deployment Guide
+# StarkQuest Deployment Guide
 
-This guide provides step-by-step instructions for deploying the StarkQuest smart contracts to StarkNet.
+This guide will help you deploy the StarkQuest smart contracts and configure the application.
 
 ## Prerequisites
 
-1. Install Scarb (Cairo package manager):
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
+1. Node.js (v16 or higher)
+2. npm or yarn
+3. A StarkNet wallet (ArgentX or Braavos)
+4. Some STRK or ETH tokens for gas fees on StarkNet Goerli testnet
+5. An Infura account with a StarkNet project (for RPC access)
+
+## Setup Environment Variables
+
+Create a `.env` file in the `Contract` directory with the following variables:
+
+```env
+STARKNET_NODE_URL=https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID
+OWNER_ADDRESS=0xYourWalletAddress
+PRIVATE_KEY=0xYourPrivateKey
+PLATFORM_FEE_BASIS_POINTS=200
+MIN_REPUTATION_FOR_CREATION=100
+MIN_REPUTATION_FOR_APPLICATION=50
 ```
 
-2. Install Starknet Foundry:
-```bash
-curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
-```
+## Deploying the Contracts
 
-3. Set up a StarkNet wallet with funds (Goerli ETH for testnet deployment)
+1. Install dependencies:
+   ```bash
+   cd Contract
+   npm install
+   ```
 
-## Deployment Steps
+2. Compile the contracts:
+   ```bash
+   scarb build
+   ```
 
-### 1. Compile Contracts
+3. Run the deployment script:
+   ```bash
+   ts-node scripts/deploy-script.ts
+   ```
 
-Navigate to the Contract directory and compile all contracts:
+## Post-Deployment Configuration
 
-```bash
-cd Contract
-scarb build
-```
+After deployment, the script will automatically update `lib/config.ts` with the deployed contract addresses. You can now run the frontend application.
 
-### 2. Deploy Contracts in Order
+## Running the Application
 
-The contracts must be deployed in a specific order due to dependencies:
+1. Install frontend dependencies:
+   ```bash
+   npm install
+   ```
 
-#### Step 1: Deploy Bounty Contract (Template)
-First, declare the bounty contract as a class for cloning:
+2. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-```bash
-starknet declare \
-  --contract target/dev/starkquest_bounty.sierra.json \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
+## Monitoring Events
 
-Note the class hash from the output.
-
-#### Step 2: Deploy BountyRegistry
-
-```bash
-starknet deploy \
-  --class-hash <bounty_registry_class_hash> \
-  --inputs <owner_address> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-Note the deployed contract address.
-
-#### Step 3: Deploy PaymentProcessor
+The backend service includes an event monitor that listens for contract events. To start the backend service:
 
 ```bash
-starknet deploy \
-  --class-hash <payment_processor_class_hash> \
-  --inputs <owner_address> <platform_fee_basis_points> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-Note the deployed contract address.
-
-#### Step 4: Deploy ReputationSystem
-
-```bash
-starknet deploy \
-  --class-hash <reputation_system_class_hash> \
-  --inputs <owner_address> <min_reputation_for_creation> <min_reputation_for_application> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-Note the deployed contract address.
-
-#### Step 5: Deploy BountyFactory
-
-```bash
-starknet deploy \
-  --class-hash <bounty_factory_class_hash> \
-  --inputs <registry_address> <bounty_class_hash> <owner_address> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-Note the deployed contract address.
-
-#### Step 6: Deploy StarkEarn Main Contract
-
-```bash
-starknet deploy \
-  --class-hash <stark_earn_class_hash> \
-  --inputs <owner_address> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-Note the deployed contract address.
-
-#### Step 7: Initialize StarkEarn Contract
-
-Call the initialize function on the StarkEarn contract:
-
-```bash
-starknet invoke \
-  --address <stark_earn_address> \
-  --abi target/dev/starkquest_stark_earn.abi.json \
-  --function initialize \
-  --inputs <registry_address> <factory_address> <payment_processor_address> <reputation_system_address> <bounty_class_hash> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
-```
-
-### 3. Update Frontend Configuration
-
-Update the contract addresses in `lib/config.ts`:
-
-```typescript
-export const CONTRACT_ADDRESSES = {
-  BOUNTY_REGISTRY: "<deployed_registry_address>",
-  BOUNTY_FACTORY: "<deployed_factory_address>",
-  PAYMENT_PROCESSOR: "<deployed_payment_processor_address>",
-  REPUTATION_SYSTEM: "<deployed_reputation_system_address>",
-  STARK_EARN: "<deployed_stark_earn_address>"
-};
-```
-
-### 4. Generate ABI Files
-
-Extract the ABI files from the compiled contracts and place them in `lib/abis/`:
-
-```bash
-# Copy ABI files from target/dev/ to lib/abis/
-cp target/dev/starkquest_bounty_registry.abi.json ../lib/abis/BountyRegistry.json
-cp target/dev/starkquest_bounty_factory.abi.json ../lib/abis/BountyFactory.json
-cp target/dev/starkquest_bounty.abi.json ../lib/abis/Bounty.json
-cp target/dev/starkquest_payment_processor.abi.json ../lib/abis/PaymentProcessor.json
-cp target/dev/starkquest_reputation_system.abi.json ../lib/abis/ReputationSystem.json
-cp target/dev/starkquest_stark_earn.abi.json ../lib/abis/StarkEarn.json
-```
-
-## Testing Deployment
-
-After deployment, test the contracts with:
-
-```bash
-# Test creating a bounty
-starknet invoke \
-  --address <stark_earn_address> \
-  --abi target/dev/starkquest_stark_earn.abi.json \
-  --function create_bounty \
-  --inputs <title> <description> <reward_amount> <deadline> <token_address> \
-  --account account.json \
-  --keystore keystore.json \
-  --network goerli
+npm run start
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Insufficient funds**: Ensure your account has enough ETH for deployment
-2. **Invalid class hash**: Make sure you're using the correct class hash from the declare command
-3. **Network issues**: Check StarkNet network status if transactions are not confirming
+1. **Insufficient funds**: Make sure your wallet has enough STRK or ETH tokens for gas fees.
 
-### Useful Commands
+2. **Network issues**: If you're having trouble connecting to StarkNet, try changing the RPC URL in your environment variables.
 
-Check transaction status:
-```bash
-starknet get_transaction_receipt --hash <transaction_hash> --network goerli
-```
+3. **Contract declaration failed**: This might happen if you're trying to declare a contract that's already declared. The deployment script handles this with `declareIfNot`.
 
-Check contract status:
-```bash
-starknet get_class_hash_at --contract-address <contract_address> --network goerli
-```
+4. **Permission errors**: Make sure your wallet address is the owner of the contracts.
 
-## Next Steps
+### Need Help?
 
-After successful deployment:
-1. Update the frontend with real contract addresses
-2. Test all contract functions through the frontend
-3. Set up backend services to monitor events
-4. Configure notifications and search indexing
+If you encounter any issues during deployment, please check the console output for error messages. Common issues include:
 
-## Security Considerations
+- Invalid private key or wallet address
+- Insufficient funds for gas fees
+- Network connectivity issues
+- Contract compilation errors
 
-1. Store private keys securely using keystore files
-2. Use different accounts for deployment and operation
-3. Verify contract code on StarkScan after deployment
-4. Test thoroughly on testnet before mainnet deployment
+For further assistance, you can:
+1. Check the StarkNet documentation
+2. Consult the StarkNet community forums
+3. Reach out to the StarkNet support team

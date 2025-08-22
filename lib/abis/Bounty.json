@@ -2,9 +2,28 @@
   {
     "name": "submit_application",
     "type": "function",
+    "inputs": [],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "accept_application",
+    "type": "function",
     "inputs": [
       {
-        "name": "proposal",
+        "name": "application_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "submit_work",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "content",
         "type": "core::felt252"
       }
     ],
@@ -12,31 +31,85 @@
     "state_mutability": "external"
   },
   {
-    "name": "review_application",
+    "name": "approve_submission",
     "type": "function",
     "inputs": [
       {
-        "name": "application_index",
-        "type": "core::integer::u256"
+        "name": "submission_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "cancel_bounty",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "reason",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "get_bounty_details",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "(core::felt252, core::felt252, core::integer::u256, core::integer::u64, core::starknet::contract_address::ContractAddress, core::starknet::contract_address::ContractAddress, core::starknet::contract_address::ContractAddress)"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "application_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
       },
       {
-        "name": "status",
-        "type": "core::integer::u256"
+        "type": "core::integer::u64"
+      },
+      {
+        "type": "core::bool"
       }
     ],
-    "outputs": [],
-    "state_mutability": "external"
+    "state_mutability": "view"
   },
   {
-    "name": "complete_bounty",
+    "name": "get_submission",
     "type": "function",
     "inputs": [
       {
-        "name": "submission",
-        "type": "core::felt252"
+        "name": "submission_id",
+        "type": "core::integer::u64"
       }
     ],
-    "outputs": [],
-    "state_mutability": "external"
+    "outputs": [
+      {
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "type": "core::felt252"
+      },
+      {
+        "type": "core::integer::u64"
+      },
+      {
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
   }
 ]

@@ -1,23 +1,32 @@
 [
   {
-    "name": "get_bounty_count",
+    "name": "register_bounty",
     "type": "function",
-    "inputs": [],
-    "outputs": [
+    "inputs": [
       {
-        "name": "count",
-        "type": "core::integer::u256"
+        "name": "bounty_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "creator",
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ],
-    "state_mutability": "view"
+    "outputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "state_mutability": "external"
   },
   {
     "name": "get_bounty_address",
     "type": "function",
     "inputs": [
       {
-        "name": "index",
-        "type": "core::integer::u256"
+        "name": "bounty_id",
+        "type": "core::integer::u64"
       }
     ],
     "outputs": [
@@ -27,5 +36,35 @@
       }
     ],
     "state_mutability": "view"
+  },
+  {
+    "name": "get_bounty_count",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "core::integer::u64"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_global_stats",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "(core::integer::u64, core::integer::u64)"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "update_completed_bounties",
+    "type": "function",
+    "inputs": [],
+    "outputs": [],
+    "state_mutability": "external"
   }
 ]

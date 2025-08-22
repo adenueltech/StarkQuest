@@ -12,20 +12,16 @@
         "type": "core::felt252"
       },
       {
-        "name": "category",
-        "type": "core::felt252"
-      },
-      {
-        "name": "reward_token",
-        "type": "core::felt252"
-      },
-      {
         "name": "reward_amount",
         "type": "core::integer::u256"
       },
       {
         "name": "deadline",
-        "type": "core::integer::u256"
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "token_address",
+        "type": "core::starknet::contract_address::ContractAddress"
       }
     ],
     "outputs": [
@@ -34,6 +30,30 @@
         "type": "core::starknet::contract_address::ContractAddress"
       }
     ],
+    "state_mutability": "external"
+  },
+  {
+    "name": "set_registry_address",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "registry_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "set_bounty_class_hash",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "class_hash",
+        "type": "core::starknet::class_hash::ClassHash"
+      }
+    ],
+    "outputs": [],
     "state_mutability": "external"
   }
 ]

@@ -1,21 +1,29 @@
 // Deployment script for StarkQuest contracts
 // This script handles the deployment of all contracts in the correct order
 
-import { Account, Contract, RpcProvider, cairo, CallData } from 'starknet';
+import { Account, RpcProvider, CallData, stark } from 'starknet';
 import fs from 'fs';
 import path from 'path';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 async function deploy() {
   console.log("Deploying StarkQuest contracts...");
   
   // Configuration
   const provider = new RpcProvider({
-    nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+    nodeUrl: process.env.STARKNET_NODE_URL || 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
   });
   
   // These values would typically come from environment variables or a secure config
-  const ownerAddress = '0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'; // Placeholder
-  const privateKey = '0x123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'; // Placeholder
+  const ownerAddress = process.env.OWNER_ADDRESS;
+  const privateKey = process.env.PRIVATE_KEY;
+  
+  if (!ownerAddress || !privateKey) {
+    throw new Error('OWNER_ADDRESS and PRIVATE_KEY must be set in environment variables');
+  }
   
   const account = new Account(
     provider,
@@ -26,23 +34,39 @@ async function deploy() {
   // Deployment parameters
   const CONFIG = {
     ownerAddress: ownerAddress,
-    platformFeeBasisPoints: '200', // 2%
-    minReputationForCreation: '100',
-    minReputationForApplication: '50',
+    platformFeeBasisPoints: process.env.PLATFORM_FEE_BASIS_POINTS || '200', // 2%
+    minReputationForCreation: process.env.MIN_REPUTATION_FOR_CREATION || '100',
+    minReputationForApplication: process.env.MIN_REPUTATION_FOR_APPLICATION || '50',
   };
   
   try {
     // Step 1: Declare contracts
     console.log('1. Declaring contracts...');
     
-    // In a real implementation, you would declare each contract class here
-    // For now, we'll use placeholder values
-    const bountyClassHash = '0x1234'; // Placeholder
-    const registryClassHash = '0x2345'; // Placeholder
-    const factoryClassHash = '0x3456'; // Placeholder
-    const paymentProcessorClassHash = '0x4567'; // Placeholder
-    const reputationSystemClassHash = '0x5678'; // Placeholder
-    const starkEarnClassHash = '0x6789'; // Placeholder
+    // Declare each contract class
+    const bountyClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty.contract_class.json'), 'utf-8'),
+    });
+    
+    const registryClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty_registry.contract_class.json'), 'utf-8'),
+    });
+    
+    const factoryClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty_factory.contract_class.json'), 'utf-8'),
+    });
+    
+    const paymentProcessorClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_payment_processor.contract_class.json'), 'utf-8'),
+    });
+    
+    const reputationSystemClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_reputation_system.contract_class.json'), 'utf-8'),
+    });
+    
+    const starkEarnClassHash = await account.declareIfNot({
+      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_stark_earn.contract_class.json'), 'utf-8'),
+    });
     
     console.log('   Contracts declared successfully');
     
@@ -51,30 +75,36 @@ async function deploy() {
     
     // Deploy BountyRegistry
     const registryResponse = await account.deploy({
-      classHash: registryClassHash,
+      classHash: registryClassHash.class_hash,
       constructorCalldata: CallData.compile({
         owner: CONFIG.ownerAddress,
       }),
     });
     
-    const registryAddress = registryResponse.contract_address;
+    // Handle potential array return type with type assertion
+    const registryAddress = (Array.isArray(registryResponse.contract_address) 
+      ? registryResponse.contract_address[0] 
+      : registryResponse.contract_address) as string;
     console.log(`   BountyRegistry deployed at: ${registryAddress}`);
     
     // Deploy PaymentProcessor
     const paymentProcessorResponse = await account.deploy({
-      classHash: paymentProcessorClassHash,
+      classHash: paymentProcessorClassHash.class_hash,
       constructorCalldata: CallData.compile({
         owner: CONFIG.ownerAddress,
         platform_fee_basis_points: CONFIG.platformFeeBasisPoints,
       }),
     });
     
-    const paymentProcessorAddress = paymentProcessorResponse.contract_address;
+    // Handle potential array return type with type assertion
+    const paymentProcessorAddress = (Array.isArray(paymentProcessorResponse.contract_address) 
+      ? paymentProcessorResponse.contract_address[0] 
+      : paymentProcessorResponse.contract_address) as string;
     console.log(`   PaymentProcessor deployed at: ${paymentProcessorAddress}`);
     
     // Deploy ReputationSystem
     const reputationSystemResponse = await account.deploy({
-      classHash: reputationSystemClassHash,
+      classHash: reputationSystemClassHash.class_hash,
       constructorCalldata: CallData.compile({
         owner: CONFIG.ownerAddress,
         min_reputation_for_creation: CONFIG.minReputationForCreation,
@@ -82,37 +112,58 @@ async function deploy() {
       }),
     });
     
-    const reputationSystemAddress = reputationSystemResponse.contract_address;
+    // Handle potential array return type with type assertion
+    const reputationSystemAddress = (Array.isArray(reputationSystemResponse.contract_address) 
+      ? reputationSystemResponse.contract_address[0] 
+      : reputationSystemResponse.contract_address) as string;
     console.log(`   ReputationSystem deployed at: ${reputationSystemAddress}`);
     
     // Deploy BountyFactory
     const factoryResponse = await account.deploy({
-      classHash: factoryClassHash,
+      classHash: factoryClassHash.class_hash,
       constructorCalldata: CallData.compile({
         registry_address: registryAddress,
-        bounty_class_hash: bountyClassHash,
+        bounty_class_hash: bountyClassHash.class_hash,
         owner: CONFIG.ownerAddress,
       }),
     });
     
-    const factoryAddress = factoryResponse.contract_address;
+    // Handle potential array return type with type assertion
+    const factoryAddress = (Array.isArray(factoryResponse.contract_address) 
+      ? factoryResponse.contract_address[0] 
+      : factoryResponse.contract_address) as string;
     console.log(`   BountyFactory deployed at: ${factoryAddress}`);
     
     // Deploy StarkEarn Main Contract
     const starkEarnResponse = await account.deploy({
-      classHash: starkEarnClassHash,
+      classHash: starkEarnClassHash.class_hash,
       constructorCalldata: CallData.compile({
         owner: CONFIG.ownerAddress,
       }),
     });
     
-    const starkEarnAddress = starkEarnResponse.contract_address;
+    // Handle potential array return type with type assertion
+    const starkEarnAddress = (Array.isArray(starkEarnResponse.contract_address) 
+      ? starkEarnResponse.contract_address[0] 
+      : starkEarnResponse.contract_address) as string;
     console.log(`   StarkEarn deployed at: ${starkEarnAddress}`);
     
     // Step 3: Initialize StarkEarn Contract
     console.log('3. Initializing StarkEarn contract...');
     
-    // In a real implementation, you would call the initialize function here
+    // Initialize the StarkEarn contract with the addresses of the other contracts
+    await account.execute({
+      contractAddress: starkEarnAddress,
+      entrypoint: 'initialize',
+      calldata: [
+        registryAddress,
+        factoryAddress,
+        paymentProcessorAddress,
+        reputationSystemAddress,
+        bountyClassHash.class_hash
+      ]
+    });
+    
     console.log('   StarkEarn initialized');
     
     // Step 4: Update frontend configuration

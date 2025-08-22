@@ -83,10 +83,9 @@ export const getAccount = () => account;
 export const createBounty = async (
   title: string,
   description: string,
-  category: string,
-  rewardToken: string,
   rewardAmount: string,
-  deadline: number
+  deadline: number,
+  tokenAddress: string
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
@@ -100,11 +99,11 @@ export const createBounty = async (
     // Convert string to felt
     const titleFelt = cairo.felt(title);
     const descriptionFelt = cairo.felt(description);
-    const categoryFelt = cairo.felt(category);
-    const rewardTokenFelt = cairo.felt(rewardToken);
+    const tokenAddressFelt = cairo.felt(tokenAddress);
     
     // Convert reward amount to uint256
     const rewardAmountUint256 = cairo.uint256(rewardAmount);
+    const deadlineU64 = cairo.uint256(deadline.toString());
     
     // Call the contract
     const { transaction_hash } = await account.execute({
@@ -113,10 +112,9 @@ export const createBounty = async (
       calldata: CallData.compile({
         title: titleFelt,
         description: descriptionFelt,
-        category: categoryFelt,
-        reward_token: rewardTokenFelt,
         reward_amount: rewardAmountUint256,
-        deadline: deadline
+        deadline: deadlineU64,
+        token_address: tokenAddressFelt
       })
     });
     
@@ -127,10 +125,7 @@ export const createBounty = async (
 };
 
 // Submit application
-export const submitApplication = async (
-  bountyAddress: string,
-  proposal: string
-) => {
+export const submitApplication = async (bountyAddress: string) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
@@ -143,16 +138,11 @@ export const submitApplication = async (
       provider
     );
     
-    // Convert proposal to felt
-    const proposalFelt = cairo.felt(proposal);
-    
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
       entrypoint: 'submit_application',
-      calldata: CallData.compile({
-        proposal: proposalFelt
-      })
+      calldata: CallData.compile({})
     });
     
     return transaction_hash;
@@ -161,11 +151,10 @@ export const submitApplication = async (
   }
 };
 
-// Review application
-export const reviewApplication = async (
+// Accept application
+export const acceptApplication = async (
   bountyAddress: string,
-  applicationIndex: number,
-  status: number // 0 = Pending, 1 = Accepted, 2 = Rejected, 3 = Withdrawn
+  applicationId: number
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
@@ -182,23 +171,22 @@ export const reviewApplication = async (
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'review_application',
+      entrypoint: 'accept_application',
       calldata: CallData.compile({
-        application_index: applicationIndex,
-        status: status
+        application_id: applicationId
       })
     });
     
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to review application: ${(error as Error).message}`);
+    throw new Error(`Failed to accept application: ${(error as Error).message}`);
   }
 };
 
-// Complete bounty
-export const completeBounty = async (
+// Submit work
+export const submitWork = async (
   bountyAddress: string,
-  submission: string
+  content: string
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
@@ -212,64 +200,88 @@ export const completeBounty = async (
       provider
     );
     
-    // Convert submission to felt
-    const submissionFelt = cairo.felt(submission);
+    // Convert content to felt
+    const contentFelt = cairo.felt(content);
     
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'complete_bounty',
+      entrypoint: 'submit_work',
       calldata: CallData.compile({
-        submission: submissionFelt
+        content: contentFelt
       })
     });
     
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to complete bounty: ${(error as Error).message}`);
+    throw new Error(`Failed to submit work: ${(error as Error).message}`);
   }
 };
 
-// Distribute payment
-export const distributePayment = async (
+// Approve submission
+export const approveSubmission = async (
   bountyAddress: string,
-  hunterAddress: string
+  submissionId: number
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
-  if (!paymentProcessor) {
-    initializeContracts();
-  }
-  
   try {
+    // Create contract instance for the specific bounty
+    const bountyContract = new Contract(
+      bountyAbi,
+      bountyAddress,
+      provider
+    );
+    
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-      entrypoint: 'distribute_payment',
+      contractAddress: bountyAddress,
+      entrypoint: 'approve_submission',
       calldata: CallData.compile({
-        hunter: hunterAddress
+        submission_id: submissionId
       })
     });
     
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to distribute payment: ${(error as Error).message}`);
+    throw new Error(`Failed to approve submission: ${(error as Error).message}`);
   }
 };
 
-// Get user reputation
-export const getUserReputation = async (userAddress: string) => {
-  if (!reputationSystem) {
-    initializeContracts();
+// Cancel bounty
+export const cancelBounty = async (
+  bountyAddress: string,
+  reason: string
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
   }
   
   try {
-    const reputation = await reputationSystem?.get_user_reputation(userAddress);
-    return reputation;
+    // Create contract instance for the specific bounty
+    const bountyContract = new Contract(
+      bountyAbi,
+      bountyAddress,
+      provider
+    );
+    
+    // Convert reason to felt
+    const reasonFelt = cairo.felt(reason);
+    
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: bountyAddress,
+      entrypoint: 'cancel_bounty',
+      calldata: CallData.compile({
+        reason: reasonFelt
+      })
+    });
+    
+    return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to get user reputation: ${(error as Error).message}`);
+    throw new Error(`Failed to cancel bounty: ${(error as Error).message}`);
   }
 };
 
@@ -287,6 +299,221 @@ export const getBountyDetails = async (bountyAddress: string) => {
     return details;
   } catch (error) {
     throw new Error(`Failed to get bounty details: ${(error as Error).message}`);
+  }
+};
+
+// Get application
+export const getApplication = async (bountyAddress: string, applicationId: number) => {
+  try {
+    // Create contract instance for the specific bounty
+    const bountyContract = new Contract(
+      bountyAbi,
+      bountyAddress,
+      provider
+    );
+    
+    const application = await bountyContract.get_application(applicationId);
+    return application;
+  } catch (error) {
+    throw new Error(`Failed to get application: ${(error as Error).message}`);
+  }
+};
+
+// Get submission
+export const getSubmission = async (bountyAddress: string, submissionId: number) => {
+  try {
+    // Create contract instance for the specific bounty
+    const bountyContract = new Contract(
+      bountyAbi,
+      bountyAddress,
+      provider
+    );
+    
+    const submission = await bountyContract.get_submission(submissionId);
+    return submission;
+  } catch (error) {
+    throw new Error(`Failed to get submission: ${(error as Error).message}`);
+  }
+};
+
+// Deposit escrow
+export const depositEscrow = async (
+  bountyAddress: string,
+  amount: string
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  if (!paymentProcessor) {
+    initializeContracts();
+  }
+  
+  try {
+    // Convert amount to uint256
+    const amountUint256 = cairo.uint256(amount);
+    
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
+      entrypoint: 'deposit_escrow',
+      calldata: CallData.compile({
+        bounty_address: bountyAddress,
+        amount: amountUint256
+      })
+    });
+    
+    return transaction_hash;
+  } catch (error) {
+    throw new Error(`Failed to deposit escrow: ${(error as Error).message}`);
+  }
+};
+
+// Process payment
+export const processPayment = async (
+  bountyAddress: string,
+  hunterAddress: string,
+  amount: string
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  if (!paymentProcessor) {
+    initializeContracts();
+  }
+  
+  try {
+    // Convert amount to uint256
+    const amountUint256 = cairo.uint256(amount);
+    
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
+      entrypoint: 'process_payment',
+      calldata: CallData.compile({
+        bounty_address: bountyAddress,
+        hunter: hunterAddress,
+        amount: amountUint256
+      })
+    });
+    
+    return transaction_hash;
+  } catch (error) {
+    throw new Error(`Failed to process payment: ${(error as Error).message}`);
+  }
+};
+
+// Process refund
+export const processRefund = async (
+  bountyAddress: string,
+  creatorAddress: string,
+  amount: string
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  if (!paymentProcessor) {
+    initializeContracts();
+  }
+  
+  try {
+    // Convert amount to uint256
+    const amountUint256 = cairo.uint256(amount);
+    
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
+      entrypoint: 'process_refund',
+      calldata: CallData.compile({
+        bounty_address: bountyAddress,
+        creator: creatorAddress,
+        amount: amountUint256
+      })
+    });
+    
+    return transaction_hash;
+  } catch (error) {
+    throw new Error(`Failed to process refund: ${(error as Error).message}`);
+  }
+};
+
+// Get user reputation
+export const getUserReputation = async (userAddress: string) => {
+  if (!reputationSystem) {
+    initializeContracts();
+  }
+  
+  try {
+    const reputation = await reputationSystem?.get_user_reputation(userAddress);
+    return reputation;
+  } catch (error) {
+    throw new Error(`Failed to get user reputation: ${(error as Error).message}`);
+  }
+};
+
+// Register user
+export const registerUser = async (
+  userAddress: string,
+  initialScore: number
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  if (!reputationSystem) {
+    initializeContracts();
+  }
+  
+  try {
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
+      entrypoint: 'register_user',
+      calldata: CallData.compile({
+        user: userAddress,
+        initial_score: initialScore
+      })
+    });
+    
+    return transaction_hash;
+  } catch (error) {
+    throw new Error(`Failed to register user: ${(error as Error).message}`);
+  }
+};
+
+// Update reputation
+export const updateReputation = async (
+  userAddress: string,
+  isCreator: boolean,
+  isCompleted: boolean,
+  qualityScore: number
+) => {
+  if (!account) {
+    throw new Error('Wallet not connected');
+  }
+  
+  if (!reputationSystem) {
+    initializeContracts();
+  }
+  
+  try {
+    // Call the contract
+    const { transaction_hash } = await account.execute({
+      contractAddress: CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
+      entrypoint: 'update_reputation',
+      calldata: CallData.compile({
+        user: userAddress,
+        is_creator: isCreator,
+        is_completed: isCompleted,
+        quality_score: qualityScore
+      })
+    });
+    
+    return transaction_hash;
+  } catch (error) {
+    throw new Error(`Failed to update reputation: ${(error as Error).message}`);
   }
 };
 

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Calendar, Users, Star } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 interface Bounty {
   id: string
@@ -32,6 +33,7 @@ interface BountyCardProps {
 
 export function BountyCard({ bounty }: BountyCardProps) {
   const [localStatus, setLocalStatus] = useState<string>(bounty.status)
+  const router = useRouter()
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
@@ -152,19 +154,12 @@ export function BountyCard({ bounty }: BountyCardProps) {
       </CardContent>
 
       <CardFooter className="pt-0">
-        <Button className="w-full bg-starknet-orange hover:bg-starknet-orange/90" disabled={localStatus !== "open"} onClick={async () => {
-            // Simulate claim/apply flow
-            try {
-              toast.loading("Submitting application...")
-              setLocalStatus("in-progress")
-              setTimeout(() => {
-                toast.success("Application submitted — bounty in progress")
-              }, 800)
-            } catch (e) {
-              toast.error("Failed to apply — try again")
-            }
-          }}>
-          {localStatus === "open" ? "Apply Now" : localStatus === "in-progress" ? "In Progress" : "Completed"}
+        <Button
+          className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+          disabled={localStatus !== "open"}
+          onClick={() => router.push(`/bounties/${bounty.id}`)}
+        >
+          {localStatus === "open" ? "View Details" : localStatus === "in-progress" ? "In Progress" : "Completed"}
         </Button>
       </CardFooter>
     </Card>

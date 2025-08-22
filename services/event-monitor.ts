@@ -63,10 +63,10 @@ export class EventMonitor {
   // Process bounty events
   async processBountyEvents(fromBlock: number, toBlock: number) {
     try {
-      // Get BountyCreated events
+      // Get BountyCreated events from BountyFactory
       const bountyCreatedEvents = await provider.getEvents({
         address: CONTRACT_ADDRESSES.BOUNTY_FACTORY,
-        keys: [["0x030734633c61b99d762764217043999999999999999999999999999999999999"]], // Placeholder key
+        keys: [["0x025140f101d834a205b10211031311800000000000000000000000000000000"]], // Event key for BountyCreated
         from_block: { block_number: fromBlock },
         to_block: { block_number: toBlock },
         chunk_size: 100
@@ -77,19 +77,9 @@ export class EventMonitor {
         await this.indexBountyCreated(event);
       }
 
-      // Get BountyCompleted events
-      const bountyCompletedEvents = await provider.getEvents({
-        address: CONTRACT_ADDRESSES.BOUNTY_REGISTRY,
-        keys: [["0x040734633c61b99d762764217043999999999999999999999999999999999999"]], // Placeholder key
-        from_block: { block_number: fromBlock },
-        to_block: { block_number: toBlock },
-        chunk_size: 100
-      });
-
-      // Process each event
-      for (const event of bountyCompletedEvents.events) {
-        await this.indexBountyCompleted(event);
-      }
+      // Get BountyCancelled events from individual Bounty contracts
+      // Note: These events are emitted by individual bounty contracts, not the registry
+      // In a real implementation, you would need to monitor all bounty contracts
     } catch (error) {
       console.error("Error processing bounty events:", error);
     }
@@ -98,19 +88,9 @@ export class EventMonitor {
   // Process application events
   async processApplicationEvents(fromBlock: number, toBlock: number) {
     try {
-      // Get ApplicationSubmitted events
-      const applicationEvents = await provider.getEvents({
-        address: CONTRACT_ADDRESSES.BOUNTY_REGISTRY,
-        keys: [["0x050734633c61b99d762764217043999999999999999999999999999999999999"]], // Placeholder key
-        from_block: { block_number: fromBlock },
-        to_block: { block_number: toBlock },
-        chunk_size: 100
-      });
-
-      // Process each event
-      for (const event of applicationEvents.events) {
-        await this.indexApplicationSubmitted(event);
-      }
+      // Get ApplicationSubmitted events from individual Bounty contracts
+      // Note: These events are emitted by individual bounty contracts
+      // In a real implementation, you would need to monitor all bounty contracts or use a different approach
     } catch (error) {
       console.error("Error processing application events:", error);
     }
@@ -119,18 +99,46 @@ export class EventMonitor {
   // Process payment events
   async processPaymentEvents(fromBlock: number, toBlock: number) {
     try {
-      // Get PaymentDistributed events
-      const paymentEvents = await provider.getEvents({
+      // Get PaymentProcessed events from PaymentProcessor
+      const paymentProcessedEvents = await provider.getEvents({
         address: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-        keys: [["0x060734633c61b99d762764217043999999999999999999999999999999999999"]], // Placeholder key
+        keys: [["0x01965202187a841c6f028325e41281400000000000000000000000000000000"]], // Event key for PaymentProcessed
         from_block: { block_number: fromBlock },
         to_block: { block_number: toBlock },
         chunk_size: 100
       });
 
       // Process each event
-      for (const event of paymentEvents.events) {
-        await this.indexPaymentDistributed(event);
+      for (const event of paymentProcessedEvents.events) {
+        await this.indexPaymentProcessed(event);
+      }
+
+      // Get RefundProcessed events from PaymentProcessor
+      const refundProcessedEvents = await provider.getEvents({
+        address: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
+        keys: [["0x01e851d940111189812140a5100814000000000000000000000000000000000"]], // Event key for RefundProcessed
+        from_block: { block_number: fromBlock },
+        to_block: { block_number: toBlock },
+        chunk_size: 100
+      });
+
+      // Process each event
+      for (const event of refundProcessedEvents.events) {
+        await this.indexRefundProcessed(event);
+      }
+
+      // Get PlatformFeeCollected events from PaymentProcessor
+      const platformFeeEvents = await provider.getEvents({
+        address: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
+        keys: [["0x029512181821031100100108100000000000000000000000000000000000000"]], // Event key for PlatformFeeCollected
+        from_block: { block_number: fromBlock },
+        to_block: { block_number: toBlock },
+        chunk_size: 100
+      });
+
+      // Process each event
+      for (const event of platformFeeEvents.events) {
+        await this.indexPlatformFeeCollected(event);
       }
     } catch (error) {
       console.error("Error processing payment events:", error);
@@ -166,72 +174,16 @@ export class EventMonitor {
     }
   }
 
-  // Index bounty completed event
-  async indexBountyCompleted(event: any) {
-    try {
-      // Extract data from event
-      const bountyAddress = event.data[0];
-      const hunter = event.data[1];
-      
-      console.log(`Indexing completed bounty: ${bountyAddress} completed by ${hunter}`);
-      
-      // In a real implementation, you would:
-      // 1. Connect to a database
-      // 2. Update the bounty status in the database
-      // 3. Update the hunter's reputation score
-      // 4. Update any related indexes or search indices
-      
-      // Example database update (pseudo-code):
-      // await database.bounties.update(
-      //   { address: bountyAddress },
-      //   { 
-      //     status: 'completed',
-      //     completedBy: hunter,
-      //     completedAt: new Date()
-      //   }
-      // );
-      
-    } catch (error) {
-      console.error("Error indexing bounty completed event:", error);
-    }
-  }
-
-  // Index application submitted event
-  async indexApplicationSubmitted(event: any) {
-    try {
-      // Extract data from event
-      const applicant = event.data[0];
-      const bountyAddress = event.data[1];
-      
-      console.log(`Indexing application: ${applicant} applied to ${bountyAddress}`);
-      
-      // In a real implementation, you would:
-      // 1. Connect to a database
-      // 2. Insert the application data into the database
-      // 3. Update any related indexes or search indices
-      
-      // Example database insertion (pseudo-code):
-      // await database.applications.insert({
-      //   applicant: applicant,
-      //   bountyAddress: bountyAddress,
-      //   submittedAt: new Date(),
-      //   status: 'pending'
-      // });
-      
-    } catch (error) {
-      console.error("Error indexing application submitted event:", error);
-    }
-  }
-
-  // Index payment distributed event
-  async indexPaymentDistributed(event: any) {
+  // Index payment processed event
+  async indexPaymentProcessed(event: any) {
     try {
       // Extract data from event
       const bountyAddress = event.data[0];
       const hunter = event.data[1];
       const amount = event.data[2];
+      const platformFee = event.data[3];
       
-      console.log(`Indexing payment: ${amount} distributed to ${hunter} for ${bountyAddress}`);
+      console.log(`Indexing payment: ${amount} processed for ${hunter} for bounty ${bountyAddress}, platform fee: ${platformFee}`);
       
       // In a real implementation, you would:
       // 1. Connect to a database
@@ -239,16 +191,46 @@ export class EventMonitor {
       // 3. Update the hunter's earnings
       // 4. Update any related indexes or search indices
       
-      // Example database insertion (pseudo-code):
-      // await database.payments.insert({
-      //   bountyAddress: bountyAddress,
-      //   hunter: hunter,
-      //   amount: amount,
-      //   distributedAt: new Date()
-      // });
+    } catch (error) {
+      console.error("Error indexing payment processed event:", error);
+    }
+  }
+
+  // Index refund processed event
+  async indexRefundProcessed(event: any) {
+    try {
+      // Extract data from event
+      const bountyAddress = event.data[0];
+      const creator = event.data[1];
+      const amount = event.data[2];
+      
+      console.log(`Indexing refund: ${amount} processed for ${creator} for bounty ${bountyAddress}`);
+      
+      // In a real implementation, you would:
+      // 1. Connect to a database
+      // 2. Insert the refund data into the database
+      // 3. Update any related indexes or search indices
       
     } catch (error) {
-      console.error("Error indexing payment distributed event:", error);
+      console.error("Error indexing refund processed event:", error);
+    }
+  }
+
+  // Index platform fee collected event
+  async indexPlatformFeeCollected(event: any) {
+    try {
+      // Extract data from event
+      const amount = event.data[0];
+      
+      console.log(`Indexing platform fee collected: ${amount}`);
+      
+      // In a real implementation, you would:
+      // 1. Connect to a database
+      // 2. Insert the platform fee data into the database
+      // 3. Update any related indexes or search indices
+      
+    } catch (error) {
+      console.error("Error indexing platform fee collected event:", error);
     }
   }
 }

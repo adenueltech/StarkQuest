@@ -1,5 +1,45 @@
 [
   {
+    "name": "register_user",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "initial_score",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "update_reputation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "is_creator",
+        "type": "core::bool"
+      },
+      {
+        "name": "is_completed",
+        "type": "core::bool"
+      },
+      {
+        "name": "quality_score",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
     "name": "get_user_reputation",
     "type": "function",
     "inputs": [
@@ -10,10 +50,80 @@
     ],
     "outputs": [
       {
-        "name": "reputation",
-        "type": "core::integer::u256"
+        "name": "score",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "bounty_count",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "completed_count",
+        "type": "core::integer::u64"
       }
     ],
     "state_mutability": "view"
+  },
+  {
+    "name": "can_create_bounties",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "can_create",
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "can_apply_for_bounties",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "can_apply",
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_total_users",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "total_users",
+        "type": "core::integer::u64"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "set_min_reputation_requirements",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "for_creation",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "for_application",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
   }
 ]
