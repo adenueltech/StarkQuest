@@ -99,7 +99,7 @@ export default function GetStartedPage() {
                 <div className="pt-4 space-y-3">
                   <Link href="/create">
                     <Button className="w-full bg-starknet-pink hover:bg-starknet-pink/90">
-                      Post a Bounty
+                      Create Bounty
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
