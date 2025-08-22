@@ -4,7 +4,12 @@
 import { Account, RpcProvider, CallData, stark } from 'starknet';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+
+// ES module equivalent of __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -43,30 +48,36 @@ async function deploy() {
     // Step 1: Declare contracts
     console.log('1. Declaring contracts...');
     
+    // Helper function to declare contract with CASM if available
+    const declareContract = async (contractName: string) => {
+      const contractPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.contract_class.json`);
+      const casmPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.compiled_contract_class.json`);
+      
+      const contractJson = fs.readFileSync(contractPath, 'utf-8');
+      
+      // Check if CASM file exists
+      if (fs.existsSync(casmPath)) {
+        const casmJson = fs.readFileSync(casmPath, 'utf-8');
+        return await account.declare({
+          contract: contractJson,
+          casm: casmJson,
+        });
+      } else {
+        // Try without CASM (might work for simple contracts)
+        console.log(`   Warning: No CASM file found for ${contractName}, trying without it...`);
+        return await account.declare({
+          contract: contractJson,
+        });
+      }
+    };
+    
     // Declare each contract class
-    const bountyClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty.contract_class.json'), 'utf-8'),
-    });
-    
-    const registryClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty_registry.contract_class.json'), 'utf-8'),
-    });
-    
-    const factoryClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_bounty_factory.contract_class.json'), 'utf-8'),
-    });
-    
-    const paymentProcessorClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_payment_processor.contract_class.json'), 'utf-8'),
-    });
-    
-    const reputationSystemClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_reputation_system.contract_class.json'), 'utf-8'),
-    });
-    
-    const starkEarnClassHash = await account.declareIfNot({
-      contract: fs.readFileSync(path.resolve(__dirname, '../target/dev/starkquest_stark_earn.contract_class.json'), 'utf-8'),
-    });
+    const bountyClassHash = await declareContract('bounty');
+    const registryClassHash = await declareContract('bounty_registry');
+    const factoryClassHash = await declareContract('bounty_factory');
+    const paymentProcessorClassHash = await declareContract('payment_processor');
+    const reputationSystemClassHash = await declareContract('reputation_system');
+    const starkEarnClassHash = await declareContract('stark_earn');
     
     console.log('   Contracts declared successfully');
     
@@ -209,7 +220,7 @@ export const TOKEN_ADDRESSES = {
 }
 
 // Run deployment if this script is executed directly
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   deploy();
 }
 
