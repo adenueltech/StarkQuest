@@ -146,7 +146,7 @@ Index content for fast search capabilities.
 Use a search engine like Elasticsearch or Typesense to index:
 
 - Bounty titles and descriptions
-- User skills and expertise
+- User skills and teamise
 - Tags and categories
 
 #### Index Structure
@@ -432,7 +432,7 @@ Implement health check endpoints for:
 - Push notifications to connected clients
 - Implement presence tracking
 
-### Advanced Analytics
+### solod Analytics
 
 - Implement machine learning for bounty recommendations
 - Track user behavior patterns

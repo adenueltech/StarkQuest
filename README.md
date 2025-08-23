@@ -25,25 +25,32 @@ StarkQuest consists of three main components:
 The StarkQuest smart contract system consists of several interconnected contracts:
 
 ### 1. BountyRegistry
+
 Central registry that keeps track of all bounties in the system.
 
 ### 2. BountyFactory
+
 Factory contract responsible for creating new bounty instances using the clone pattern for gas efficiency.
 
 ### 3. Bounty (Individual Contract)
+
 Each bounty has its own contract instance with functionality for:
+
 - Bounty details management
 - Application handling
 - Submission and review process
 - Payment distribution
 
 ### 4. PaymentProcessor
+
 Handles all payment-related operations including escrow and distribution.
 
 ### 5. ReputationSystem
+
 Manages reputation scores for both creators and hunters.
 
 ### 6. StarkEarn (Main Contract)
+
 Main entry point that coordinates the entire system.
 
 ## Frontend Integration
@@ -70,12 +77,15 @@ The frontend uses several services to interact with the smart contracts:
 The backend services provide additional functionality that enhances the user experience:
 
 ### Event Monitor
+
 Monitors StarkNet for contract events and indexes relevant data.
 
 ### Data Indexing
+
 Indexes data for fast search and retrieval.
 
 ### User Management
+
 Manages user profiles and preferences.
 
 ## Deployment
@@ -83,11 +93,13 @@ Manages user profiles and preferences.
 ### Prerequisites
 
 1. Install Scarb (Cairo package manager):
+
    ```bash
    curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
    ```
 
 2. Install Starknet Foundry:
+
    ```bash
    curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | sh
    ```
@@ -97,6 +109,7 @@ Manages user profiles and preferences.
 ### Deployment Steps
 
 1. Compile Contracts:
+
    ```bash
    cd Contract
    scarb build
@@ -104,6 +117,7 @@ Manages user profiles and preferences.
 
 2. Deploy Contracts:
    Use the deployment script:
+
    ```bash
    ts-node Contract/scripts/deploy-script.ts
    ```
@@ -122,13 +136,14 @@ npm run test
 ### Manual Testing
 
 1. Start the development server:
+
    ```bash
    npm run dev
    ```
 
 2. Connect your StarkNet wallet (ArgentX or Braavos)
 
-3. Create a new bounty using the "Post Bounty" form
+3. Create a new bounty using the "Create Bounty" form
 
 4. Apply to bounties as a hunter
 
@@ -149,12 +164,14 @@ We welcome contributions to StarkQuest! Here's how you can help:
 ### Development Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/your-username/starkquest.git
    cd starkquest
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -194,6 +211,7 @@ MIT License
 ## Support
 
 For questions about StarkQuest:
+
 - GitHub Issues: https://github.com/your-username/starkquest/issues
 - Discord: https://discord.gg/StarkQuest
 - Email: support@starkquest.io

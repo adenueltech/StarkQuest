@@ -1,28 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Progress } from "@/components/ui/progress"
-import { Separator } from "@/components/ui/separator"
-import { Shield, CheckCircle, Loader2 } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import { Shield, CheckCircle, Loader2 } from "lucide-react";
 
 interface PaymentModalProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
   bounty: {
-    title: string
-    reward: number
-    currency: string
-    client: string
-  }
-  type: "apply" | "post" | "release"
+    title: string;
+    reward: number;
+    currency: string;
+    client: string;
+  };
+  type: "apply" | "post" | "release";
 }
 
-export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProps) {
-  const [paymentStep, setPaymentStep] = useState<"confirm" | "processing" | "success" | "error">("confirm")
-  const [transactionHash, setTransactionHash] = useState("")
+export function PaymentModal({
+  isOpen,
+  onClose,
+  bounty,
+  type,
+}: PaymentModalProps) {
+  const [paymentStep, setPaymentStep] = useState<
+    "confirm" | "processing" | "success" | "error"
+  >("confirm");
+  const [transactionHash, setTransactionHash] = useState("");
 
   const getPaymentDetails = () => {
     switch (type) {
@@ -33,15 +45,15 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
           amount: 0,
           fee: 0,
           total: 0,
-        }
+        };
       case "post":
         return {
-          title: "Post Bounty",
+          title: "Create Bounty",
           description: "Funds will be held in escrow until completion",
           amount: bounty.reward,
           fee: bounty.reward * 0.02, // 2% platform fee
           total: bounty.reward + bounty.reward * 0.02,
-        }
+        };
       case "release":
         return {
           title: "Release Payment",
@@ -49,32 +61,32 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
           amount: bounty.reward,
           fee: 0,
           total: bounty.reward,
-        }
+        };
     }
-  }
+  };
 
-  const paymentDetails = getPaymentDetails()
+  const paymentDetails = getPaymentDetails();
 
   const handlePayment = async () => {
-    setPaymentStep("processing")
+    setPaymentStep("processing");
 
     // Simulate payment processing
     setTimeout(() => {
-      const success = Math.random() > 0.1 // 90% success rate
+      const success = Math.random() > 0.1; // 90% success rate
       if (success) {
-        setTransactionHash("0x1234567890abcdef1234567890abcdef12345678")
-        setPaymentStep("success")
+        setTransactionHash("0x1234567890abcdef1234567890abcdef12345678");
+        setPaymentStep("success");
       } else {
-        setPaymentStep("error")
+        setPaymentStep("error");
       }
-    }, 3000)
-  }
+    }, 3000);
+  };
 
   const handleClose = () => {
-    setPaymentStep("confirm")
-    setTransactionHash("")
-    onClose()
-  }
+    setPaymentStep("confirm");
+    setTransactionHash("");
+    onClose();
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -88,24 +100,32 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base">{bounty.title}</CardTitle>
-                <p className="text-sm text-muted-foreground">Client: {bounty.client}</p>
+                <p className="text-sm text-muted-foreground">
+                  Client: {bounty.client}
+                </p>
               </CardHeader>
               <CardContent className="pt-0">
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Bounty Amount</span>
-                    <span>{bounty.reward.toLocaleString()} {bounty.currency}</span>
+                    <span>
+                      {bounty.reward.toLocaleString()} {bounty.currency}
+                    </span>
                   </div>
                   {paymentDetails.fee > 0 && (
                     <div className="flex justify-between">
                       <span>Platform Fee (2%)</span>
-                      <span>{paymentDetails.fee.toLocaleString()} {bounty.currency}</span>
+                      <span>
+                        {paymentDetails.fee.toLocaleString()} {bounty.currency}
+                      </span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
-                    <span>{paymentDetails.total.toLocaleString()} {bounty.currency}</span>
+                    <span>
+                      {paymentDetails.total.toLocaleString()} {bounty.currency}
+                    </span>
                   </div>
                 </div>
               </CardContent>
@@ -120,10 +140,17 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
             </div>
 
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={handleClose} className="flex-1 bg-transparent">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 bg-transparent"
+              >
                 Cancel
               </Button>
-              <Button onClick={handlePayment} className="flex-1 bg-starknet-orange hover:bg-starknet-orange/90">
+              <Button
+                onClick={handlePayment}
+                className="flex-1 bg-starknet-orange hover:bg-starknet-orange/90"
+              >
                 {type === "apply" ? "Apply" : "Confirm Payment"}
               </Button>
             </div>
@@ -136,7 +163,8 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
             <div>
               <div className="font-medium mb-2">Processing Transaction</div>
               <div className="text-sm text-muted-foreground">
-                Please confirm the transaction in your wallet and wait for confirmation...
+                Please confirm the transaction in your wallet and wait for
+                confirmation...
               </div>
             </div>
             <Progress value={65} className="w-full" />
@@ -161,7 +189,11 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
             )}
 
             <div className="flex space-x-2 pt-4">
-              <Button variant="outline" onClick={handleClose} className="flex-1 bg-transparent">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 bg-transparent"
+              >
                 Close
               </Button>
               <Button className="flex-1 bg-starknet-orange hover:bg-starknet-orange/90">
@@ -174,8 +206,19 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
         {paymentStep === "error" && (
           <div className="space-y-6 text-center py-8">
             <div className="h-12 w-12 mx-auto bg-red-100 rounded-full flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 text-red-600"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </div>
             <div>
@@ -186,10 +229,17 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
             </div>
 
             <div className="flex space-x-2">
-              <Button variant="outline" onClick={handleClose} className="flex-1 bg-transparent">
+              <Button
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1 bg-transparent"
+              >
                 Cancel
               </Button>
-              <Button onClick={handlePayment} className="flex-1 bg-starknet-orange hover:bg-starknet-orange/90">
+              <Button
+                onClick={handlePayment}
+                className="flex-1 bg-starknet-orange hover:bg-starknet-orange/90"
+              >
                 Try Again
               </Button>
             </div>
@@ -197,5 +247,5 @@ export function PaymentModal({ isOpen, onClose, bounty, type }: PaymentModalProp
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }

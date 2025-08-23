@@ -1,11 +1,20 @@
-import { Header } from "@/components/header"
-import { LeaderboardCard } from "@/components/leaderboard-card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { Trophy, Star, Award, Crown, Target, DollarSign, Users, Calendar } from "lucide-react"
+import { Header } from "@/components/header";
+import { LeaderboardCard } from "@/components/leaderboard-card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import {
+  Trophy,
+  Star,
+  Award,
+  Crown,
+  Target,
+  DollarSign,
+  Users,
+  Calendar,
+} from "lucide-react";
 
 // Mock leaderboard data
 const topEarners = [
@@ -16,7 +25,7 @@ const topEarners = [
       displayName: "Alex Chen",
       avatar: "/placeholder.svg?height=60&width=60",
       reputation: 4.9,
-      badges: ["Top Performer", "DeFi Expert", "Verified"],
+      badges: ["Top Performer", "DeFi team", "Verified"],
     },
     stats: {
       totalEarned: 45000,
@@ -70,7 +79,7 @@ const topEarners = [
       displayName: "Emma Wilson",
       avatar: "/placeholder.svg?height=60&width=60",
       reputation: 4.6,
-      badges: ["Design Guru", "Brand Expert"],
+      badges: ["Design Guru", "Brand team"],
     },
     stats: {
       totalEarned: 28750,
@@ -88,7 +97,7 @@ const topEarners = [
       displayName: "David Park",
       avatar: "/placeholder.svg?height=60&width=60",
       reputation: 4.5,
-      badges: ["Cairo Expert", "Protocol Builder"],
+      badges: ["Cairo team", "Protocol Builder"],
     },
     stats: {
       totalEarned: 26200,
@@ -99,7 +108,7 @@ const topEarners = [
     change: "+3",
     trend: "up" as const,
   },
-]
+];
 
 const topRated = [
   {
@@ -125,7 +134,7 @@ const topRated = [
       displayName: "Alex Chen",
       avatar: "/placeholder.svg?height=60&width=60",
       reputation: 4.9,
-      badges: ["Top Performer", "DeFi Expert"],
+      badges: ["Top Performer", "DeFi team"],
     },
     stats: {
       avgRating: 4.9,
@@ -135,7 +144,7 @@ const topRated = [
     },
   },
   // Add more entries...
-]
+];
 
 const mostActive = [
   {
@@ -155,7 +164,7 @@ const mostActive = [
     },
   },
   // Add more entries...
-]
+];
 
 const communityStats = {
   totalContributors: 2847,
@@ -167,7 +176,7 @@ const communityStats = {
     { name: "Design", count: 128, percentage: 26 },
     { name: "Content", count: 89, percentage: 18 },
   ],
-}
+};
 
 const achievements = [
   {
@@ -185,7 +194,7 @@ const achievements = [
     holders: 23,
   },
   {
-    name: "DeFi Expert",
+    name: "DeFi team",
     description: "Complete 10+ DeFi-related bounties",
     icon: Award,
     rarity: "epic",
@@ -198,7 +207,7 @@ const achievements = [
     rarity: "legendary",
     holders: 3,
   },
-]
+];
 
 export default function LeaderboardPage() {
   return (
@@ -213,8 +222,8 @@ export default function LeaderboardPage() {
             Community Leaderboard
           </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Celebrating the top contributors who are building the future of StarkNet. Compete, collaborate, and climb
-            the ranks!
+            Celebrating the top contributors who are building the future of
+            StarkNet. Compete, collaborate, and climb the ranks!
           </p>
         </div>
 
@@ -223,7 +232,9 @@ export default function LeaderboardPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <Users className="h-8 w-8 mx-auto mb-2 text-starknet-blue" />
-              <div className="text-2xl font-bold">{communityStats.totalContributors.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                {communityStats.totalContributors.toLocaleString()}
+              </div>
               <div className="text-sm text-muted-foreground">Contributors</div>
             </CardContent>
           </Card>
@@ -231,15 +242,21 @@ export default function LeaderboardPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <Target className="h-8 w-8 mx-auto mb-2 text-starknet-orange" />
-              <div className="text-2xl font-bold">{communityStats.totalBounties.toLocaleString()}</div>
-              <div className="text-sm text-muted-foreground">Bounties Completed</div>
+              <div className="text-2xl font-bold">
+                {communityStats.totalBounties.toLocaleString()}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                Bounties Completed
+              </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="pt-6 text-center">
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-starknet-pink" />
-              <div className="text-2xl font-bold">${(communityStats.totalRewards / 1000000).toFixed(1)}M</div>
+              <div className="text-2xl font-bold">
+                ${(communityStats.totalRewards / 1000000).toFixed(1)}M
+              </div>
               <div className="text-sm text-muted-foreground">Total Rewards</div>
             </CardContent>
           </Card>
@@ -247,7 +264,9 @@ export default function LeaderboardPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <Star className="h-8 w-8 mx-auto mb-2 text-yellow-400" />
-              <div className="text-2xl font-bold">{communityStats.avgRating}</div>
+              <div className="text-2xl font-bold">
+                {communityStats.avgRating}
+              </div>
               <div className="text-sm text-muted-foreground">Avg Rating</div>
             </CardContent>
           </Card>
@@ -281,7 +300,12 @@ export default function LeaderboardPage() {
           <TabsContent value="earnings" className="space-y-6">
             <div className="grid gap-4">
               {topEarners.map((entry, index) => (
-                <LeaderboardCard key={entry.user.username} entry={entry} metric="earnings" showPodium={index < 3} />
+                <LeaderboardCard
+                  key={entry.user.username}
+                  entry={entry}
+                  metric="earnings"
+                  showPodium={index < 3}
+                />
               ))}
             </div>
 
@@ -296,7 +320,12 @@ export default function LeaderboardPage() {
           <TabsContent value="rated" className="space-y-6">
             <div className="grid gap-4">
               {topRated.map((entry, index) => (
-                <LeaderboardCard key={entry.user.username} entry={entry} metric="rating" showPodium={index < 3} />
+                <LeaderboardCard
+                  key={entry.user.username}
+                  entry={entry}
+                  metric="rating"
+                  showPodium={index < 3}
+                />
               ))}
             </div>
           </TabsContent>
@@ -305,7 +334,12 @@ export default function LeaderboardPage() {
           <TabsContent value="active" className="space-y-6">
             <div className="grid gap-4">
               {mostActive.map((entry, index) => (
-                <LeaderboardCard key={entry.user.username} entry={entry} metric="bounties" showPodium={index < 3} />
+                <LeaderboardCard
+                  key={entry.user.username}
+                  entry={entry}
+                  metric="bounties"
+                  showPodium={index < 3}
+                />
               ))}
             </div>
           </TabsContent>
@@ -314,7 +348,10 @@ export default function LeaderboardPage() {
           <TabsContent value="achievements" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {achievements.map((achievement) => (
-                <Card key={achievement.name} className="hover:shadow-lg transition-shadow">
+                <Card
+                  key={achievement.name}
+                  className="hover:shadow-lg transition-shadow"
+                >
                   <CardHeader>
                     <div className="flex items-center space-x-3">
                       <div
@@ -322,17 +359,21 @@ export default function LeaderboardPage() {
                           achievement.rarity === "legendary"
                             ? "bg-gradient-to-r from-yellow-400 to-orange-500"
                             : achievement.rarity === "epic"
-                              ? "bg-gradient-to-r from-purple-400 to-pink-500"
-                              : achievement.rarity === "rare"
-                                ? "bg-gradient-to-r from-blue-400 to-cyan-500"
-                                : "bg-gray-100"
+                            ? "bg-gradient-to-r from-purple-400 to-pink-500"
+                            : achievement.rarity === "rare"
+                            ? "bg-gradient-to-r from-blue-400 to-cyan-500"
+                            : "bg-gray-100"
                         }`}
                       >
                         <achievement.icon className="h-6 w-6 text-white" />
                       </div>
                       <div>
-                        <CardTitle className="text-lg">{achievement.name}</CardTitle>
-                        <p className="text-sm text-muted-foreground">{achievement.description}</p>
+                        <CardTitle className="text-lg">
+                          {achievement.name}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          {achievement.description}
+                        </p>
                       </div>
                     </div>
                   </CardHeader>
@@ -343,10 +384,10 @@ export default function LeaderboardPage() {
                           achievement.rarity === "legendary"
                             ? "bg-yellow-100 text-yellow-800"
                             : achievement.rarity === "epic"
-                              ? "bg-purple-100 text-purple-800"
-                              : achievement.rarity === "rare"
-                                ? "bg-blue-100 text-blue-800"
-                                : "bg-gray-100 text-gray-800"
+                            ? "bg-purple-100 text-purple-800"
+                            : achievement.rarity === "rare"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
                         }
                       >
                         {achievement.rarity}
@@ -373,7 +414,9 @@ export default function LeaderboardPage() {
                 <div key={category.name} className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-medium">{category.name}</span>
-                    <span className="text-sm text-muted-foreground">{category.count} bounties</span>
+                    <span className="text-sm text-muted-foreground">
+                      {category.count} bounties
+                    </span>
                   </div>
                   <Progress value={category.percentage} className="h-2" />
                 </div>
@@ -383,5 +426,5 @@ export default function LeaderboardPage() {
         </Card>
       </div>
     </div>
-  )
+  );
 }

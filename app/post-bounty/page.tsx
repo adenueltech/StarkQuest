@@ -1,33 +1,39 @@
-"use client"
-import BackButton from "@/components/back-button"
+"use client";
+import BackButton from "@/components/back-button";
 
-import { Header } from "@/components/header"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, X } from "lucide-react"
-import { useState } from "react"
+import { Header } from "@/components/header";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, Plus, X } from "lucide-react";
+import { useState } from "react";
 
 export default function PostBountyPage() {
-  const router = useRouter()
-  const [tags, setTags] = useState<string[]>([])
-  const [newTag, setNewTag] = useState("")
+  const router = useRouter();
+  const [tags, setTags] = useState<string[]>([]);
+  const [newTag, setNewTag] = useState("");
 
   const addTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags([...tags, newTag.trim()])
-      setNewTag("")
+      setTags([...tags, newTag.trim()]);
+      setNewTag("");
     }
-  }
+  };
 
   const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove))
-  }
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
 
   return (
     <>
@@ -56,7 +62,11 @@ export default function PostBountyPage() {
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="title">Bounty Title</Label>
-                      <Input id="title" placeholder="e.g., Build a DeFi Dashboard for StarkNet" className="mt-1" />
+                      <Input
+                        id="title"
+                        placeholder="e.g., Build a DeFi Dashboard for StarkNet"
+                        className="mt-1"
+                      />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -67,7 +77,9 @@ export default function PostBountyPage() {
                             <SelectValue placeholder="Select category" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="development">Development</SelectItem>
+                            <SelectItem value="development">
+                              Development
+                            </SelectItem>
                             <SelectItem value="design">Design</SelectItem>
                             <SelectItem value="content">Content</SelectItem>
                             <SelectItem value="research">Research</SelectItem>
@@ -84,9 +96,11 @@ export default function PostBountyPage() {
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="beginner">Beginner</SelectItem>
-                            <SelectItem value="intermediate">Intermediate</SelectItem>
-                            <SelectItem value="advanced">Advanced</SelectItem>
-                            <SelectItem value="expert">Expert</SelectItem>
+                            <SelectItem value="intermediate">
+                              Intermediate
+                            </SelectItem>
+                            <SelectItem value="solod">solod</SelectItem>
+                            <SelectItem value="team">team</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -107,7 +121,12 @@ export default function PostBountyPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="reward">Reward Amount</Label>
-                        <Input id="reward" type="number" placeholder="1000" className="mt-1" />
+                        <Input
+                          id="reward"
+                          type="number"
+                          placeholder="1000"
+                          className="mt-1"
+                        />
                       </div>
 
                       <div>
@@ -142,7 +161,12 @@ export default function PostBountyPage() {
                           onChange={(e) => setNewTag(e.target.value)}
                           onKeyPress={(e) => e.key === "Enter" && addTag()}
                         />
-                        <Button type="button" onClick={addTag} size="icon" variant="outline">
+                        <Button
+                          type="button"
+                          onClick={addTag}
+                          size="icon"
+                          variant="outline"
+                        >
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
@@ -150,7 +174,11 @@ export default function PostBountyPage() {
                       {tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {tags.map((tag) => (
-                            <Badge key={tag} variant="secondary" className="flex items-center gap-1">
+                            <Badge
+                              key={tag}
+                              variant="secondary"
+                              className="flex items-center gap-1"
+                            >
                               {tag}
                               <button
                                 type="button"
@@ -169,12 +197,21 @@ export default function PostBountyPage() {
                   {/* Additional Settings */}
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="max-applicants">Maximum Applicants (Optional)</Label>
-                      <Input id="max-applicants" type="number" placeholder="Leave empty for unlimited" className="mt-1" />
+                      <Label htmlFor="max-applicants">
+                        Maximum Applicants (Optional)
+                      </Label>
+                      <Input
+                        id="max-applicants"
+                        type="number"
+                        placeholder="Leave empty for unlimited"
+                        className="mt-1"
+                      />
                     </div>
 
                     <div>
-                      <Label htmlFor="requirements">Special Requirements (Optional)</Label>
+                      <Label htmlFor="requirements">
+                        Special Requirements (Optional)
+                      </Label>
                       <Textarea
                         id="requirements"
                         placeholder="Any specific requirements, qualifications, or portfolio examples needed..."
@@ -195,13 +232,19 @@ export default function PostBountyPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="text-lg font-semibold">Your Bounty Title</div>
+                    <div className="text-lg font-semibold">
+                      Your Bounty Title
+                    </div>
                     <div className="flex gap-2">
                       <Badge variant="outline">Category</Badge>
                       <Badge variant="secondary">Difficulty</Badge>
                     </div>
-                    <div className="text-2xl font-bold text-starknet-blue">0 STRK</div>
-                    <div className="text-sm text-muted-foreground">Deadline: Not set</div>
+                    <div className="text-2xl font-bold text-starknet-blue">
+                      0 STRK
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Deadline: Not set
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -233,8 +276,11 @@ export default function PostBountyPage() {
 
               {/* Actions */}
               <div className="space-y-3">
-                <Button className="w-full bg-starknet-orange hover:bg-starknet-orange/90" size="lg">
-                  Post Bounty
+                <Button
+                  className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+                  size="lg"
+                >
+                  Create Bounty
                 </Button>
                 <Button variant="outline" className="w-full bg-transparent">
                   Save as Draft
@@ -258,5 +304,5 @@ export default function PostBountyPage() {
         </div>
       </div>
     </>
-  )
+  );
 }

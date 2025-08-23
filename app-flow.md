@@ -8,7 +8,7 @@ The app uses a consistent navigation system that's available on all pages:
 
 - Logo (StarkEarn) - Returns to home page
 - Browse Bounties (/bounties)
-- Post Bounty (/create)
+- Create Bounty (/create)
 - **Swap (/swap)** ← This is the link to the swap page
 - Leaderboard (/leaderboard)
 - Profile (/profile)
@@ -58,7 +58,7 @@ The app uses a consistent navigation system that's available on all pages:
 Home Page
     |
     ├── Browse Bounties ────► /bounties
-    ├── Post Bounty ────────► /create
+    ├── Create Bounty ────────► /create
     ├── Swap ───────────────► /swap  ← (This is what you're looking for)
     ├── Leaderboard ────────► /leaderboard
     ├── Profile ────────────► /profile

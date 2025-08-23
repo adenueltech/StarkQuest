@@ -4,7 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Menu, X, Wallet, Bell, User, Settings, LogOut, Home, PlusCircle, Trophy, Users, ArrowLeftRight } from "lucide-react";
+import {
+  Menu,
+  X,
+  Wallet,
+  Bell,
+  User,
+  Settings,
+  LogOut,
+  Home,
+  PlusCircle,
+  Trophy,
+  Users,
+  ArrowLeftRight,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -30,7 +43,7 @@ export function Navigation() {
 
   const navigationItems = [
     { href: "/bounties", label: "Browse Bounties", icon: Home },
-    { href: "/create", label: "Post Bounty", icon: PlusCircle },
+    { href: "/create", label: "Create Bounty", icon: PlusCircle },
     { href: "/swap", label: "Swap", icon: ArrowLeftRight },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { href: "/community", label: "Community", icon: Users },
@@ -52,11 +65,14 @@ export function Navigation() {
                   className="h-8 w-8 object-contain"
                   onError={(e) => {
                     // Fallback if image fails to load
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling.style.display = 'flex';
+                    e.currentTarget.style.display = "none";
+                    e.currentTarget.nextElementSibling.style.display = "flex";
                   }}
                 />
-                <div className="w-8 h-8 bg-starknet-blue rounded-lg flex items-center justify-center" style={{display: 'none'}}>
+                <div
+                  className="w-8 h-8 bg-starknet-blue rounded-lg flex items-center justify-center"
+                  style={{ display: "none" }}
+                >
                   <span className="text-white font-bold text-sm">SE</span>
                 </div>
               </div>
@@ -83,11 +99,7 @@ export function Navigation() {
               {isAuthenticated ? (
                 <>
                   {/* Notifications */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative"
-                  >
+                  <Button variant="ghost" size="icon" className="relative">
                     <Bell className="h-4 w-4" />
                     <Badge className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs bg-starknet-pink">
                       3
@@ -105,7 +117,10 @@ export function Navigation() {
                       >
                         <Avatar className="h-8 w-8">
                           <AvatarImage
-                            src={user?.avatar || "/placeholder.svg?height=32&width=32"}
+                            src={
+                              user?.avatar ||
+                              "/placeholder.svg?height=32&width=32"
+                            }
                             alt="User"
                           />
                           <AvatarFallback>
@@ -114,7 +129,11 @@ export function Navigation() {
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuContent
+                      className="w-56"
+                      align="end"
+                      forceMount
+                    >
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
@@ -173,7 +192,7 @@ export function Navigation() {
                   </Link>
                 </>
               )}
-              
+
               <ThemeToggle />
             </div>
 
@@ -184,7 +203,11 @@ export function Navigation() {
                 size="icon"
                 onClick={() => setIsOpen(!isOpen)}
               >
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </div>
@@ -194,24 +217,26 @@ export function Navigation() {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Menu */}
-      <div className={`
+      <div
+        className={`
         fixed right-0 top-0 z-50 h-full w-[320px] bg-background border-l border-border
         transform transition-transform duration-300 ease-in-out md:hidden overflow-hidden
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}>
+        ${isOpen ? "translate-x-0" : "translate-x-full"}
+      `}
+      >
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold">Menu</h2>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
             >
@@ -226,9 +251,11 @@ export function Navigation() {
               {isAuthenticated && user && (
                 <div className="flex items-center space-x-3 pb-4 border-b">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage 
-                      src={user?.avatar || "/placeholder.svg?height=48&width=48"} 
-                      alt={user?.username} 
+                    <AvatarImage
+                      src={
+                        user?.avatar || "/placeholder.svg?height=48&width=48"
+                      }
+                      alt={user?.username}
                     />
                     <AvatarFallback className="text-lg">
                       {user?.username?.charAt(0).toUpperCase() || "U"}
@@ -236,7 +263,9 @@ export function Navigation() {
                   </Avatar>
                   <div>
                     <p className="font-medium">{user?.username}</p>
-                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
               )}
@@ -304,7 +333,9 @@ export function Navigation() {
                     {/* Notifications Mobile */}
                     <div className="flex items-center space-x-3 py-3 px-2">
                       <Bell className="h-5 w-5" />
-                      <span className="text-base font-medium">Notifications</span>
+                      <span className="text-base font-medium">
+                        Notifications
+                      </span>
                       <Badge className="ml-auto h-5 w-5 rounded-full p-0 text-xs bg-starknet-pink">
                         3
                       </Badge>
@@ -321,16 +352,25 @@ export function Navigation() {
                 </>
               ) : (
                 <div className="border-t pt-4 space-y-3">
-                  <Button variant="outline" className="w-full" onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setIsOpen(false)}
+                  >
                     <Wallet className="w-4 h-4 mr-2" />
                     Connect Wallet
                   </Button>
-                  <Button variant="outline" className="w-full" asChild onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    asChild
+                    onClick={() => setIsOpen(false)}
+                  >
                     <Link href="/login">Sign In</Link>
                   </Button>
-                  <Button 
-                    className="w-full bg-starknet-orange hover:bg-starknet-orange/90" 
-                    asChild 
+                  <Button
+                    className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+                    asChild
                     onClick={() => setIsOpen(false)}
                   >
                     <Link href="/signup">Get Started</Link>

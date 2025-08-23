@@ -1,15 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { TransactionHistory } from "@/components/transaction-history"
+import { useState } from "react";
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { TransactionHistory } from "@/components/transaction-history";
 import {
   Wallet,
   Send,
@@ -23,7 +29,7 @@ import {
   AlertCircle,
   Plus,
   Minus,
-} from "lucide-react"
+} from "lucide-react";
 
 // Mock wallet data
 const walletData = {
@@ -87,36 +93,36 @@ const walletData = {
       releaseDate: "2024-02-12",
     },
   ],
-}
+};
 
 export default function WalletPage() {
-  const [showSendModal, setShowSendModal] = useState(false)
-  const [sendAmount, setSendAmount] = useState("")
-  const [sendAddress, setSendAddress] = useState("")
+  const [showSendModal, setShowSendModal] = useState(false);
+  const [sendAmount, setSendAmount] = useState("");
+  const [sendAddress, setSendAddress] = useState("");
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case "pending":
-        return <Clock className="h-4 w-4 text-yellow-500" />
+        return <Clock className="h-4 w-4 text-yellow-500" />;
       case "failed":
-        return <AlertCircle className="h-4 w-4 text-red-500" />
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
-        return <Clock className="h-4 w-4 text-gray-400" />
+        return <Clock className="h-4 w-4 text-gray-400" />;
     }
-  }
+  };
 
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case "received":
-        return <ArrowDownLeft className="h-4 w-4 text-green-500" />
+        return <ArrowDownLeft className="h-4 w-4 text-green-500" />;
       case "sent":
-        return <ArrowUpRight className="h-4 w-4 text-red-500" />
+        return <ArrowUpRight className="h-4 w-4 text-red-500" />;
       default:
-        return <ArrowUpRight className="h-4 w-4 text-gray-400" />
+        return <ArrowUpRight className="h-4 w-4 text-gray-400" />;
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -130,7 +136,9 @@ export default function WalletPage() {
               <Wallet className="inline-block mr-3 h-8 w-8 text-starknet-orange" />
               Wallet
             </h1>
-            <p className="text-muted-foreground">Manage your StarkNet assets and transactions</p>
+            <p className="text-muted-foreground">
+              Manage your StarkNet assets and transactions
+            </p>
           </div>
 
           <div className="flex items-center space-x-2">
@@ -172,10 +180,16 @@ export default function WalletPage() {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" onClick={() => setShowSendModal(false)} className="flex-1 bg-transparent">
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowSendModal(false)}
+                      className="flex-1 bg-transparent"
+                    >
                       Cancel
                     </Button>
-                    <Button className="flex-1 bg-starknet-blue hover:bg-starknet-blue/90">Send</Button>
+                    <Button className="flex-1 bg-starknet-blue hover:bg-starknet-blue/90">
+                      Send
+                    </Button>
                   </div>
                 </div>
               </DialogContent>
@@ -195,7 +209,9 @@ export default function WalletPage() {
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Portfolio Balance</span>
-                <Badge className="bg-green-100 text-green-800">+3.2% (24h)</Badge>
+                <Badge className="bg-green-100 text-green-800">
+                  +3.2% (24h)
+                </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -205,21 +221,30 @@ export default function WalletPage() {
 
               <div className="space-y-3">
                 {walletData.balances.map((balance) => (
-                  <div key={balance.token} className="flex items-center justify-between">
+                  <div
+                    key={balance.token}
+                    className="flex items-center justify-between"
+                  >
                     <div className="flex items-center space-x-3">
                       <div className="h-8 w-8 rounded-full bg-starknet-blue/10 flex items-center justify-center">
-                        <span className="text-xs font-bold">{balance.token}</span>
+                        <span className="text-xs font-bold">
+                          {balance.token}
+                        </span>
                       </div>
                       <div>
                         <div className="font-medium">
                           {balance.amount} {balance.token}
                         </div>
-                        <div className="text-sm text-muted-foreground">${balance.usdValue.toLocaleString()}</div>
+                        <div className="text-sm text-muted-foreground">
+                          ${balance.usdValue.toLocaleString()}
+                        </div>
                       </div>
                     </div>
                     <Badge
                       className={
-                        balance.change.startsWith("+") ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                        balance.change.startsWith("+")
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
                       }
                     >
                       {balance.change}
@@ -239,8 +264,14 @@ export default function WalletPage() {
               <div>
                 <Label className="text-sm text-muted-foreground">Address</Label>
                 <div className="flex items-center space-x-2 mt-1">
-                  <code className="text-xs bg-muted p-2 rounded flex-1 truncate">{walletData.address}</code>
-                  <Button variant="outline" size="icon" className="h-8 w-8 bg-transparent">
+                  <code className="text-xs bg-muted p-2 rounded flex-1 truncate">
+                    {walletData.address}
+                  </code>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 bg-transparent"
+                  >
                     <Copy className="h-3 w-3" />
                   </Button>
                 </div>
@@ -255,7 +286,9 @@ export default function WalletPage() {
               </div>
 
               <div>
-                <Label className="text-sm text-muted-foreground">Wallet Type</Label>
+                <Label className="text-sm text-muted-foreground">
+                  Wallet Type
+                </Label>
                 <div className="text-sm mt-1">ArgentX</div>
               </div>
             </CardContent>
@@ -287,11 +320,15 @@ export default function WalletPage() {
               <CardContent>
                 <div className="space-y-4">
                   {walletData.escrowBalances.map((escrow) => (
-                    <div key={escrow.bountyId} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={escrow.bountyId}
+                      className="flex items-center justify-between p-4 border rounded-lg"
+                    >
                       <div>
                         <div className="font-medium">{escrow.title}</div>
                         <div className="text-sm text-muted-foreground">
-                          Release date: {new Date(escrow.releaseDate).toLocaleDateString()}
+                          Release date:{" "}
+                          {new Date(escrow.releaseDate).toLocaleDateString()}
                         </div>
                       </div>
 
@@ -299,7 +336,9 @@ export default function WalletPage() {
                         <div className="text-lg font-bold text-starknet-orange">
                           {escrow.amount.toLocaleString()} {escrow.token}
                         </div>
-                        <Badge className="bg-blue-100 text-blue-800">{escrow.status}</Badge>
+                        <Badge className="bg-blue-100 text-blue-800">
+                          {escrow.status}
+                        </Badge>
                       </div>
                     </div>
                   ))}
@@ -311,8 +350,9 @@ export default function WalletPage() {
                     <div className="text-sm text-blue-800">
                       <div className="font-medium">About Escrow</div>
                       <div>
-                        Funds are held in smart contract escrow until bounty completion. This ensures secure payments
-                        for both clients and contributors.
+                        Funds are held in smart contract escrow until bounty
+                        completion. This ensures secure payments for both
+                        clients and contributors.
                       </div>
                     </div>
                   </div>
@@ -333,19 +373,31 @@ export default function WalletPage() {
                   <div className="space-y-3 mt-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Transaction Confirmations</div>
+                        <div className="font-medium">
+                          Transaction Confirmations
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           Get notified when transactions are confirmed
                         </div>
                       </div>
-                      <input type="checkbox" defaultChecked className="rounded" />
+                      <input
+                        type="checkbox"
+                        defaultChecked
+                        className="rounded"
+                      />
                     </div>
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-medium">Escrow Updates</div>
-                        <div className="text-sm text-muted-foreground">Notifications for escrow status changes</div>
+                        <div className="text-sm text-muted-foreground">
+                          Notifications for escrow status changes
+                        </div>
                       </div>
-                      <input type="checkbox" defaultChecked className="rounded" />
+                      <input
+                        type="checkbox"
+                        defaultChecked
+                        className="rounded"
+                      />
                     </div>
                   </div>
                 </div>
@@ -353,11 +405,17 @@ export default function WalletPage() {
                 <div>
                   <Label className="text-base font-medium">Security</Label>
                   <div className="space-y-3 mt-3">
-                    <Button variant="outline" className="w-full justify-start bg-transparent">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start bg-transparent"
+                    >
                       <Shield className="mr-2 h-4 w-4" />
                       View Recovery Phrase
                     </Button>
-                    <Button variant="outline" className="w-full justify-start bg-transparent">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start bg-transparent"
+                    >
                       <ExternalLink className="mr-2 h-4 w-4" />
                       Connected Apps
                     </Button>
@@ -365,7 +423,7 @@ export default function WalletPage() {
                 </div>
 
                 <div>
-                  <Label className="text-base font-medium">Advanced</Label>
+                  <Label className="text-base font-medium">solod</Label>
                   <div className="space-y-3 mt-3">
                     <Button
                       variant="outline"
@@ -382,5 +440,5 @@ export default function WalletPage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

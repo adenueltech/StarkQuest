@@ -68,7 +68,7 @@ const mockBountyDetail = {
   reward: 2500,
   currency: "STRK",
   category: "Development",
-  difficulty: "Advanced",
+  difficulty: "solod",
   deadline: "2024-02-15",
   applicants: 12,
   status: "open" as const,
@@ -127,27 +127,30 @@ export default function BountyDetailPage() {
         if (isNaN(bountyId)) {
           throw new Error("Invalid bounty ID");
         }
-        
+
         const result = await getBountyById(bountyId);
-        
+
         // Transform the data to match our UI structure
         // Parsing the data returned from the smart contract
         // Based on the Cairo contract, get_bounty_details returns:
         // (title, description, reward_amount, deadline, token_address, status)
         const details = result.details;
-        
+
         // Extract individual values from the tuple
         // Note: The exact parsing may need adjustment based on the actual return format
         const title = details[0]?.toString() || "Untitled Bounty";
-        const description = details[1]?.toString() || "No description available";
+        const description =
+          details[1]?.toString() || "No description available";
         const rewardAmount = parseInt(details[2]?.toString() || "0");
         const deadlineTimestamp = parseInt(details[3]?.toString() || "0");
         const tokenAddress = details[4]?.toString() || "";
         const statusValue = details[5]?.toString() || "0";
-        
+
         // Convert timestamp to readable date
-        const deadline = new Date(deadlineTimestamp * 1000).toLocaleDateString();
-        
+        const deadline = new Date(
+          deadlineTimestamp * 1000
+        ).toLocaleDateString();
+
         // Convert status value to string
         let status = "open";
         switch (statusValue) {
@@ -166,12 +169,12 @@ export default function BountyDetailPage() {
           default:
             status = "open";
         }
-        
+
         // Determine category and difficulty based on tags or other heuristics
         const tags = ["Smart Contract", "Web3", "StarkNet"];
         const category = "Development";
         const difficulty = "Intermediate";
-        
+
         const transformedData = {
           id: id,
           title: title,
@@ -203,10 +206,10 @@ export default function BountyDetailPage() {
               },
               proposal: "Sample application proposal",
               appliedAt: "2024-01-10",
-            }
+            },
           ],
         };
-        
+
         setBountyDetail(transformedData);
       } catch (err) {
         console.error("Error fetching bounty details:", err);
@@ -215,7 +218,7 @@ export default function BountyDetailPage() {
         // Use mock data as fallback
         setBountyDetail({
           ...mockBountyDetail,
-          id: id
+          id: id,
         });
       } finally {
         setLoading(false);
@@ -269,7 +272,7 @@ export default function BountyDetailPage() {
     title: bountyDetail.title,
     reward: bountyDetail.reward,
     currency: bountyDetail.currency,
-    client: bountyDetail.poster.name
+    client: bountyDetail.poster.name,
   };
 
   return (
@@ -367,54 +370,60 @@ export default function BountyDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <MessageSquare className="h-5 w-5" />
-                  <span>Applications ({bountyDetail.applications?.length || 0})</span>
+                  <span>
+                    Applications ({bountyDetail.applications?.length || 0})
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {bountyDetail.applications && bountyDetail.applications.length > 0 ? (
-                  bountyDetail.applications.map((application: any, index: number) => (
-                    <div key={application.id}>
-                      <div className="flex items-start space-x-3">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage
-                            src={
-                              application.applicant.avatar || "/placeholder.svg"
-                            }
-                            alt={application.applicant.name}
-                          />
-                          <AvatarFallback>
-                            {application.applicant.name.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-medium">
-                              {application.applicant.name}
-                            </span>
-                            <div className="flex items-center space-x-1">
-                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                {bountyDetail.applications &&
+                bountyDetail.applications.length > 0 ? (
+                  bountyDetail.applications.map(
+                    (application: any, index: number) => (
+                      <div key={application.id}>
+                        <div className="flex items-start space-x-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage
+                              src={
+                                application.applicant.avatar ||
+                                "/placeholder.svg"
+                              }
+                              alt={application.applicant.name}
+                            />
+                            <AvatarFallback>
+                              {application.applicant.name.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="font-medium">
+                                {application.applicant.name}
+                              </span>
+                              <div className="flex items-center space-x-1">
+                                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                                <span className="text-xs text-muted-foreground">
+                                  {application.applicant.reputation}
+                                </span>
+                              </div>
                               <span className="text-xs text-muted-foreground">
-                                {application.applicant.reputation}
+                                {application.applicant.completedBounties}{" "}
+                                bounties completed
                               </span>
                             </div>
+                            <p className="text-sm text-muted-foreground mb-2">
+                              {application.proposal}
+                            </p>
                             <span className="text-xs text-muted-foreground">
-                              {application.applicant.completedBounties} bounties
-                              completed
+                              Applied {application.appliedAt}
                             </span>
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            {application.proposal}
-                          </p>
-                          <span className="text-xs text-muted-foreground">
-                            Applied {application.appliedAt}
-                          </span>
                         </div>
+                        {index < bountyDetail.applications.length - 1 && (
+                          <Separator className="mt-4" />
+                        )}
                       </div>
-                      {index < bountyDetail.applications.length - 1 && (
-                        <Separator className="mt-4" />
-                      )}
-                    </div>
-                  ))
+                    )
+                  )
                 ) : (
                   <p className="text-muted-foreground text-center py-4">
                     No applications yet. Be the first to apply!
@@ -442,8 +451,8 @@ export default function BountyDetailPage() {
                 >
                   Apply for Bounty
                 </Button>
-                
-                <PaymentModal 
+
+                <PaymentModal
                   isOpen={isApplyModalOpen}
                   onClose={() => setIsApplyModalOpen(false)}
                   bounty={paymentBountyData}
@@ -493,7 +502,8 @@ export default function BountyDetailPage() {
                       Total Rewards:
                     </span>
                     <span>
-                      {bountyDetail.poster.totalRewardsGiven?.toLocaleString() || "0"}{" "}
+                      {bountyDetail.poster.totalRewardsGiven?.toLocaleString() ||
+                        "0"}{" "}
                       STRK
                     </span>
                   </div>
@@ -520,14 +530,14 @@ export default function BountyDetailPage() {
                     placeholder="Write a brief proposal explaining why you're the right person for this bounty..."
                     className="min-h-[100px]"
                   />
-                  <Button 
+                  <Button
                     className="w-full bg-starknet-blue hover:bg-starknet-blue/90"
                     onClick={() => setIsQuickApplyModalOpen(true)}
                   >
                     Submit Application
                   </Button>
-                  
-                  <PaymentModal 
+
+                  <PaymentModal
                     isOpen={isQuickApplyModalOpen}
                     onClose={() => setIsQuickApplyModalOpen(false)}
                     bounty={paymentBountyData}

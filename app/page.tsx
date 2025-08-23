@@ -307,7 +307,7 @@ export default function HomePage() {
                     href="/post-bounty"
                     className="hover:text-starknet-orange transition-colors"
                   >
-                    Post Bounty
+                    Create Bounty
                   </Link>
                 </li>
                 <li>

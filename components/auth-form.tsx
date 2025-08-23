@@ -13,7 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Wallet, Mail, AlertCircle, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
@@ -28,15 +34,15 @@ const supportedWallets = [
     name: "ArgentX",
     icon: "/placeholder.svg?height=40&width=40",
     description: "The most popular StarkNet wallet",
-    id: "argentX"
+    id: "argentX",
   },
   {
     name: "Braavos",
-    icon: "/placeholder.svg?height=40&width=40", 
+    icon: "/placeholder.svg?height=40&width=40",
     description: "Smart wallet for StarkNet",
-    id: "braavos"
-  }
-]
+    id: "braavos",
+  },
+];
 
 export function AuthForm({ mode }: AuthFormProps) {
   const { signup, login, loginWithWallet } = useAuth();
@@ -92,57 +98,66 @@ export function AuthForm({ mode }: AuthFormProps) {
   };
 
   const checkWalletInstallation = () => {
-    const isArgentXInstalled = typeof window !== 'undefined' && 
-      (window as any).starknet_argentX && 
-      typeof (window as any).starknet_argentX.enable === 'function'
-    
-    const isBraavosInstalled = typeof window !== 'undefined' && 
-      (window as any).starknet_braavos && 
-      typeof (window as any).starknet_braavos.enable === 'function'
+    const isArgentXInstalled =
+      typeof window !== "undefined" &&
+      (window as any).starknet_argentX &&
+      typeof (window as any).starknet_argentX.enable === "function";
 
-    return supportedWallets.map(wallet => ({
+    const isBraavosInstalled =
+      typeof window !== "undefined" &&
+      (window as any).starknet_braavos &&
+      typeof (window as any).starknet_braavos.enable === "function";
+
+    return supportedWallets.map((wallet) => ({
       ...wallet,
-      installed: wallet.id === "argentX" ? isArgentXInstalled : isBraavosInstalled
-    }))
-  }
+      installed:
+        wallet.id === "argentX" ? isArgentXInstalled : isBraavosInstalled,
+    }));
+  };
 
   const handleWalletConnect = async (walletName: string) => {
-    setIsConnectingWallet(true)
-    setSelectedWallet(walletName)
-    setWalletError(null)
-    
+    setIsConnectingWallet(true);
+    setSelectedWallet(walletName);
+    setWalletError(null);
+
     try {
       console.log(`Attempting to connect to ${walletName}...`);
-      
+
       let walletObj;
-      
+
       // Get the correct wallet object
       if (walletName.toLowerCase() === "argentx") {
         walletObj = (window as any).starknet_argentX;
       } else if (walletName.toLowerCase() === "braavos") {
         walletObj = (window as any).starknet_braavos;
       }
-      
+
       if (!walletObj) {
-        throw new Error(`${walletName} wallet is not installed. Please install the extension first.`);
+        throw new Error(
+          `${walletName} wallet is not installed. Please install the extension first.`
+        );
       }
 
       // Check if wallet is available and has enable method
-      if (typeof walletObj.enable !== 'function') {
+      if (typeof walletObj.enable !== "function") {
         throw new Error(`${walletName} wallet is not properly initialized.`);
       }
 
       // Enable the wallet connection
       console.log(`Enabling ${walletName}...`);
-      
+
       // Try enabling with a timeout
       const enablePromise = walletObj.enable();
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Connection timeout - please check your wallet')), 30000)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(
+          () =>
+            reject(new Error("Connection timeout - please check your wallet")),
+          30000
+        )
       );
-      
+
       await Promise.race([enablePromise, timeoutPromise]);
-      
+
       console.log(`${walletName} enabled successfully`);
 
       // Check if wallet is connected
@@ -163,29 +178,40 @@ export function AuthForm({ mode }: AuthFormProps) {
 
       // Trigger auto sign-in with wallet
       await loginWithWallet(account.address, walletName);
-      
     } catch (error: any) {
       console.error("Failed to connect wallet:", error);
-      
+
       // Provide user-friendly error messages
       let userMessage = error.message;
-      
-      if (error.message?.includes("timeout") || error.message?.includes("Timeout")) {
-        userMessage = "Connection timed out. Please check your wallet extension and try again. Make sure to approve the connection prompt.";
-      } else if (error.message?.includes("User rejected") || error.message?.includes("cancelled") || error.message?.includes("denied")) {
-        userMessage = "Connection was cancelled. Please try again and approve the connection in your wallet.";
-      } else if (error.message?.includes("not installed") || error.message?.includes("not found")) {
+
+      if (
+        error.message?.includes("timeout") ||
+        error.message?.includes("Timeout")
+      ) {
+        userMessage =
+          "Connection timed out. Please check your wallet extension and try again. Make sure to approve the connection prompt.";
+      } else if (
+        error.message?.includes("User rejected") ||
+        error.message?.includes("cancelled") ||
+        error.message?.includes("denied")
+      ) {
+        userMessage =
+          "Connection was cancelled. Please try again and approve the connection in your wallet.";
+      } else if (
+        error.message?.includes("not installed") ||
+        error.message?.includes("not found")
+      ) {
         userMessage = `${walletName} wallet extension not found. Please make sure it's installed and enabled.`;
       } else if (error.message?.includes("not initialized")) {
         userMessage = `${walletName} wallet is not ready. Please refresh the page and try again.`;
       }
-      
+
       setWalletError(userMessage);
     } finally {
-      setIsConnectingWallet(false)
-      setSelectedWallet(null)
+      setIsConnectingWallet(false);
+      setSelectedWallet(null);
     }
-  }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -334,7 +360,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
           {role === "hunter" && (
             <div className="space-y-2">
-              <Label>Skills & Expertise</Label>
+              <Label>Skills & teamise</Label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {skills.map((s) => (
                   <span
@@ -412,7 +438,9 @@ export function AuthForm({ mode }: AuthFormProps) {
     <>
       <Card className="backdrop-blur supports-[backdrop-filter]:bg-card/80 dark:[background:linear-gradient(135deg,rgba(12,12,79,.8),rgba(17,22,80,.9))] border border-starknet-pink/20 shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle>{mode === "login" ? "Sign In" : "Create Account"}</CardTitle>
+          <CardTitle>
+            {mode === "login" ? "Sign In" : "Create Account"}
+          </CardTitle>
           <CardDescription>
             {mode === "login"
               ? "Access your StarkEarn profile"
@@ -539,7 +567,9 @@ export function AuthForm({ mode }: AuthFormProps) {
 
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Connect your StarkNet wallet to {mode === "login" ? "sign in" : "create an account"} and start earning rewards.
+              Connect your StarkNet wallet to{" "}
+              {mode === "login" ? "sign in" : "create an account"} and start
+              earning rewards.
             </p>
 
             {walletError && (
@@ -558,22 +588,36 @@ export function AuthForm({ mode }: AuthFormProps) {
                   key={wallet.name}
                   className={`cursor-pointer transition-all hover:shadow-md ${
                     !wallet.installed ? "opacity-50 cursor-not-allowed" : ""
-                  } ${selectedWallet === wallet.name ? "border-starknet-blue" : ""}`}
-                  onClick={() => wallet.installed && handleWalletConnect(wallet.name)}
+                  } ${
+                    selectedWallet === wallet.name ? "border-starknet-blue" : ""
+                  }`}
+                  onClick={() =>
+                    wallet.installed && handleWalletConnect(wallet.name)
+                  }
                 >
                   <CardContent className="flex items-center space-x-3 p-4">
-                    <img src={wallet.icon || "/placeholder.svg"} alt={wallet.name} className="h-8 w-8 rounded" />
+                    <img
+                      src={wallet.icon || "/placeholder.svg"}
+                      alt={wallet.name}
+                      className="h-8 w-8 rounded"
+                    />
                     <div className="flex-1">
                       <div className="font-medium">{wallet.name}</div>
-                      <div className="text-sm text-muted-foreground">{wallet.description}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {wallet.description}
+                      </div>
                       {isConnectingWallet && selectedWallet === wallet.name && (
                         <div className="text-xs text-starknet-orange mt-1">
                           Check your wallet for connection prompt...
                         </div>
                       )}
                     </div>
-                    {!wallet.installed && <Badge variant="outline">Not Installed</Badge>}
-                    {isConnectingWallet && selectedWallet === wallet.name && <Loader2 className="h-4 w-4 animate-spin" />}
+                    {!wallet.installed && (
+                      <Badge variant="outline">Not Installed</Badge>
+                    )}
+                    {isConnectingWallet && selectedWallet === wallet.name && (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    )}
                   </CardContent>
                 </Card>
               ))}
@@ -584,8 +628,14 @@ export function AuthForm({ mode }: AuthFormProps) {
               <div className="text-sm text-blue-800">
                 <div className="font-medium">New to StarkNet?</div>
                 <div>
-                  Install a wallet extension to get started. We recommend ArgentX for beginners.{" "}
-                  <a href="https://www.argent.xyz/argent-x/" target="_blank" rel="noopener noreferrer" className="underline">
+                  Install a wallet extension to get started. We recommend
+                  ArgentX for beginners.{" "}
+                  <a
+                    href="https://www.argent.xyz/argent-x/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
                     Install ArgentX
                   </a>
                 </div>

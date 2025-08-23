@@ -1,9 +1,9 @@
-import { Header } from "@/components/header"
-import { BountyCard } from "@/components/bounty-card"
-import { AdvancedSearch } from "@/components/advanced-search"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Plus } from "lucide-react"
+import { Header } from "@/components/header";
+import { BountyCard } from "@/components/bounty-card";
+import { solodSearch } from "@/components/solod-search";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Plus } from "lucide-react";
 
 // Mock bounty data
 const bounties = [
@@ -15,7 +15,7 @@ const bounties = [
     reward: 2500,
     currency: "STRK",
     category: "Development",
-    difficulty: "Advanced",
+    difficulty: "solod",
     deadline: "2024-02-15",
     applicants: 12,
     status: "open",
@@ -49,7 +49,7 @@ const bounties = [
     id: "3",
     title: "Write StarkNet Smart Contract Tutorial",
     description:
-      "Create a comprehensive tutorial series covering Cairo smart contract development from basics to advanced concepts. Include code examples and best practices.",
+      "Create a comprehensive tutorial series covering Cairo smart contract development from basics to solod concepts. Include code examples and best practices.",
     reward: 1200,
     currency: "STRK",
     category: "Content",
@@ -72,7 +72,7 @@ const bounties = [
     reward: 3000,
     currency: "STRK",
     category: "Development",
-    difficulty: "Expert",
+    difficulty: "team",
     deadline: "2024-02-12",
     applicants: 15,
     status: "in-progress",
@@ -91,7 +91,7 @@ const bounties = [
     reward: 1500,
     currency: "STRK",
     category: "Design",
-    difficulty: "Advanced",
+    difficulty: "solod",
     deadline: "2024-02-18",
     applicants: 6,
     status: "open",
@@ -110,7 +110,7 @@ const bounties = [
     reward: 4000,
     currency: "STRK",
     category: "Development",
-    difficulty: "Expert",
+    difficulty: "team",
     deadline: "2024-03-01",
     applicants: 9,
     status: "open",
@@ -121,7 +121,7 @@ const bounties = [
       reputation: 4.5,
     },
   },
-]
+];
 
 export default function BountiesPage() {
   return (
@@ -133,27 +133,38 @@ export default function BountiesPage() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Bounty Marketplace</h1>
-            <p className="text-muted-foreground">Discover opportunities to contribute to the StarkNet ecosystem</p>
+            <p className="text-muted-foreground">
+              Discover opportunities to contribute to the StarkNet ecosystem
+            </p>
           </div>
           <Button className="mt-4 md:mt-0 bg-starknet-orange hover:bg-starknet-orange/90">
             <Plus className="mr-2 h-4 w-4" />
-            Post Bounty
+            Create Bounty
           </Button>
         </div>
 
-        <AdvancedSearch />
+        <solodSearch />
 
         {/* Active Filters */}
         <div className="flex flex-wrap gap-2 mb-6">
-          <Badge variant="secondary" className="bg-starknet-blue/10 text-starknet-blue">
+          <Badge
+            variant="secondary"
+            className="bg-starknet-blue/10 text-starknet-blue"
+          >
             Development
             <button className="ml-2 text-xs">×</button>
           </Badge>
-          <Badge variant="secondary" className="bg-starknet-orange/10 text-starknet-orange">
-            Advanced
+          <Badge
+            variant="secondary"
+            className="bg-starknet-orange/10 text-starknet-orange"
+          >
+            solod
             <button className="ml-2 text-xs">×</button>
           </Badge>
-          <Badge variant="secondary" className="bg-starknet-pink/10 text-starknet-pink">
+          <Badge
+            variant="secondary"
+            className="bg-starknet-pink/10 text-starknet-pink"
+          >
             2000+ STRK
             <button className="ml-2 text-xs">×</button>
           </Badge>
@@ -162,7 +173,8 @@ export default function BountiesPage() {
         {/* Results Summary */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-sm text-muted-foreground">
-            Showing {bounties.length} bounties • <span className="text-starknet-blue">3 filters active</span>
+            Showing {bounties.length} bounties •{" "}
+            <span className="text-starknet-blue">3 filters active</span>
           </p>
           <div className="flex items-center space-x-2">
             <Button variant="outline" size="sm">
@@ -194,5 +206,5 @@ export default function BountiesPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

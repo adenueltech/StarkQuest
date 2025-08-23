@@ -1,48 +1,62 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { DollarSign, Plus, X, Zap, Target, Clock, Users } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { DollarSign, Plus, X, Zap, Target, Clock, Users } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function CreateBountyPage() {
-  const [skills, setSkills] = useState<string[]>([])
-  const [newSkill, setNewSkill] = useState("")
-  const [milestones, setMilestones] = useState([{ title: "", description: "", reward: "" }])
-  const router = useRouter()
+  const [skills, setSkills] = useState<string[]>([]);
+  const [newSkill, setNewSkill] = useState("");
+  const [milestones, setMilestones] = useState([
+    { title: "", description: "", reward: "" },
+  ]);
+  const router = useRouter();
 
   const addSkill = () => {
     if (newSkill && !skills.includes(newSkill)) {
-      setSkills([...skills, newSkill])
-      setNewSkill("")
+      setSkills([...skills, newSkill]);
+      setNewSkill("");
     }
-  }
+  };
 
   const removeSkill = (skill: string) => {
-    setSkills(skills.filter((s) => s !== skill))
-  }
+    setSkills(skills.filter((s) => s !== skill));
+  };
 
   const addMilestone = () => {
-    setMilestones([...milestones, { title: "", description: "", reward: "" }])
-  }
+    setMilestones([...milestones, { title: "", description: "", reward: "" }]);
+  };
 
   const removeMilestone = (index: number) => {
-    setMilestones(milestones.filter((_, i) => i !== index))
-  }
+    setMilestones(milestones.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // Simulate bounty creation
-    router.push("/bounties")
-  }
+    router.push("/bounties");
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -59,7 +73,8 @@ export default function CreateBountyPage() {
               Create a New Bounty
             </h1>
             <p className="text-muted-foreground text-lg">
-              Post your project and connect with talented developers in the StarkNet ecosystem
+              Post your project and connect with talented developers in the
+              StarkNet ecosystem
             </p>
           </div>
 
@@ -71,7 +86,9 @@ export default function CreateBountyPage() {
                     <Target className="h-5 w-5 text-starknet-orange" />
                     Basic Information
                   </CardTitle>
-                  <CardDescription>Provide the essential details about your bounty</CardDescription>
+                  <CardDescription>
+                    Provide the essential details about your bounty
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-2">
@@ -102,9 +119,13 @@ export default function CreateBountyPage() {
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="development">Development</SelectItem>
+                          <SelectItem value="development">
+                            Development
+                          </SelectItem>
                           <SelectItem value="design">Design</SelectItem>
-                          <SelectItem value="content">Content Creation</SelectItem>
+                          <SelectItem value="content">
+                            Content Creation
+                          </SelectItem>
                           <SelectItem value="marketing">Marketing</SelectItem>
                           <SelectItem value="research">Research</SelectItem>
                         </SelectContent>
@@ -119,9 +140,11 @@ export default function CreateBountyPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">Intermediate</SelectItem>
-                          <SelectItem value="advanced">Advanced</SelectItem>
-                          <SelectItem value="expert">Expert</SelectItem>
+                          <SelectItem value="intermediate">
+                            Intermediate
+                          </SelectItem>
+                          <SelectItem value="solod">solod</SelectItem>
+                          <SelectItem value="team">team</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -137,7 +160,9 @@ export default function CreateBountyPage() {
                     <Zap className="h-5 w-5 text-starknet-pink" />
                     Skills Required
                   </CardTitle>
-                  <CardDescription>Add the skills needed to complete this bounty</CardDescription>
+                  <CardDescription>
+                    Add the skills needed to complete this bounty
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex gap-2">
@@ -145,7 +170,9 @@ export default function CreateBountyPage() {
                       placeholder="Add a skill (e.g., React, Solidity)"
                       value={newSkill}
                       onChange={(e) => setNewSkill(e.target.value)}
-                      onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addSkill())
+                      }
                       className="border-2 focus:border-starknet-pink transition-all duration-300"
                     />
                     <Button
@@ -188,7 +215,9 @@ export default function CreateBountyPage() {
                     <DollarSign className="h-5 w-5 text-starknet-blue" />
                     Milestones & Rewards
                   </CardTitle>
-                  <CardDescription>Break down your bounty into milestones with specific rewards</CardDescription>
+                  <CardDescription>
+                    Break down your bounty into milestones with specific rewards
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {milestones.map((milestone, index) => (
@@ -215,9 +244,9 @@ export default function CreateBountyPage() {
                           placeholder="Milestone title"
                           value={milestone.title}
                           onChange={(e) => {
-                            const newMilestones = [...milestones]
-                            newMilestones[index].title = e.target.value
-                            setMilestones(newMilestones)
+                            const newMilestones = [...milestones];
+                            newMilestones[index].title = e.target.value;
+                            setMilestones(newMilestones);
                           }}
                           className="border-2 focus:border-starknet-blue transition-all duration-300"
                         />
@@ -225,9 +254,9 @@ export default function CreateBountyPage() {
                           placeholder="Reward (ETH)"
                           value={milestone.reward}
                           onChange={(e) => {
-                            const newMilestones = [...milestones]
-                            newMilestones[index].reward = e.target.value
-                            setMilestones(newMilestones)
+                            const newMilestones = [...milestones];
+                            newMilestones[index].reward = e.target.value;
+                            setMilestones(newMilestones);
                           }}
                           className="border-2 focus:border-starknet-orange transition-all duration-300"
                         />
@@ -236,9 +265,9 @@ export default function CreateBountyPage() {
                         placeholder="Describe what needs to be delivered for this milestone"
                         value={milestone.description}
                         onChange={(e) => {
-                          const newMilestones = [...milestones]
-                          newMilestones[index].description = e.target.value
-                          setMilestones(newMilestones)
+                          const newMilestones = [...milestones];
+                          newMilestones[index].description = e.target.value;
+                          setMilestones(newMilestones);
                         }}
                         className="border-2 focus:border-starknet-pink transition-all duration-300"
                       />
@@ -264,7 +293,9 @@ export default function CreateBountyPage() {
                     <Clock className="h-5 w-5 text-starknet-orange" />
                     Timeline & Details
                   </CardTitle>
-                  <CardDescription>Set deadlines and additional requirements</CardDescription>
+                  <CardDescription>
+                    Set deadlines and additional requirements
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -289,7 +320,9 @@ export default function CreateBountyPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="requirements">Additional Requirements</Label>
+                    <Label htmlFor="requirements">
+                      Additional Requirements
+                    </Label>
                     <Textarea
                       id="requirements"
                       placeholder="Any specific requirements, deliverables, or conditions..."
@@ -313,12 +346,12 @@ export default function CreateBountyPage() {
                 className="bg-gradient-to-r from-starknet-orange via-starknet-pink to-starknet-blue hover:from-starknet-pink hover:to-starknet-orange transition-all duration-500 transform hover:scale-105 px-8"
               >
                 <Users className="mr-2 h-4 w-4" />
-                Post Bounty
+                Create Bounty
               </Button>
             </div>
           </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

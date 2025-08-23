@@ -3,7 +3,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Bell, User, Menu, Moon, Sun, LogOut, X, Home, PlusCircle, Trophy, Users, ArrowLeftRight } from "lucide-react";
+import {
+  Search,
+  Bell,
+  User,
+  Menu,
+  Moon,
+  Sun,
+  LogOut,
+  X,
+  Home,
+  PlusCircle,
+  Trophy,
+  Users,
+  ArrowLeftRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -33,7 +47,12 @@ export function Header() {
 
   const navigationItems = [
     { href: "/bounties", label: "Browse Bounties", icon: Home },
-    { href: "/post-bounty", label: "Post Bounty", icon: PlusCircle, authRequired: true },
+    {
+      href: "/post-bounty",
+      label: "Create Bounty",
+      icon: PlusCircle,
+      authRequired: true,
+    },
     { href: "/swap", label: "Swap", icon: ArrowLeftRight },
     { href: "/leaderboard", label: "Leaderboard", icon: Trophy },
     { href: "/community", label: "Community", icon: Users },
@@ -69,7 +88,7 @@ export function Header() {
                 href="/post-bounty"
                 className="text-sm font-medium hover:text-starknet-orange transition-colors"
               >
-                Post Bounty
+                Create Bounty
               </Link>
             )}
             <Link
@@ -154,7 +173,11 @@ export function Header() {
                         </Avatar>
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuContent
+                      className="w-56"
+                      align="end"
+                      forceMount
+                    >
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
@@ -213,12 +236,16 @@ export function Header() {
 
             {/* Mobile Menu Toggle */}
             <div className="md:hidden">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="icon"
                 onClick={() => setIsOpen(!isOpen)}
               >
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </div>
@@ -228,24 +255,26 @@ export function Header() {
 
       {/* Mobile Menu Overlay */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Mobile Menu */}
-      <div className={`
+      <div
+        className={`
         fixed right-0 top-0 z-50 h-full w-[320px] bg-background border-l border-border
         transform transition-transform duration-300 ease-in-out md:hidden overflow-hidden
-        ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}>
+        ${isOpen ? "translate-x-0" : "translate-x-full"}
+      `}
+      >
         <div className="flex flex-col h-full">
           {/* Mobile Menu Header */}
           <div className="flex items-center justify-between p-4 border-b">
             <h2 className="text-lg font-semibold">Menu</h2>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
             >
@@ -260,9 +289,11 @@ export function Header() {
               {isAuthenticated && user && (
                 <div className="flex items-center space-x-3 pb-4 border-b">
                   <Avatar className="h-12 w-12">
-                    <AvatarImage 
-                      src={user?.avatar || "/placeholder.svg?height=48&width=48"} 
-                      alt={user?.username} 
+                    <AvatarImage
+                      src={
+                        user?.avatar || "/placeholder.svg?height=48&width=48"
+                      }
+                      alt={user?.username}
                     />
                     <AvatarFallback className="text-lg">
                       {user?.username?.charAt(0).toUpperCase() || "U"}
@@ -270,12 +301,12 @@ export function Header() {
                   </Avatar>
                   <div>
                     <p className="font-medium">{user?.username}</p>
-                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
               )}
-
-
 
               {/* Mobile Search */}
               <div className="lg:hidden">
@@ -290,7 +321,7 @@ export function Header() {
                 {navigationItems.map((item) => {
                   // Skip auth-required items if not authenticated
                   if (item.authRequired && !isAuthenticated) return null;
-                  
+
                   const Icon = item.icon;
                   return (
                     <Link
@@ -362,7 +393,9 @@ export function Header() {
                     {/* Notifications Mobile */}
                     <div className="flex items-center space-x-3 py-3 px-2">
                       <Bell className="h-5 w-5" />
-                      <span className="text-base font-medium">Notifications</span>
+                      <span className="text-base font-medium">
+                        Notifications
+                      </span>
                       <Badge className="ml-auto h-5 w-5 rounded-full p-0 text-xs bg-starknet-pink">
                         3
                       </Badge>
@@ -379,12 +412,17 @@ export function Header() {
                 </>
               ) : (
                 <div className="border-t pt-4 space-y-3">
-                  <Button variant="outline" className="w-full" asChild onClick={() => setIsOpen(false)}>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    asChild
+                    onClick={() => setIsOpen(false)}
+                  >
                     <Link href="/login">Sign In</Link>
                   </Button>
-                  <Button 
-                    className="w-full bg-starknet-orange hover:bg-starknet-orange/90" 
-                    asChild 
+                  <Button
+                    className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+                    asChild
                     onClick={() => setIsOpen(false)}
                   >
                     <Link href="/signup">Get Started</Link>
@@ -398,4 +436,3 @@ export function Header() {
     </>
   );
 }
-

@@ -2,13 +2,11 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "deploy": "tsc && node dist/deploy-script.js"
+    "deploy": "tsc && node dist/deploy-script.js",
+    "check-balance": "tsc && node dist/check-balance.js"
   },
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5"
-  },
-  "dependencies": {
-    "dotenv": "^17.2.1"
   }
 }

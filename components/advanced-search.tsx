@@ -1,16 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Slider } from "@/components/ui/slider"
-import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible"
-import { Search, Filter, X, ChevronDown, ChevronUp, Bookmark, Clock, DollarSign, MapPin, Star } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
+import {
+  Search,
+  Filter,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Bookmark,
+  Clock,
+  DollarSign,
+  MapPin,
+  Star,
+} from "lucide-react";
 
 const popularSkills = [
   "React",
@@ -25,30 +42,38 @@ const popularSkills = [
   "Python",
   "Rust",
   "GraphQL",
-]
+];
 
-const locations = ["Remote", "North America", "Europe", "Asia", "Africa", "South America", "Oceania"]
+const locations = [
+  "Remote",
+  "North America",
+  "Europe",
+  "Asia",
+  "Africa",
+  "South America",
+  "Oceania",
+];
 
-export function AdvancedSearch() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([])
-  const [rewardRange, setRewardRange] = useState([0, 10000])
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false)
+export function solodSearch() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [rewardRange, setRewardRange] = useState([0, 10000]);
+  const [issolodOpen, setIssolodOpen] = useState(false);
   const [savedSearches, setSavedSearches] = useState([
     "React DeFi Projects",
     "High Reward Contracts",
     "UI/UX Design Tasks",
-  ])
+  ]);
 
   const addSkill = (skill: string) => {
     if (!selectedSkills.includes(skill)) {
-      setSelectedSkills([...selectedSkills, skill])
+      setSelectedSkills([...selectedSkills, skill]);
     }
-  }
+  };
 
   const removeSkill = (skill: string) => {
-    setSelectedSkills(selectedSkills.filter((s) => s !== skill))
-  }
+    setSelectedSkills(selectedSkills.filter((s) => s !== skill));
+  };
 
   return (
     <div className="space-y-4 mb-8">
@@ -63,7 +88,12 @@ export function AdvancedSearch() {
             className="pl-10 h-12 text-base"
           />
           {searchQuery && (
-            <Button variant="ghost" size="sm" className="absolute right-2 top-2" onClick={() => setSearchQuery("")}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute right-2 top-2"
+              onClick={() => setSearchQuery("")}
+            >
               <X className="h-4 w-4" />
             </Button>
           )}
@@ -71,15 +101,21 @@ export function AdvancedSearch() {
 
         <Button
           variant="outline"
-          onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+          onClick={() => setIssolodOpen(!issolodOpen)}
           className="h-12 px-6 bg-transparent"
         >
           <Filter className="mr-2 h-4 w-4" />
-          Advanced
-          {isAdvancedOpen ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
+          solod
+          {issolodOpen ? (
+            <ChevronUp className="ml-2 h-4 w-4" />
+          ) : (
+            <ChevronDown className="ml-2 h-4 w-4" />
+          )}
         </Button>
 
-        <Button className="h-12 px-8 bg-starknet-orange hover:bg-starknet-orange/90">Search</Button>
+        <Button className="h-12 px-8 bg-starknet-orange hover:bg-starknet-orange/90">
+          Search
+        </Button>
       </div>
 
       {/* Quick Filters */}
@@ -102,14 +138,18 @@ export function AdvancedSearch() {
         </Button>
       </div>
 
-      {/* Advanced Search Panel */}
-      <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
+      {/* solod Search Panel */}
+      <Collapsible open={issolodOpen} onOpenChange={setIssolodOpen}>
         <CollapsibleContent>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Advanced Search & Filters</span>
-                <Button variant="ghost" size="sm" onClick={() => setIsAdvancedOpen(false)}>
+                <span>solod Search & Filters</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIssolodOpen(false)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </CardTitle>
@@ -157,9 +197,11 @@ export function AdvancedSearch() {
                       <SelectContent>
                         <SelectItem value="any">Any Difficulty</SelectItem>
                         <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">Intermediate</SelectItem>
-                        <SelectItem value="advanced">Advanced</SelectItem>
-                        <SelectItem value="expert">Expert</SelectItem>
+                        <SelectItem value="intermediate">
+                          Intermediate
+                        </SelectItem>
+                        <SelectItem value="solod">solod</SelectItem>
+                        <SelectItem value="team">team</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -168,7 +210,9 @@ export function AdvancedSearch() {
                 {/* Reward & Timeline */}
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium">Reward Range (STRK)</Label>
+                    <Label className="text-sm font-medium">
+                      Reward Range (STRK)
+                    </Label>
                     <div className="mt-4 px-2">
                       <Slider
                         value={rewardRange}
@@ -209,7 +253,10 @@ export function AdvancedSearch() {
                       </SelectTrigger>
                       <SelectContent>
                         {locations.map((location) => (
-                          <SelectItem key={location} value={location.toLowerCase()}>
+                          <SelectItem
+                            key={location}
+                            value={location.toLowerCase()}
+                          >
                             {location}
                           </SelectItem>
                         ))}
@@ -221,13 +268,22 @@ export function AdvancedSearch() {
                 {/* Skills & Client */}
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium">Required Skills</Label>
+                    <Label className="text-sm font-medium">
+                      Required Skills
+                    </Label>
                     <div className="mt-2">
                       <div className="flex flex-wrap gap-1 mb-2">
                         {selectedSkills.map((skill) => (
-                          <Badge key={skill} variant="secondary" className="text-xs">
+                          <Badge
+                            key={skill}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             {skill}
-                            <button onClick={() => removeSkill(skill)} className="ml-1 hover:text-destructive">
+                            <button
+                              onClick={() => removeSkill(skill)}
+                              className="ml-1 hover:text-destructive"
+                            >
                               <X className="h-3 w-3" />
                             </button>
                           </Badge>
@@ -296,16 +352,26 @@ export function AdvancedSearch() {
                   <Button variant="ghost" size="sm">
                     Clear All Filters
                   </Button>
-                  <Button variant="outline" size="sm" className="bg-transparent">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-transparent"
+                  >
                     <Bookmark className="mr-2 h-4 w-4" />
                     Save Search
                   </Button>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Button variant="outline" onClick={() => setIsAdvancedOpen(false)} className="bg-transparent">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIssolodOpen(false)}
+                    className="bg-transparent"
+                  >
                     Cancel
                   </Button>
-                  <Button className="bg-starknet-orange hover:bg-starknet-orange/90">Apply Filters</Button>
+                  <Button className="bg-starknet-orange hover:bg-starknet-orange/90">
+                    Apply Filters
+                  </Button>
                 </div>
               </div>
             </CardContent>
@@ -318,7 +384,12 @@ export function AdvancedSearch() {
         <div className="flex items-center space-x-2">
           <span className="text-sm text-muted-foreground">Saved searches:</span>
           {savedSearches.map((search) => (
-            <Button key={search} variant="outline" size="sm" className="h-7 text-xs bg-transparent">
+            <Button
+              key={search}
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs bg-transparent"
+            >
               <Bookmark className="mr-1 h-3 w-3" />
               {search}
             </Button>
@@ -326,5 +397,5 @@ export function AdvancedSearch() {
         </div>
       )}
     </div>
-  )
+  );
 }
