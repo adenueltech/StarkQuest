@@ -21,18 +21,23 @@ Update `lib/config.ts` with actual deployed contract addresses:
 ```typescript
 // lib/config.ts
 export const CONTRACT_ADDRESSES = {
-  BOUNTY_REGISTRY: "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
-  BOUNTY_FACTORY: "0x123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
-  PAYMENT_PROCESSOR: "0x23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
-  REPUTATION_SYSTEM: "0x3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
-  STARK_EARN: "0x456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123"
+  BOUNTY_REGISTRY:
+    "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  BOUNTY_FACTORY:
+    "0x123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0",
+  PAYMENT_PROCESSOR:
+    "0x23456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef01",
+  REPUTATION_SYSTEM:
+    "0x3456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef012",
+  STARK_EARN:
+    "0x456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123",
 };
 
 export const NETWORK = "goerli"; // or "mainnet" for production
 
 export const TOKEN_ADDRESSES = {
   STRK: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  ETH: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
+  ETH: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
 };
 ```
 
@@ -104,18 +109,18 @@ Update `lib/services/starknet.ts` with proper contract integration:
 
 ```typescript
 // lib/services/starknet.ts
-import { Contract, Account, RpcProvider, cairo, CallData } from 'starknet';
-import { CONTRACT_ADDRESSES } from '../config';
-import bountyRegistryAbi from '../abis/BountyRegistry.json';
-import bountyFactoryAbi from '../abis/BountyFactory.json';
-import bountyAbi from '../abis/Bounty.json';
-import paymentProcessorAbi from '../abis/PaymentProcessor.json';
-import reputationSystemAbi from '../abis/ReputationSystem.json';
-import starkEarnAbi from '../abis/StarkEarn.json';
+import { Contract, Account, RpcProvider, cairo, CallData } from "starknet";
+import { CONTRACT_ADDRESSES } from "../config";
+import bountyRegistryAbi from "../abis/BountyRegistry.json";
+import bountyFactoryAbi from "../abis/BountyFactory.json";
+import bountyAbi from "../abis/Bounty.json";
+import paymentProcessorAbi from "../abis/PaymentProcessor.json";
+import reputationSystemAbi from "../abis/ReputationSystem.json";
+import starkEarnAbi from "../abis/StarkEarn.json";
 
 // Initialize provider
 const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+  nodeUrl: "https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID",
 });
 
 // Contract instances
@@ -132,25 +137,25 @@ export const initializeContracts = () => {
     CONTRACT_ADDRESSES.BOUNTY_REGISTRY,
     provider
   );
-  
+
   bountyFactory = new Contract(
     bountyFactoryAbi,
     CONTRACT_ADDRESSES.BOUNTY_FACTORY,
     provider
   );
-  
+
   paymentProcessor = new Contract(
     paymentProcessorAbi,
     CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
     provider
   );
-  
+
   reputationSystem = new Contract(
     reputationSystemAbi,
     CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
     provider
   );
-  
+
   starkEarn = new Contract(
     starkEarnAbi,
     CONTRACT_ADDRESSES.STARK_EARN,
@@ -162,23 +167,25 @@ export const initializeContracts = () => {
 let account: Account | null = null;
 
 export const connectWallet = async (): Promise<string> => {
-  if (typeof window === 'undefined') {
-    throw new Error('Wallet connection is only available in browser');
+  if (typeof window === "undefined") {
+    throw new Error("Wallet connection is only available in browser");
   }
-  
+
   // Try to use injected StarkNet provider (ArgentX, Braavos, etc.)
   const starknet = (window as any).starknet;
   if (!starknet) {
-    throw new Error('StarkNet wallet not found. Please install ArgentX or Braavos extension.');
+    throw new Error(
+      "StarkNet wallet not found. Please install ArgentX or Braavos extension."
+    );
   }
-  
+
   try {
     // Enable the wallet
     await starknet.enable({ showModal: true });
-    
+
     // Get the account
     account = starknet.account;
-    
+
     // Return the account address
     return account.address;
   } catch (error) {
@@ -198,35 +205,35 @@ export const createBounty = async (
   tokenAddress: string
 ) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   if (!starkEarn) {
     initializeContracts();
   }
-  
+
   try {
     // Convert string to felt
     const titleFelt = cairo.felt(title);
     const descriptionFelt = cairo.felt(description);
     const tokenAddressFelt = cairo.felt(tokenAddress);
-    
+
     // Convert reward amount to uint256
     const rewardAmountUint256 = cairo.uint256(rewardAmount);
-    
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: CONTRACT_ADDRESSES.STARK_EARN,
-      entrypoint: 'create_bounty',
+      entrypoint: "create_bounty",
       calldata: CallData.compile({
         title: titleFelt,
         description: descriptionFelt,
         reward_amount: rewardAmountUint256,
         deadline: deadline,
-        token_address: tokenAddressFelt
-      })
+        token_address: tokenAddressFelt,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
     throw new Error(`Failed to create bounty: ${(error as Error).message}`);
@@ -239,32 +246,30 @@ export const submitApplication = async (
   proposal: string
 ) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     // Convert proposal to felt
     const proposalFelt = cairo.felt(proposal);
-    
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'submit_application',
+      entrypoint: "submit_application",
       calldata: CallData.compile({
-        proposal: proposalFelt
-      })
+        proposal: proposalFelt,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to submit application: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to submit application: ${(error as Error).message}`
+    );
   }
 };
 
@@ -274,61 +279,52 @@ export const acceptApplication = async (
   applicationId: number
 ) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'accept_application',
+      entrypoint: "accept_application",
       calldata: CallData.compile({
-        application_id: applicationId
-      })
+        application_id: applicationId,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to accept application: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to accept application: ${(error as Error).message}`
+    );
   }
 };
 
 // Submit work
-export const submitWork = async (
-  bountyAddress: string,
-  content: string
-) => {
+export const submitWork = async (bountyAddress: string, content: string) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     // Convert content to felt
     const contentFelt = cairo.felt(content);
-    
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'submit_work',
+      entrypoint: "submit_work",
       calldata: CallData.compile({
-        content: contentFelt
-      })
+        content: contentFelt,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
     throw new Error(`Failed to submit work: ${(error as Error).message}`);
@@ -341,61 +337,52 @@ export const approveSubmission = async (
   submissionId: number
 ) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'approve_submission',
+      entrypoint: "approve_submission",
       calldata: CallData.compile({
-        submission_id: submissionId
-      })
+        submission_id: submissionId,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
-    throw new Error(`Failed to approve submission: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to approve submission: ${(error as Error).message}`
+    );
   }
 };
 
 // Cancel bounty
-export const cancelBounty = async (
-  bountyAddress: string,
-  reason: string
-) => {
+export const cancelBounty = async (bountyAddress: string, reason: string) => {
   if (!account) {
-    throw new Error('Wallet not connected');
+    throw new Error("Wallet not connected");
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     // Convert reason to felt
     const reasonFelt = cairo.felt(reason);
-    
+
     // Call the contract
     const { transaction_hash } = await account.execute({
       contractAddress: bountyAddress,
-      entrypoint: 'cancel_bounty',
+      entrypoint: "cancel_bounty",
       calldata: CallData.compile({
-        reason: reasonFelt
-      })
+        reason: reasonFelt,
+      }),
     });
-    
+
     return transaction_hash;
   } catch (error) {
     throw new Error(`Failed to cancel bounty: ${(error as Error).message}`);
@@ -407,19 +394,17 @@ export const getBountyDetails = async (bountyAddress: string) => {
   if (!bountyRegistry) {
     initializeContracts();
   }
-  
+
   try {
     // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
+    const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
+
     const details = await bountyContract.get_bounty_details();
     return details;
   } catch (error) {
-    throw new Error(`Failed to get bounty details: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to get bounty details: ${(error as Error).message}`
+    );
   }
 };
 
@@ -428,12 +413,14 @@ export const getUserReputation = async (userAddress: string) => {
   if (!reputationSystem) {
     initializeContracts();
   }
-  
+
   try {
     const reputation = await reputationSystem?.get_user_reputation(userAddress);
     return reputation;
   } catch (error) {
-    throw new Error(`Failed to get user reputation: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to get user reputation: ${(error as Error).message}`
+    );
   }
 };
 
@@ -442,18 +429,20 @@ export const listenToEvents = (callback: (event: any) => void) => {
   if (!bountyFactory) {
     initializeContracts();
   }
-  
+
   // Set up event listener for BountyCreated events
-  provider.getEvents({
-    address: CONTRACT_ADDRESSES.BOUNTY_FACTORY,
-    keys: [['BountyCreated']],
-    from_block: 'latest',
-    to_block: 'latest'
-  }).then((events) => {
-    events.events.forEach((event) => {
-      callback(event);
+  provider
+    .getEvents({
+      address: CONTRACT_ADDRESSES.BOUNTY_FACTORY,
+      keys: [["BountyCreated"]],
+      from_block: "latest",
+      to_block: "latest",
+    })
+    .then((events) => {
+      events.events.forEach((event) => {
+        callback(event);
+      });
     });
-  });
 };
 ```
 
@@ -471,24 +460,29 @@ import { CONTRACT_ADDRESSES, TOKEN_ADDRESSES } from "@/lib/config";
 // In your component, update the handleSubmit function:
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
-  
+
   try {
     // Connect wallet if not already connected
     const walletAddress = await connectWallet();
-    
+
     // Get form values
     const title = (document.getElementById("title") as HTMLInputElement).value;
-    const description = (document.getElementById("description") as HTMLTextAreaElement).value;
-    const reward = (document.getElementById("reward") as HTMLInputElement).value;
-    const currency = (document.getElementById("currency") as HTMLSelectElement).value;
-    const deadline = (document.getElementById("deadline") as HTMLInputElement).value;
-    
+    const description = (
+      document.getElementById("description") as HTMLTextAreaElement
+    ).value;
+    const reward = (document.getElementById("reward") as HTMLInputElement)
+      .value;
+    const Asset = (document.getElementById("Asset") as HTMLSelectElement).value;
+    const deadline = (document.getElementById("deadline") as HTMLInputElement)
+      .value;
+
     // Convert deadline to timestamp
     const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000);
-    
+
     // Get token address
-    const tokenAddress = TOKEN_ADDRESSES[currency.toUpperCase() as keyof typeof TOKEN_ADDRESSES];
-    
+    const tokenAddress =
+      TOKEN_ADDRESSES[Asset.toUpperCase() as keyof typeof TOKEN_ADDRESSES];
+
     // Create bounty
     const transactionHash = await createBounty(
       title,
@@ -497,7 +491,7 @@ const handleSubmit = async (e: React.FormEvent) => {
       deadlineTimestamp,
       tokenAddress
     );
-    
+
     console.log("Bounty created with transaction hash:", transactionHash);
     // Redirect to success page or show success message
   } catch (error) {
@@ -554,7 +548,7 @@ useEffect(() => {
     console.log("New bounty created:", event);
     // Update UI with new bounty
   };
-  
+
   listenToEvents(handleBountyCreated);
 }, []);
 ```

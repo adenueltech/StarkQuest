@@ -26,12 +26,14 @@ MIN_REPUTATION_FOR_APPLICATION=50
 ## Deploying the Contracts
 
 1. Install dependencies:
+
    ```bash
    cd Contract
    npm install
    ```
 
 2. Compile the contracts:
+
    ```bash
    scarb build
    ```
@@ -48,6 +50,7 @@ After deployment, the script will automatically update `lib/config.ts` with the 
 ## Running the Application
 
 1. Install frontend dependencies:
+
    ```bash
    npm install
    ```
@@ -87,6 +90,7 @@ If you encounter any issues during deployment, please check the console output f
 - Contract compilation errors
 
 For further assistance, you can:
+
 1. Check the StarkNet documentation
 2. Consult the StarkNet community forums
-3. Reach out to the StarkNet support team
+3. Reach out to the StarkNet support Team

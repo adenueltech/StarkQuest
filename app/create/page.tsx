@@ -133,17 +133,15 @@ export default function CreateBountyPage() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="difficulty">Difficulty Level</Label>
+                      <Label htmlFor="difficulty">Formation</Label>
                       <Select required>
                         <SelectTrigger className="border-2 focus:border-starknet-orange transition-all duration-300">
                           <SelectValue placeholder="Select difficulty" />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="beginner">Beginner</SelectItem>
-                          <SelectItem value="intermediate">
-                            Intermediate
-                          </SelectItem>
-                          <SelectItem value="solod">solod</SelectItem>
+                          <SelectItem value="Solo">Solo</SelectItem>
+                          <SelectItem value="Solo">Solo</SelectItem>
                           <SelectItem value="team">team</SelectItem>
                         </SelectContent>
                       </Select>

@@ -54,11 +54,11 @@ const locations = [
   "Oceania",
 ];
 
-export function solodSearch() {
+export function SoloSearch() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [rewardRange, setRewardRange] = useState([0, 10000]);
-  const [issolodOpen, setIssolodOpen] = useState(false);
+  const [isSoloOpen, setIsSoloOpen] = useState(false);
   const [savedSearches, setSavedSearches] = useState([
     "React DeFi Projects",
     "High Reward Contracts",
@@ -101,12 +101,12 @@ export function solodSearch() {
 
         <Button
           variant="outline"
-          onClick={() => setIssolodOpen(!issolodOpen)}
+          onClick={() => setIsSoloOpen(!isSoloOpen)}
           className="h-12 px-6 bg-transparent"
         >
           <Filter className="mr-2 h-4 w-4" />
-          solod
-          {issolodOpen ? (
+          Solo
+          {isSoloOpen ? (
             <ChevronUp className="ml-2 h-4 w-4" />
           ) : (
             <ChevronDown className="ml-2 h-4 w-4" />
@@ -138,17 +138,17 @@ export function solodSearch() {
         </Button>
       </div>
 
-      {/* solod Search Panel */}
-      <Collapsible open={issolodOpen} onOpenChange={setIssolodOpen}>
+      {/* Solo Search Panel */}
+      <Collapsible open={isSoloOpen} onOpenChange={setIsSoloOpen}>
         <CollapsibleContent>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>solod Search & Filters</span>
+                <span>Solo Search & Filters</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIssolodOpen(false)}
+                  onClick={() => setIsSoloOpen(false)}
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -200,7 +200,7 @@ export function solodSearch() {
                         <SelectItem value="intermediate">
                           Intermediate
                         </SelectItem>
-                        <SelectItem value="solod">solod</SelectItem>
+                        <SelectItem value="Solo">Solo</SelectItem>
                         <SelectItem value="team">team</SelectItem>
                       </SelectContent>
                     </Select>
@@ -364,7 +364,7 @@ export function solodSearch() {
                 <div className="flex items-center space-x-2">
                   <Button
                     variant="outline"
-                    onClick={() => setIssolodOpen(false)}
+                    onClick={() => setIsSoloOpen(false)}
                     className="bg-transparent"
                   >
                     Cancel

@@ -20,7 +20,7 @@ const searchResults = [
     reward: 2500,
     currency: "STRK",
     category: "Development",
-    difficulty: "solod",
+    difficulty: "Solo",
     deadline: "2024-02-15",
     applicants: 12,
     status: "open" as const,

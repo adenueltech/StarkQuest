@@ -68,7 +68,7 @@ const mockBountyDetail = {
   reward: 2500,
   currency: "STRK",
   category: "Development",
-  difficulty: "solod",
+  difficulty: "Solo",
   deadline: "2024-02-15",
   applicants: 12,
   status: "open" as const,
@@ -173,7 +173,7 @@ export default function BountyDetailPage() {
         // Determine category and difficulty based on tags or other heuristics
         const tags = ["Smart Contract", "Web3", "StarkNet"];
         const category = "Development";
-        const difficulty = "Intermediate";
+        const difficulty = "Solo";
 
         const transformedData = {
           id: id,

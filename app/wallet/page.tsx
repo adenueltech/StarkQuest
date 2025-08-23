@@ -423,7 +423,7 @@ export default function WalletPage() {
                 </div>
 
                 <div>
-                  <Label className="text-base font-medium">solod</Label>
+                  <Label className="text-base font-medium">Solo</Label>
                   <div className="space-y-3 mt-3">
                     <Button
                       variant="outline"

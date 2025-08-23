@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { BountyCard } from "@/components/bounty-card";
-import { solodSearch } from "@/components/solod-search";
+import { SoloSearch } from "@/components/Solo-search";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
@@ -15,7 +15,7 @@ const bounties = [
     reward: 2500,
     currency: "STRK",
     category: "Development",
-    difficulty: "solod",
+    difficulty: "Solo",
     deadline: "2024-02-15",
     applicants: 12,
     status: "open",
@@ -34,7 +34,7 @@ const bounties = [
     reward: 800,
     currency: "STRK",
     category: "Design",
-    difficulty: "Intermediate",
+    difficulty: "Solo",
     deadline: "2024-02-10",
     applicants: 8,
     status: "open",
@@ -49,11 +49,11 @@ const bounties = [
     id: "3",
     title: "Write StarkNet Smart Contract Tutorial",
     description:
-      "Create a comprehensive tutorial series covering Cairo smart contract development from basics to solod concepts. Include code examples and best practices.",
+      "Create a comprehensive tutorial series covering Cairo smart contract development from basics to Solo concepts. Include code examples and best practices.",
     reward: 1200,
     currency: "STRK",
     category: "Content",
-    difficulty: "Intermediate",
+    difficulty: "Solo",
     deadline: "2024-02-20",
     applicants: 5,
     status: "open",
@@ -91,7 +91,7 @@ const bounties = [
     reward: 1500,
     currency: "STRK",
     category: "Design",
-    difficulty: "solod",
+    difficulty: "Solo",
     deadline: "2024-02-18",
     applicants: 6,
     status: "open",
@@ -143,7 +143,7 @@ export default function BountiesPage() {
           </Button>
         </div>
 
-        <solodSearch />
+        <SoloSearch />
 
         {/* Active Filters */}
         <div className="flex flex-wrap gap-2 mb-6">
@@ -158,7 +158,7 @@ export default function BountiesPage() {
             variant="secondary"
             className="bg-starknet-orange/10 text-starknet-orange"
           >
-            solod
+            Solo
             <button className="ml-2 text-xs">×</button>
           </Badge>
           <Badge

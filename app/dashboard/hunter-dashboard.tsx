@@ -511,7 +511,7 @@ function HunterDashboard() {
                           <div className="flex justify-between">
                             <span>React</span>
                             <span className="text-sm text-muted-foreground">
-                              solod
+                              Solo
                             </span>
                           </div>
                           <Progress value={90} className="h-2 mt-1" />
@@ -520,7 +520,7 @@ function HunterDashboard() {
                           <div className="flex justify-between">
                             <span>TypeScript</span>
                             <span className="text-sm text-muted-foreground">
-                              solod
+                              Solo
                             </span>
                           </div>
                           <Progress value={85} className="h-2 mt-1" />

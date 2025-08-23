@@ -89,18 +89,16 @@ export default function PostBountyPage() {
                       </div>
 
                       <div>
-                        <Label htmlFor="difficulty">Difficulty Level</Label>
+                        <Label htmlFor="difficulty">Formation</Label>
                         <Select>
                           <SelectTrigger className="mt-1">
                             <SelectValue placeholder="Select difficulty" />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="beginner">Beginner</SelectItem>
-                            <SelectItem value="intermediate">
-                              Intermediate
-                            </SelectItem>
-                            <SelectItem value="solod">solod</SelectItem>
-                            <SelectItem value="team">team</SelectItem>
+                            <SelectItem value="Solo">Solo</SelectItem>
+                            <SelectItem value="Solo">Solo</SelectItem>
+                            <SelectItem value="Team">Team</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
