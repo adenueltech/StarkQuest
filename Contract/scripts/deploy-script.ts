@@ -13,28 +13,41 @@ const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
+console.log("Environment variables loaded:");
+console.log("STARKNET_NODE_URL:", process.env.STARKNET_NODE_URL ? "SET" : "NOT SET");
+console.log("OWNER_ADDRESS:", process.env.OWNER_ADDRESS ? "SET" : "NOT SET");
+console.log("PRIVATE_KEY:", process.env.PRIVATE_KEY ? "SET" : "NOT SET");
 
 async function deploy() {
-  console.log("Deploying StarkQuest contracts...");
+  console.log("Starting StarkQuest contract deployment...");
   
   // Configuration
+  console.log("Setting up provider...");
   const provider = new RpcProvider({
     nodeUrl: process.env.STARKNET_NODE_URL || 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
   });
+  console.log("Provider set up successfully");
   
   // These values would typically come from environment variables or a secure config
   const ownerAddress = process.env.OWNER_ADDRESS;
   const privateKey = process.env.PRIVATE_KEY;
   
+  console.log("Checking required environment variables...");
   if (!ownerAddress || !privateKey) {
-    throw new Error('OWNER_ADDRESS and PRIVATE_KEY must be set in environment variables');
+    console.error('OWNER_ADDRESS and PRIVATE_KEY must be set in environment variables');
+    console.log("OWNER_ADDRESS:", ownerAddress);
+    console.log("PRIVATE_KEY:", privateKey ? "SET" : "NOT SET");
+    return;
   }
+  console.log("Environment variables validated");
   
+  console.log("Setting up account...");
   const account = new Account(
     provider,
     ownerAddress,
     privateKey
   );
+  console.log("Account set up successfully");
   
   // Deployment parameters
   const CONFIG = {
@@ -43,6 +56,7 @@ async function deploy() {
     minReputationForCreation: process.env.MIN_REPUTATION_FOR_CREATION || '100',
     minReputationForApplication: process.env.MIN_REPUTATION_FOR_APPLICATION || '50',
   };
+  console.log("Configuration set:", CONFIG);
   
   try {
     // Step 1: Declare contracts
@@ -50,14 +64,33 @@ async function deploy() {
     
     // Helper function to declare contract with CASM if available
     const declareContract = async (contractName: string) => {
-      const contractPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.contract_class.json`);
-      const casmPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.compiled_contract_class.json`);
+      console.log(`Declaring contract: ${contractName}`);
+      // Try the new naming convention first
+      let contractPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.contract_class.json`);
+      let casmPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.compiled_contract_class.json`);
       
-      const contractJson = fs.readFileSync(contractPath, 'utf-8');
+      // If the new naming convention files don't exist, try the old naming convention
+      if (!fs.existsSync(contractPath)) {
+        console.log(`  Trying old naming convention for ${contractName}`);
+        contractPath = path.resolve(__dirname, `../target/dev/${contractName}.contract_class.json`);
+        casmPath = path.resolve(__dirname, `../target/dev/${contractName}.compiled_contract_class.json`);
+      }
+      
+      console.log(`  Contract path: ${contractPath}`);
+      console.log(`  CASM path: ${casmPath}`);
+      
+      if (!fs.existsSync(contractPath)) {
+        throw new Error(`Contract file not found: ${contractPath}`);
+      }
+      
+      const contractJson = JSON.parse(fs.readFileSync(contractPath, 'utf-8'));
+      console.log(`  Contract JSON loaded for ${contractName}`);
       
       // Check if CASM file exists
       if (fs.existsSync(casmPath)) {
-        const casmJson = fs.readFileSync(casmPath, 'utf-8');
+        console.log(`  CASM file found for ${contractName}`);
+        const casmJson = JSON.parse(fs.readFileSync(casmPath, 'utf-8'));
+        console.log(`  Declaring ${contractName} with CASM...`);
         return await account.declare({
           contract: contractJson,
           casm: casmJson,
@@ -72,12 +105,29 @@ async function deploy() {
     };
     
     // Declare each contract class
+    console.log('Declaring bounty contract...');
     const bountyClassHash = await declareContract('bounty');
+    console.log('Bounty contract declared:', bountyClassHash.class_hash);
+    
+    console.log('Declaring bounty_registry contract...');
     const registryClassHash = await declareContract('bounty_registry');
+    console.log('Bounty registry contract declared:', registryClassHash.class_hash);
+    
+    console.log('Declaring bounty_factory contract...');
     const factoryClassHash = await declareContract('bounty_factory');
+    console.log('Bounty factory contract declared:', factoryClassHash.class_hash);
+    
+    console.log('Declaring payment_processor contract...');
     const paymentProcessorClassHash = await declareContract('payment_processor');
+    console.log('Payment processor contract declared:', paymentProcessorClassHash.class_hash);
+    
+    console.log('Declaring reputation_system contract...');
     const reputationSystemClassHash = await declareContract('reputation_system');
+    console.log('Reputation system contract declared:', reputationSystemClassHash.class_hash);
+    
+    console.log('Declaring stark_earn contract...');
     const starkEarnClassHash = await declareContract('stark_earn');
+    console.log('Stark earn contract declared:', starkEarnClassHash.class_hash);
     
     console.log('   Contracts declared successfully');
     
@@ -85,6 +135,7 @@ async function deploy() {
     console.log('2. Deploying contracts...');
     
     // Deploy BountyRegistry
+    console.log('Deploying BountyRegistry...');
     const registryResponse = await account.deploy({
       classHash: registryClassHash.class_hash,
       constructorCalldata: CallData.compile({
@@ -99,6 +150,7 @@ async function deploy() {
     console.log(`   BountyRegistry deployed at: ${registryAddress}`);
     
     // Deploy PaymentProcessor
+    console.log('Deploying PaymentProcessor...');
     const paymentProcessorResponse = await account.deploy({
       classHash: paymentProcessorClassHash.class_hash,
       constructorCalldata: CallData.compile({
@@ -114,6 +166,7 @@ async function deploy() {
     console.log(`   PaymentProcessor deployed at: ${paymentProcessorAddress}`);
     
     // Deploy ReputationSystem
+    console.log('Deploying ReputationSystem...');
     const reputationSystemResponse = await account.deploy({
       classHash: reputationSystemClassHash.class_hash,
       constructorCalldata: CallData.compile({
@@ -130,6 +183,7 @@ async function deploy() {
     console.log(`   ReputationSystem deployed at: ${reputationSystemAddress}`);
     
     // Deploy BountyFactory
+    console.log('Deploying BountyFactory...');
     const factoryResponse = await account.deploy({
       classHash: factoryClassHash.class_hash,
       constructorCalldata: CallData.compile({
@@ -146,6 +200,7 @@ async function deploy() {
     console.log(`   BountyFactory deployed at: ${factoryAddress}`);
     
     // Deploy StarkEarn Main Contract
+    console.log('Deploying StarkEarn...');
     const starkEarnResponse = await account.deploy({
       classHash: starkEarnClassHash.class_hash,
       constructorCalldata: CallData.compile({
@@ -163,6 +218,7 @@ async function deploy() {
     console.log('3. Initializing StarkEarn contract...');
     
     // Initialize the StarkEarn contract with the addresses of the other contracts
+    console.log('Initializing StarkEarn with contract addresses...');
     await account.execute({
       contractAddress: starkEarnAddress,
       entrypoint: 'initialize',
@@ -199,6 +255,7 @@ export const TOKEN_ADDRESSES = {
 };
 `;
     
+    console.log('Writing config to ../../lib/config.ts');
     fs.writeFileSync(
       path.resolve(__dirname, '../../lib/config.ts'),
       configContent
@@ -219,9 +276,8 @@ export const TOKEN_ADDRESSES = {
   }
 }
 
-// Run deployment if this script is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  deploy();
-}
+// Always run deployment when this script is executed directly
+console.log("Running deployment...");
+deploy();
 
 export default deploy;

@@ -12,10 +12,6 @@ starknet = "2.12.0"
 snforge_std = "0.48.0"
 assert_macros = "2.12.0"
 
-[[target.starknet-contract]]
-sierra = true
-casm = true
-
 [scripts]
 test = "snforge test"
 
@@ -26,26 +22,38 @@ allow-prebuilt-plugins = ["snforge_std"]
 [[target.starknet-contract]]
 name = "bounty_registry"
 source = "src/bounty_registry.cairo"
+sierra = true
+casm = true
 
 [[target.starknet-contract]]
 name = "bounty_factory"
 source = "src/bounty_factory.cairo"
+sierra = true
+casm = true
 
 [[target.starknet-contract]]
 name = "bounty"
 source = "src/bounty.cairo"
+sierra = true
+casm = true
 
 [[target.starknet-contract]]
 name = "payment_processor"
 source = "src/payment_processor.cairo"
+sierra = true
+casm = true
 
 [[target.starknet-contract]]
 name = "reputation_system"
 source = "src/reputation_system.cairo"
+sierra = true
+casm = true
 
 [[target.starknet-contract]]
 name = "stark_earn"
 source = "src/stark_earn.cairo"
+sierra = true
+casm = true
 
 # Visit https://foundry-rs.github.io/starknet-foundry/appendix/scarb-toml.html for more information
 
