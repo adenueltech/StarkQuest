@@ -160,7 +160,7 @@ Use a search engine like Elasticsearch or Typesense to index:
   tags: string[],               // Bounty tags
   category: string,             // Bounty category
   reward: number,               // Reward amount
-  currency: string,             // Reward currency
+  Asset: string,             // Reward Asset
   deadline: Date,               // Bounty deadline
   creator: string,              // Creator wallet address
   status: string,               // Bounty status

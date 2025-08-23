@@ -66,7 +66,7 @@ const mockBountyDetail = {
 - Documentation quality
 - Test coverage`,
   reward: 2500,
-  currency: "STRK",
+  Asset: "STRK",
   category: "Development",
   difficulty: "Solo",
   deadline: "2024-02-15",
@@ -180,7 +180,7 @@ export default function BountyDetailPage() {
           title: title,
           description: description,
           reward: rewardAmount,
-          currency: "STRK", // Assuming STRK token
+          Asset: "STRK", // Assuming STRK token
           category: category,
           difficulty: difficulty,
           deadline: deadline,
@@ -271,7 +271,7 @@ export default function BountyDetailPage() {
   const paymentBountyData = {
     title: bountyDetail.title,
     reward: bountyDetail.reward,
-    currency: bountyDetail.currency,
+    Asset: bountyDetail.Asset,
     client: bountyDetail.poster.name,
   };
 
@@ -442,7 +442,7 @@ export default function BountyDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-3xl font-bold text-starknet-blue mb-4">
-                  {bountyDetail.reward.toLocaleString()} {bountyDetail.currency}
+                  {bountyDetail.reward.toLocaleString()} {bountyDetail.Asset}
                 </div>
                 <Button
                   className="w-full bg-starknet-orange hover:bg-starknet-orange/90"

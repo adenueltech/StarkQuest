@@ -1,10 +1,6 @@
 import { Contract, Account, RpcProvider, cairo, CallData } from 'starknet';
 import { CONTRACT_ADDRESSES } from '../config';
-import bountyRegistryAbi from '../abis/BountyRegistry.json';
-import bountyFactoryAbi from '../abis/BountyFactory.json';
-import bountyAbi from '../abis/Bounty.json';
-import paymentProcessorAbi from '../abis/PaymentProcessor.json';
-import reputationSystemAbi from '../abis/ReputationSystem.json';
+import starkQuestMinimalAbi from '../abis/StarkQuestMinimal.json';
 
 // Initialize provider
 const provider = new RpcProvider({
@@ -12,34 +8,13 @@ const provider = new RpcProvider({
 });
 
 // Contract instances
-let bountyRegistry: Contract | null = null;
-let bountyFactory: Contract | null = null;
-let paymentProcessor: Contract | null = null;
-let reputationSystem: Contract | null = null;
+let starkQuestMinimal: Contract | null = null;
 
 // Initialize contracts
 export const initializeContracts = () => {
-  bountyRegistry = new Contract(
-    bountyRegistryAbi,
-    CONTRACT_ADDRESSES.BOUNTY_REGISTRY,
-    provider
-  );
-  
-  bountyFactory = new Contract(
-    bountyFactoryAbi,
-    CONTRACT_ADDRESSES.BOUNTY_FACTORY,
-    provider
-  );
-  
-  paymentProcessor = new Contract(
-    paymentProcessorAbi,
-    CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-    provider
-  );
-  
-  reputationSystem = new Contract(
-    reputationSystemAbi,
-    CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
+  starkQuestMinimal = new Contract(
+    starkQuestMinimalAbi,
+    CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
     provider
   );
 };
@@ -91,7 +66,7 @@ export const createBounty = async (
     throw new Error('Wallet not connected');
   }
   
-  if (!bountyFactory) {
+  if (!starkQuestMinimal) {
     initializeContracts();
   }
   
@@ -107,7 +82,7 @@ export const createBounty = async (
     
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.BOUNTY_FACTORY,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'create_bounty',
       calldata: CallData.compile({
         title: titleFelt,
@@ -125,24 +100,23 @@ export const createBounty = async (
 };
 
 // Submit application
-export const submitApplication = async (bountyAddress: string) => {
+export const submitApplication = async (bountyId: number) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
+  if (!starkQuestMinimal) {
+    initializeContracts();
+  }
+  
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: bountyAddress,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'submit_application',
-      calldata: CallData.compile({})
+      calldata: CallData.compile({
+        bounty_id: bountyId
+      })
     });
     
     return transaction_hash;
@@ -153,26 +127,24 @@ export const submitApplication = async (bountyAddress: string) => {
 
 // Accept application
 export const acceptApplication = async (
-  bountyAddress: string,
+  bountyId: number,
   applicationId: number
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
+  if (!starkQuestMinimal) {
+    initializeContracts();
+  }
+  
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: bountyAddress,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'accept_application',
       calldata: CallData.compile({
+        bounty_id: bountyId,
         application_id: applicationId
       })
     });
@@ -185,29 +157,27 @@ export const acceptApplication = async (
 
 // Submit work
 export const submitWork = async (
-  bountyAddress: string,
+  bountyId: number,
   content: string
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
+  if (!starkQuestMinimal) {
+    initializeContracts();
+  }
+  
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
     // Convert content to felt
     const contentFelt = cairo.felt(content);
     
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: bountyAddress,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'submit_work',
       calldata: CallData.compile({
+        bounty_id: bountyId,
         content: contentFelt
       })
     });
@@ -220,26 +190,24 @@ export const submitWork = async (
 
 // Approve submission
 export const approveSubmission = async (
-  bountyAddress: string,
+  bountyId: number,
   submissionId: number
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
+  if (!starkQuestMinimal) {
+    initializeContracts();
+  }
+  
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: bountyAddress,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'approve_submission',
       calldata: CallData.compile({
+        bounty_id: bountyId,
         submission_id: submissionId
       })
     });
@@ -252,29 +220,27 @@ export const approveSubmission = async (
 
 // Cancel bounty
 export const cancelBounty = async (
-  bountyAddress: string,
+  bountyId: number,
   reason: string
 ) => {
   if (!account) {
     throw new Error('Wallet not connected');
   }
   
+  if (!starkQuestMinimal) {
+    initializeContracts();
+  }
+  
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
     // Convert reason to felt
     const reasonFelt = cairo.felt(reason);
     
     // Call the contract
     const { transaction_hash } = await account.execute({
-      contractAddress: bountyAddress,
+      contractAddress: CONTRACT_ADDRESSES.STARKQUEST_MINIMAL,
       entrypoint: 'cancel_bounty',
       calldata: CallData.compile({
+        bounty_id: bountyId,
         reason: reasonFelt
       })
     });
@@ -286,54 +252,27 @@ export const cancelBounty = async (
 };
 
 // Get bounty details
-export const getBountyDetails = async (bountyAddress: string) => {
+export const getBountyDetails = async (bountyId: number) => {
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
+    if (!starkQuestMinimal) {
+      initializeContracts();
+    }
     
-    const details = await bountyContract.get_bounty_details();
+    const details = await starkQuestMinimal?.get_bounty(bountyId);
     return details;
   } catch (error) {
     throw new Error(`Failed to get bounty details: ${(error as Error).message}`);
   }
 };
 
-// Get bounty by ID
-export const getBountyById = async (bountyId: number) => {
+// Get application
+export const getApplication = async (bountyId: number, applicationId: number) => {
   try {
-    if (!bountyRegistry) {
+    if (!starkQuestMinimal) {
       initializeContracts();
     }
     
-    // Get bounty address from registry
-    const bountyAddress = await bountyRegistry?.get_bounty_address(bountyId);
-    
-    // Get bounty details
-    const details = await getBountyDetails(bountyAddress);
-    return {
-      address: bountyAddress,
-      details: details
-    };
-  } catch (error) {
-    throw new Error(`Failed to get bounty by ID: ${(error as Error).message}`);
-  }
-};
-
-// Get application
-export const getApplication = async (bountyAddress: string, applicationId: number) => {
-  try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
-    
-    const application = await bountyContract.get_application(applicationId);
+    const application = await starkQuestMinimal?.get_application(bountyId, applicationId);
     return application;
   } catch (error) {
     throw new Error(`Failed to get application: ${(error as Error).message}`);
@@ -341,222 +280,55 @@ export const getApplication = async (bountyAddress: string, applicationId: numbe
 };
 
 // Get submission
-export const getSubmission = async (bountyAddress: string, submissionId: number) => {
+export const getSubmission = async (bountyId: number, submissionId: number) => {
   try {
-    // Create contract instance for the specific bounty
-    const bountyContract = new Contract(
-      bountyAbi,
-      bountyAddress,
-      provider
-    );
+    if (!starkQuestMinimal) {
+      initializeContracts();
+    }
     
-    const submission = await bountyContract.get_submission(submissionId);
+    const submission = await starkQuestMinimal?.get_submission(bountyId, submissionId);
     return submission;
   } catch (error) {
     throw new Error(`Failed to get submission: ${(error as Error).message}`);
   }
 };
 
-// Deposit escrow
-export const depositEscrow = async (
-  bountyAddress: string,
-  amount: string
-) => {
-  if (!account) {
-    throw new Error('Wallet not connected');
-  }
-  
-  if (!paymentProcessor) {
-    initializeContracts();
-  }
-  
+// Get escrow balance
+export const getEscrowBalance = async (bountyId: number) => {
   try {
-    // Convert amount to uint256
-    const amountUint256 = cairo.uint256(amount);
+    if (!starkQuestMinimal) {
+      initializeContracts();
+    }
     
-    // Call the contract
-    const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-      entrypoint: 'deposit_escrow',
-      calldata: CallData.compile({
-        bounty_address: bountyAddress,
-        amount: amountUint256
-      })
-    });
-    
-    return transaction_hash;
+    const balance = await starkQuestMinimal?.get_escrow_balance(bountyId);
+    return balance;
   } catch (error) {
-    throw new Error(`Failed to deposit escrow: ${(error as Error).message}`);
-  }
-};
-
-// Process payment
-export const processPayment = async (
-  bountyAddress: string,
-  hunterAddress: string,
-  amount: string
-) => {
-  if (!account) {
-    throw new Error('Wallet not connected');
-  }
-  
-  if (!paymentProcessor) {
-    initializeContracts();
-  }
-  
-  try {
-    // Convert amount to uint256
-    const amountUint256 = cairo.uint256(amount);
-    
-    // Call the contract
-    const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-      entrypoint: 'process_payment',
-      calldata: CallData.compile({
-        bounty_address: bountyAddress,
-        hunter: hunterAddress,
-        amount: amountUint256
-      })
-    });
-    
-    return transaction_hash;
-  } catch (error) {
-    throw new Error(`Failed to process payment: ${(error as Error).message}`);
-  }
-};
-
-// Process refund
-export const processRefund = async (
-  bountyAddress: string,
-  creatorAddress: string,
-  amount: string
-) => {
-  if (!account) {
-    throw new Error('Wallet not connected');
-  }
-  
-  if (!paymentProcessor) {
-    initializeContracts();
-  }
-  
-  try {
-    // Convert amount to uint256
-    const amountUint256 = cairo.uint256(amount);
-    
-    // Call the contract
-    const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.PAYMENT_PROCESSOR,
-      entrypoint: 'process_refund',
-      calldata: CallData.compile({
-        bounty_address: bountyAddress,
-        creator: creatorAddress,
-        amount: amountUint256
-      })
-    });
-    
-    return transaction_hash;
-  } catch (error) {
-    throw new Error(`Failed to process refund: ${(error as Error).message}`);
-  }
-};
-
-// Get user reputation
-export const getUserReputation = async (userAddress: string) => {
-  if (!reputationSystem) {
-    initializeContracts();
-  }
-  
-  try {
-    const reputation = await reputationSystem?.get_user_reputation(userAddress);
-    return reputation;
-  } catch (error) {
-    throw new Error(`Failed to get user reputation: ${(error as Error).message}`);
-  }
-};
-
-// Register user
-export const registerUser = async (
-  userAddress: string,
-  initialScore: number
-) => {
-  if (!account) {
-    throw new Error('Wallet not connected');
-  }
-  
-  if (!reputationSystem) {
-    initializeContracts();
-  }
-  
-  try {
-    // Call the contract
-    const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
-      entrypoint: 'register_user',
-      calldata: CallData.compile({
-        user: userAddress,
-        initial_score: initialScore
-      })
-    });
-    
-    return transaction_hash;
-  } catch (error) {
-    throw new Error(`Failed to register user: ${(error as Error).message}`);
-  }
-};
-
-// Update reputation
-export const updateReputation = async (
-  userAddress: string,
-  isCreator: boolean,
-  isCompleted: boolean,
-  qualityScore: number
-) => {
-  if (!account) {
-    throw new Error('Wallet not connected');
-  }
-  
-  if (!reputationSystem) {
-    initializeContracts();
-  }
-  
-  try {
-    // Call the contract
-    const { transaction_hash } = await account.execute({
-      contractAddress: CONTRACT_ADDRESSES.REPUTATION_SYSTEM,
-      entrypoint: 'update_reputation',
-      calldata: CallData.compile({
-        user: userAddress,
-        is_creator: isCreator,
-        is_completed: isCompleted,
-        quality_score: qualityScore
-      })
-    });
-    
-    return transaction_hash;
-  } catch (error) {
-    throw new Error(`Failed to update reputation: ${(error as Error).message}`);
+    throw new Error(`Failed to get escrow balance: ${(error as Error).message}`);
   }
 };
 
 // Get all bounties
 export const getAllBounties = async () => {
-  if (!bountyRegistry) {
-    initializeContracts();
-  }
-  
   try {
-    // Get bounty count
-    const count = await bountyRegistry?.get_bounty_count();
-    const bountyCount = parseInt(count.toString());
-    
-    // Get all bounty addresses
-    const bountyAddresses = [];
-    for (let i = 1; i <= bountyCount; i++) {
-      const address = await bountyRegistry?.get_bounty_address(i);
-      bountyAddresses.push(address);
+    if (!starkQuestMinimal) {
+      initializeContracts();
     }
     
-    return bountyAddresses;
+    // Get bounty count
+    const count = await starkQuestMinimal?.get_bounty_count();
+    const bountyCount = parseInt(count.toString());
+    
+    // Get all bounty details
+    const bounties = [];
+    for (let i = 1; i <= bountyCount; i++) {
+      const details = await getBountyDetails(i);
+      bounties.push({
+        id: i,
+        details: details
+      });
+    }
+    
+    return bounties;
   } catch (error) {
     throw new Error(`Failed to get bounties: ${(error as Error).message}`);
   }

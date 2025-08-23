@@ -128,7 +128,7 @@ export default function PostBountyPage() {
                       </div>
 
                       <div>
-                        <Label htmlFor="currency">Currency</Label>
+                        <Label htmlFor="Asset">Asset</Label>
                         <Select>
                           <SelectTrigger className="mt-1">
                             <SelectValue placeholder="STRK" />

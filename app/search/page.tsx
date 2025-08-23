@@ -18,7 +18,7 @@ const searchResults = [
     description:
       "Create a comprehensive dashboard for tracking DeFi protocols on StarkNet",
     reward: 2500,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Development",
     difficulty: "Solo",
     deadline: "2024-02-15",

@@ -197,11 +197,11 @@ export function SoloSearch() {
                       <SelectContent>
                         <SelectItem value="any">Any Difficulty</SelectItem>
                         <SelectItem value="beginner">Beginner</SelectItem>
-                        <SelectItem value="intermediate">
-                          Intermediate
+                        <SelectItem value="Solo">
+                          Solo
                         </SelectItem>
                         <SelectItem value="Solo">Solo</SelectItem>
-                        <SelectItem value="team">team</SelectItem>
+                        <SelectItem value="Team">Team</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

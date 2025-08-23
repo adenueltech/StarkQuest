@@ -48,7 +48,7 @@ const hunterDashboardData = {
       title: "Build Mobile Wallet Integration",
       client: "MobileStark",
       reward: 4000,
-      currency: "STRK",
+      Asset: "STRK",
       deadline: "2024-03-01",
       progress: 65,
       status: "in-progress",
@@ -59,7 +59,7 @@ const hunterDashboardData = {
       title: "Optimize Smart Contract Gas Usage",
       client: "SwapStark",
       reward: 3000,
-      currency: "STRK",
+      Asset: "STRK",
       deadline: "2024-02-12",
       progress: 30,
       status: "in-progress",
@@ -72,7 +72,7 @@ const hunterDashboardData = {
       title: "Create Brand Identity for DeFi Protocol",
       client: "YieldStark",
       reward: 1500,
-      currency: "STRK",
+      Asset: "STRK",
       appliedAt: "2024-01-19",
       status: "pending",
     },
@@ -81,7 +81,7 @@ const hunterDashboardData = {
       title: "Write StarkNet Tutorial Series",
       client: "StarkNet Foundation",
       reward: 1200,
-      currency: "STRK",
+      Asset: "STRK",
       appliedAt: "2024-01-17",
       status: "pending",
     },
@@ -241,7 +241,7 @@ function HunterDashboard() {
                     <div className="grid md:grid-cols-3 gap-4 mb-4">
                       <div>
                         <div className="text-2xl font-bold text-starknet-orange">
-                          {bounty.reward.toLocaleString()} {bounty.currency}
+                          {bounty.reward.toLocaleString()} {bounty.Asset}
                         </div>
                         <div className="text-sm text-muted-foreground">
                           Reward
@@ -329,7 +329,7 @@ function HunterDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="text-lg font-bold text-starknet-orange">
                         {application.reward.toLocaleString()}{" "}
-                        {application.currency}
+                        {application.Asset}
                       </div>
                       <span className="text-sm text-muted-foreground">
                         Applied{" "}
@@ -492,7 +492,7 @@ function HunterDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>Skills & teamise</span>
+                  <span>Skills & Teamise</span>
                   <Button variant="outline" size="sm">
                     <Edit className="mr-2 h-4 w-4" />
                     Edit Skills
@@ -529,7 +529,7 @@ function HunterDashboard() {
                           <div className="flex justify-between">
                             <span>Solidity</span>
                             <span className="text-sm text-muted-foreground">
-                              Intermediate
+                              Solo
                             </span>
                           </div>
                           <Progress value={70} className="h-2 mt-1" />
@@ -538,7 +538,7 @@ function HunterDashboard() {
                           <div className="flex justify-between">
                             <span>StarkNet</span>
                             <span className="text-sm text-muted-foreground">
-                              Intermediate
+                              Solo
                             </span>
                           </div>
                           <Progress value={75} className="h-2 mt-1" />

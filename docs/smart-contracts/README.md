@@ -21,40 +21,15 @@ StarkEarn is a decentralized bounty platform built on StarkNet that connects pro
 
 ## Contract Architecture
 
-The StarkEarn smart contract system consists of several interconnected contracts:
+The StarkEarn smart contract system now consists of a single contract:
 
-1. **BountyRegistry** - Main registry for all bounties
-2. **BountyFactory** - Factory contract for creating new bounties
-3. **Bounty** - Individual bounty contract (clone pattern)
-4. **PaymentProcessor** - Handles payments and escrow
-5. **ReputationSystem** - Manages user reputation scores
-6. **TokenBridge** - Handles cross-chain token transfers (if applicable)
+1. **StarkQuest Minimal** - A simplified contract that handles all bounty functionality
 
 ## Core Contracts
 
-### BountyRegistry
+### StarkQuest Minimal
 
-The central registry that keeps track of all bounties in the system.
-
-Key responsibilities:
-
-- Maintains a list of all bounty addresses
-- Provides search and filtering capabilities
-- Tracks global statistics
-
-### BountyFactory
-
-Factory contract responsible for creating new bounty instances using the clone pattern for gas efficiency.
-
-Key responsibilities:
-
-- Creates new bounty contracts
-- Sets initial parameters
-- Registers new bounties in the BountyRegistry
-
-### Bounty (Individual Contract)
-
-Each bounty has its own contract instance with the following functionality:
+A simplified contract that combines all functionality into a single contract with the following features:
 
 Key responsibilities:
 
@@ -62,27 +37,7 @@ Key responsibilities:
 - Application handling
 - Submission and review process
 - Payment distribution
-
-### PaymentProcessor
-
-Handles all payment-related operations including escrow and distribution.
-
-Key responsibilities:
-
-- Token escrow management
-- Payment distribution to bounty hunters
-- Refunds to creators
-- Platform fee collection
-
-### ReputationSystem
-
-Manages reputation scores for both creators and hunters.
-
-Key responsibilities:
-
-- Tracking user reputation
-- Updating scores based on bounty completion
-- Providing reputation-based access controls
+- Escrow management
 
 ## Data Structures
 
@@ -90,17 +45,12 @@ Key responsibilities:
 
 ```cairo
 struct Bounty {
-    felt creator;
     felt title;
     felt description;
-    felt category;
-    felt reward_token;
     uint256 reward_amount;
-    uint256 deadline;
-    uint256 created_at;
+    uint64 deadline;
+    ContractAddress token_address;
     BountyStatus status;
-    Application[] applications;
-    felt selected_hunter;
 }
 ```
 
@@ -108,10 +58,20 @@ struct Bounty {
 
 ```cairo
 struct Application {
-    felt hunter;
-    felt proposal;
-    uint256 submitted_at;
-    ApplicationStatus status;
+    ContractAddress applicant;
+    uint64 timestamp;
+    bool accepted;
+}
+```
+
+### Submission Structure
+
+```cairo
+struct Submission {
+    ContractAddress hunter;
+    felt content;
+    uint64 timestamp;
+    bool approved;
 }
 ```
 
@@ -123,18 +83,6 @@ enum BountyStatus {
     InProgress,
     Completed,
     Cancelled,
-    Expired
-}
-```
-
-### ApplicationStatus Enum
-
-```cairo
-enum ApplicationStatus {
-    Pending,
-    Accepted,
-    Rejected,
-    Withdrawn
 }
 ```
 
@@ -146,11 +94,10 @@ enum ApplicationStatus {
 func create_bounty(
     title: felt,
     description: felt,
-    category: felt,
-    reward_token: felt,
     reward_amount: uint256,
-    deadline: uint256
-) -> (bounty_address: felt) {
+    deadline: uint64,
+    token_address: ContractAddress
+) -> (bounty_id: uint64) {
     // Implementation details
 }
 ```
@@ -158,34 +105,51 @@ func create_bounty(
 ### Application Submission
 
 ```cairo
-func submit_application(proposal: felt) {
+func submit_application(bounty_id: uint64) {
     // Implementation details
 }
 ```
 
-### Application Review
+### Application Acceptance
 
 ```cairo
-func review_application(
-    application_index: felt,
-    status: ApplicationStatus
+func accept_application(
+    bounty_id: uint64,
+    application_id: uint64
 ) {
     // Implementation details
 }
 ```
 
-### Bounty Completion
+### Work Submission
 
 ```cairo
-func complete_bounty(submission: felt) {
+func submit_work(
+    bounty_id: uint64,
+    content: felt
+) {
     // Implementation details
 }
 ```
 
-### Payment Distribution
+### Submission Approval
 
 ```cairo
-func distribute_payment(hunter: felt) {
+func approve_submission(
+    bounty_id: uint64,
+    submission_id: uint64
+) {
+    // Implementation details
+}
+```
+
+### Bounty Cancellation
+
+```cairo
+func cancel_bounty(
+    bounty_id: uint64,
+    reason: felt
+) {
     // Implementation details
 }
 ```
@@ -198,10 +162,10 @@ Emitted when a new bounty is created.
 
 ```cairo
 event BountyCreated {
-    bounty_address: felt,
-    creator: felt,
+    bounty_id: uint64,
+    creator: ContractAddress,
+    title: felt,
     reward_amount: uint256,
-    deadline: uint256
 }
 ```
 
@@ -211,21 +175,46 @@ Emitted when a hunter submits an application.
 
 ```cairo
 event ApplicationSubmitted {
-    bounty_address: felt,
-    hunter: felt,
-    application_index: felt
+    bounty_id: uint64,
+    applicant: ContractAddress,
+    timestamp: uint64,
 }
 ```
 
-### ApplicationReviewed
+### ApplicationAccepted
 
-Emitted when a creator reviews an application.
+Emitted when a creator accepts an application.
 
 ```cairo
-event ApplicationReviewed {
-    bounty_address: felt,
-    hunter: felt,
-    status: ApplicationStatus
+event ApplicationAccepted {
+    bounty_id: uint64,
+    applicant: ContractAddress,
+    timestamp: uint64,
+}
+```
+
+### SubmissionSubmitted
+
+Emitted when a hunter submits work.
+
+```cairo
+event SubmissionSubmitted {
+    bounty_id: uint64,
+    hunter: ContractAddress,
+    content: felt,
+    timestamp: uint64,
+}
+```
+
+### SubmissionApproved
+
+Emitted when a creator approves a submission.
+
+```cairo
+event SubmissionApproved {
+    bounty_id: uint64,
+    hunter: ContractAddress,
+    timestamp: uint64,
 }
 ```
 
@@ -235,39 +224,49 @@ Emitted when a bounty is marked as completed.
 
 ```cairo
 event BountyCompleted {
-    bounty_address: felt,
-    hunter: felt,
-    submission: felt
+    bounty_id: uint64,
+    hunter: ContractAddress,
+    reward_amount: uint256,
 }
 ```
 
-### PaymentDistributed
+### BountyCancelled
 
-Emitted when payment is distributed to a hunter.
+Emitted when a bounty is cancelled.
 
 ```cairo
-event PaymentDistributed {
-    bounty_address: felt,
-    hunter: felt,
-    amount: uint256
+event BountyCancelled {
+    bounty_id: uint64,
+    reason: felt,
+}
+```
+
+### PaymentProcessed
+
+Emitted when payment is processed.
+
+```cairo
+event PaymentProcessed {
+    bounty_id: uint64,
+    hunter: ContractAddress,
+    amount: uint256,
 }
 ```
 
 ## Security Considerations
 
-1. **Reentrancy Protection**: All external calls that transfer funds should be protected against reentrancy attacks.
+1. **Access Control**: Ensure only authorized parties can perform sensitive operations:
 
-2. **Access Control**: Ensure only authorized parties can perform sensitive operations:
+   - Only creators can accept applications
+   - Only assigned hunters can submit work
+   - Only creators can approve submissions
+   - Only creators can cancel bounties
 
-   - Only creators can review applications
-   - Only selected hunters can complete bounties
-   - Only contract owners can update platform parameters
+2. **Deadline Validation**: Always check that deadlines haven't passed before allowing certain operations.
 
-3. **Deadline Validation**: Always check that deadlines haven't passed before allowing certain operations.
+3. **Payment Validation**: Validate all payment amounts and ensure escrow balances are sufficient.
 
-4. **Payment Validation**: Validate all payment amounts and ensure escrow balances are sufficient.
-
-5. **Integer Overflow**: Use safe math operations for all numeric calculations.
+4. **Integer Overflow**: Use safe math operations for all numeric calculations.
 
 ## Deployment
 
@@ -279,33 +278,20 @@ event PaymentDistributed {
 
 ### Deployment Steps
 
-1. Deploy the BountyRegistry contract
-2. Deploy the BountyFactory contract, linking it to the registry
-3. Deploy the PaymentProcessor contract
-4. Deploy the ReputationSystem contract
-5. Update contract references as needed
+1. Deploy the StarkQuest Minimal contract
 
 ### Example Deployment Script
 
 ```bash
-# Deploy BountyRegistry
-starknet deploy --contract BountyRegistry.json
-
-# Deploy BountyFactory with registry address
-starknet deploy --contract BountyFactory.json --inputs <registry_address>
-
-# Deploy PaymentProcessor
-starknet deploy --contract PaymentProcessor.json
-
-# Deploy ReputationSystem
-starknet deploy --contract ReputationSystem.json
+# Deploy StarkQuest Minimal
+starknet deploy --contract StarkQuestMinimal.json
 ```
 
 ## Testing
 
 ### Unit Tests
 
-All contracts should have comprehensive unit tests covering:
+The contract should have comprehensive unit tests covering:
 
 - Happy path scenarios
 - Edge cases
@@ -314,12 +300,13 @@ All contracts should have comprehensive unit tests covering:
 
 ### Integration Tests
 
-Test the interaction between different contracts:
+Test the contract functionality:
 
-- Bounty creation and registration
-- Application submission and review
+- Bounty creation
+- Application submission and acceptance
+- Work submission and approval
 - Payment processing
-- Reputation updates
+- Bounty cancellation
 
 ### Test Coverage
 
@@ -332,7 +319,7 @@ Aim for at least 90% test coverage for all critical functions.
 To integrate with the frontend, developers should:
 
 1. **Connect to StarkNet**: Use starknet.js to connect to the network
-2. **Load Contract ABIs**: Import the JSON ABI files for each contract
+2. **Load Contract ABIs**: Import the JSON ABI files for the contract
 3. **Initialize Contracts**: Create contract instances using the addresses
 4. **Call Functions**: Use the contract methods to interact with the blockchain
 
@@ -340,23 +327,23 @@ To integrate with the frontend, developers should:
 
 ```javascript
 import { Contract, Account } from "starknet";
-import bountyRegistryAbi from "./abis/BountyRegistry.json";
+import starkQuestMinimalAbi from "./abis/StarkQuestMinimal.json";
 
 // Initialize contract
-const bountyRegistry = new Contract(
-  bountyRegistryAbi,
-  bountyRegistryAddress,
+const starkQuestMinimal = new Contract(
+  starkQuestMinimalAbi,
+  starkQuestMinimalAddress,
   provider
 );
 
 // Read data
-const bountyCount = await bountyRegistry.get_bounty_count();
+const bountyCount = await starkQuestMinimal.get_bounty_count();
 
 // Write data
 const { transaction_hash } = await account.execute({
-  contractAddress: bountyFactoryAddress,
+  contractAddress: starkQuestMinimalAddress,
   entrypoint: "create_bounty",
-  calldata: [title, description, category, rewardToken, rewardAmount, deadline],
+  calldata: [title, description, rewardAmount, deadline, tokenAddress],
 });
 ```
 
@@ -383,7 +370,7 @@ provider
   .getEvents({
     from_block: "latest",
     to_block: "latest",
-    address: bountyRegistryAddress,
+    address: starkQuestMinimalAddress,
     keys: [["BountyCreated"]],
   })
   .then((events) => {
@@ -396,11 +383,9 @@ provider
 
 ## Future Enhancements
 
-1. **Multi-signature Escrow**: Implement multi-sig for large bounty payments
-2. **Dispute Resolution**: Add arbitration mechanisms for contested bounties
-3. **Token Staking**: Allow users to stake tokens for reputation boosting
-4. **Cross-chain Compatibility**: Enable bounties payable in multiple token standards
-5. **DAO Governance**: Implement community governance for platform parameters
+1. **Advanced Features**: Add more sophisticated bounty features as needed
+2. **Performance Optimizations**: Optimize contract performance as the platform grows
+3. **Security Audits**: Regular security audits to ensure contract safety
 
 ## Contact and Support
 

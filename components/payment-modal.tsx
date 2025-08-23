@@ -19,7 +19,7 @@ interface PaymentModalProps {
   bounty: {
     title: string;
     reward: number;
-    currency: string;
+    Asset: string;
     client: string;
   };
   type: "apply" | "post" | "release";
@@ -109,14 +109,14 @@ export function PaymentModal({
                   <div className="flex justify-between">
                     <span>Bounty Amount</span>
                     <span>
-                      {bounty.reward.toLocaleString()} {bounty.currency}
+                      {bounty.reward.toLocaleString()} {bounty.Asset}
                     </span>
                   </div>
                   {paymentDetails.fee > 0 && (
                     <div className="flex justify-between">
                       <span>Platform Fee (2%)</span>
                       <span>
-                        {paymentDetails.fee.toLocaleString()} {bounty.currency}
+                        {paymentDetails.fee.toLocaleString()} {bounty.Asset}
                       </span>
                     </div>
                   )}
@@ -124,7 +124,7 @@ export function PaymentModal({
                   <div className="flex justify-between font-medium">
                     <span>Total</span>
                     <span>
-                      {paymentDetails.total.toLocaleString()} {bounty.currency}
+                      {paymentDetails.total.toLocaleString()} {bounty.Asset}
                     </span>
                   </div>
                 </div>

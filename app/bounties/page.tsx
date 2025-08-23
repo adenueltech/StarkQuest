@@ -13,7 +13,7 @@ const bounties = [
     description:
       "Create a comprehensive dashboard for tracking DeFi protocols on StarkNet. Should include TVL, APY tracking, and portfolio management features.",
     reward: 2500,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Development",
     difficulty: "Solo",
     deadline: "2024-02-15",
@@ -32,7 +32,7 @@ const bounties = [
     description:
       "Design a modern, engaging landing page for a new NFT marketplace on StarkNet. Should include hero section, featured collections, and artist spotlights.",
     reward: 800,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Design",
     difficulty: "Solo",
     deadline: "2024-02-10",
@@ -51,7 +51,7 @@ const bounties = [
     description:
       "Create a comprehensive tutorial series covering Cairo smart contract development from basics to Solo concepts. Include code examples and best practices.",
     reward: 1200,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Content",
     difficulty: "Solo",
     deadline: "2024-02-20",
@@ -70,7 +70,7 @@ const bounties = [
     description:
       "Review and optimize gas usage in our automated market maker smart contract. Looking for 20%+ gas reduction while maintaining functionality.",
     reward: 3000,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Development",
     difficulty: "team",
     deadline: "2024-02-12",
@@ -89,7 +89,7 @@ const bounties = [
     description:
       "Develop complete brand identity including logo, color palette, typography, and brand guidelines for a new DeFi protocol launching on StarkNet.",
     reward: 1500,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Design",
     difficulty: "Solo",
     deadline: "2024-02-18",
@@ -108,7 +108,7 @@ const bounties = [
     description:
       "Develop a React Native mobile app that integrates with StarkNet wallets. Should support transaction signing and account management.",
     reward: 4000,
-    currency: "STRK",
+    Asset: "STRK",
     category: "Development",
     difficulty: "team",
     deadline: "2024-03-01",

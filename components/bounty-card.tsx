@@ -18,7 +18,7 @@ interface Bounty {
   title: string;
   description: string;
   reward: number;
-  currency: string;
+  Asset: string;
   category: string;
   difficulty: string;
   deadline: string;
@@ -44,11 +44,11 @@ export function BountyCard({ bounty }: BountyCardProps) {
     switch (difficulty.toLowerCase()) {
       case "beginner":
         return "bg-green-100 text-green-800";
-      case "intermediate":
+      case "Solo":
         return "bg-yellow-100 text-yellow-800";
       case "Solo":
         return "bg-orange-100 text-orange-800";
-      case "team":
+      case "Team":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -135,7 +135,7 @@ export function BountyCard({ bounty }: BountyCardProps) {
         <CardContent className="flex-1 pb-3">
           <div className="flex items-center justify-between mb-3">
             <div className="text-2xl font-bold text-starknet-orange">
-              {bounty.reward.toLocaleString()} {bounty.currency}
+              {bounty.reward.toLocaleString()} {bounty.Asset}
             </div>
             <Badge
               className={getDifficultyColor(bounty.difficulty)}

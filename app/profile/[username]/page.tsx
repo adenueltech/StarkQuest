@@ -1,11 +1,20 @@
-import { Header } from "@/components/header"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Progress } from "@/components/ui/progress"
-import { Star, MapPin, Calendar, Github, Twitter, Globe, MessageSquare, Heart } from "lucide-react"
+import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
+import {
+  Star,
+  MapPin,
+  Calendar,
+  Github,
+  Twitter,
+  Globe,
+  MessageSquare,
+  Heart,
+} from "lucide-react";
 
 // Mock user profile data
 const userProfile = {
@@ -43,9 +52,10 @@ const userProfile = {
     {
       id: "1",
       title: "DeFi Analytics Dashboard",
-      description: "Built a comprehensive analytics dashboard for tracking DeFi protocols on StarkNet",
+      description:
+        "Built a comprehensive analytics dashboard for tracking DeFi protocols on StarkNet",
       reward: 2500,
-      currency: "STRK",
+      Asset: "STRK",
       completedAt: "2024-01-10",
       rating: 5.0,
       client: "StarkDeFi Protocol",
@@ -55,9 +65,10 @@ const userProfile = {
     {
       id: "2",
       title: "NFT Marketplace Smart Contract",
-      description: "Developed and deployed a gas-optimized NFT marketplace contract",
+      description:
+        "Developed and deployed a gas-optimized NFT marketplace contract",
       reward: 3200,
-      currency: "STRK",
+      Asset: "STRK",
       completedAt: "2023-12-20",
       rating: 4.8,
       client: "StarkArt Collective",
@@ -67,9 +78,10 @@ const userProfile = {
     {
       id: "3",
       title: "Yield Farming Protocol UI",
-      description: "Created responsive frontend for a yield farming protocol with real-time APY tracking",
+      description:
+        "Created responsive frontend for a yield farming protocol with real-time APY tracking",
       reward: 1800,
-      currency: "STRK",
+      Asset: "STRK",
       completedAt: "2023-11-15",
       rating: 4.9,
       client: "YieldStark",
@@ -99,7 +111,7 @@ const userProfile = {
       date: "2023-12-20",
     },
   ],
-}
+};
 
 export default function ProfilePage() {
   return (
@@ -115,14 +127,23 @@ export default function ProfilePage() {
                 {/* Avatar and Basic Info */}
                 <div className="flex flex-col items-center md:items-start">
                   <Avatar className="h-32 w-32 mb-4">
-                    <AvatarImage src={userProfile.avatar || "/placeholder.svg"} alt={userProfile.displayName} />
-                    <AvatarFallback className="text-2xl">{userProfile.displayName.charAt(0)}</AvatarFallback>
+                    <AvatarImage
+                      src={userProfile.avatar || "/placeholder.svg"}
+                      alt={userProfile.displayName}
+                    />
+                    <AvatarFallback className="text-2xl">
+                      {userProfile.displayName.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
 
                   <div className="flex items-center space-x-1 mb-2">
                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold">{userProfile.reputation}</span>
-                    <span className="text-sm text-muted-foreground">({userProfile.completedBounties} reviews)</span>
+                    <span className="font-semibold">
+                      {userProfile.reputation}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      ({userProfile.completedBounties} reviews)
+                    </span>
                   </div>
 
                   <div className="flex items-center space-x-4 text-sm text-muted-foreground">
@@ -132,7 +153,10 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4" />
-                      <span>Joined {new Date(userProfile.joinedDate).toLocaleDateString()}</span>
+                      <span>
+                        Joined{" "}
+                        {new Date(userProfile.joinedDate).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -141,8 +165,12 @@ export default function ProfilePage() {
                 <div className="flex-1">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4">
                     <div>
-                      <h1 className="text-3xl font-bold mb-2">{userProfile.displayName}</h1>
-                      <p className="text-lg text-muted-foreground mb-4">@{userProfile.username}</p>
+                      <h1 className="text-3xl font-bold mb-2">
+                        {userProfile.displayName}
+                      </h1>
+                      <p className="text-lg text-muted-foreground mb-4">
+                        @{userProfile.username}
+                      </p>
                     </div>
 
                     <div className="flex items-center space-x-2">
@@ -152,11 +180,15 @@ export default function ProfilePage() {
                       <Button variant="outline" size="icon">
                         <MessageSquare className="h-4 w-4" />
                       </Button>
-                      <Button className="bg-starknet-orange hover:bg-starknet-orange/90">Hire Me</Button>
+                      <Button className="bg-starknet-orange hover:bg-starknet-orange/90">
+                        Hire Me
+                      </Button>
                     </div>
                   </div>
 
-                  <p className="text-muted-foreground mb-6">{userProfile.bio}</p>
+                  <p className="text-muted-foreground mb-6">
+                    {userProfile.bio}
+                  </p>
 
                   {/* Social Links */}
                   <div className="flex items-center space-x-4 mb-6">
@@ -192,22 +224,36 @@ export default function ProfilePage() {
                   {/* Quick Stats */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-starknet-blue">{userProfile.stats.totalBounties}</div>
-                      <div className="text-sm text-muted-foreground">Completed</div>
+                      <div className="text-2xl font-bold text-starknet-blue">
+                        {userProfile.stats.totalBounties}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Completed
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-starknet-orange">
                         {userProfile.stats.totalEarnings.toLocaleString()}
                       </div>
-                      <div className="text-sm text-muted-foreground">STRK Earned</div>
+                      <div className="text-sm text-muted-foreground">
+                        STRK Earned
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-starknet-pink">{userProfile.stats.completionRate}%</div>
-                      <div className="text-sm text-muted-foreground">Success Rate</div>
+                      <div className="text-2xl font-bold text-starknet-pink">
+                        {userProfile.stats.completionRate}%
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Success Rate
+                      </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-starknet-blue">{userProfile.stats.responseTime}h</div>
-                      <div className="text-sm text-muted-foreground">Response Time</div>
+                      <div className="text-2xl font-bold text-starknet-blue">
+                        {userProfile.stats.responseTime}h
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Response Time
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -229,7 +275,10 @@ export default function ProfilePage() {
           <TabsContent value="portfolio" className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {userProfile.recentWork.map((work) => (
-                <Card key={work.id} className="hover:shadow-lg transition-shadow">
+                <Card
+                  key={work.id}
+                  className="hover:shadow-lg transition-shadow"
+                >
                   <div className="aspect-video relative overflow-hidden rounded-t-lg">
                     <img
                       src={work.image || "/placeholder.svg"}
@@ -239,20 +288,28 @@ export default function ProfilePage() {
                   </div>
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between mb-2">
-                      <CardTitle className="text-lg line-clamp-1">{work.title}</CardTitle>
+                      <CardTitle className="text-lg line-clamp-1">
+                        {work.title}
+                      </CardTitle>
                       <div className="flex items-center space-x-1">
                         <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium">{work.rating}</span>
+                        <span className="text-sm font-medium">
+                          {work.rating}
+                        </span>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{work.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {work.description}
+                    </p>
                   </CardHeader>
                   <CardContent className="pt-0">
                     <div className="flex items-center justify-between mb-3">
                       <div className="text-lg font-bold text-starknet-blue">
-                        {work.reward.toLocaleString()} {work.currency}
+                        {work.reward.toLocaleString()} {work.Asset}
                       </div>
-                      <span className="text-sm text-muted-foreground">{work.client}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {work.client}
+                      </span>
                     </div>
 
                     <div className="flex flex-wrap gap-1 mb-3">
@@ -264,7 +321,8 @@ export default function ProfilePage() {
                     </div>
 
                     <div className="text-xs text-muted-foreground">
-                      Completed {new Date(work.completedAt).toLocaleDateString()}
+                      Completed{" "}
+                      {new Date(work.completedAt).toLocaleDateString()}
                     </div>
                   </CardContent>
                 </Card>
@@ -284,7 +342,9 @@ export default function ProfilePage() {
                     <div key={skill.name} className="space-y-2">
                       <div className="flex justify-between">
                         <span className="font-medium">{skill.name}</span>
-                        <span className="text-sm text-muted-foreground">{skill.level}%</span>
+                        <span className="text-sm text-muted-foreground">
+                          {skill.level}%
+                        </span>
                       </div>
                       <Progress value={skill.level} className="h-2" />
                     </div>
@@ -299,9 +359,15 @@ export default function ProfilePage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-starknet-blue/10 text-starknet-blue">DeFi Development</Badge>
-                  <Badge className="bg-starknet-orange/10 text-starknet-orange">Smart Contracts</Badge>
-                  <Badge className="bg-starknet-pink/10 text-starknet-pink">Frontend Development</Badge>
+                  <Badge className="bg-starknet-blue/10 text-starknet-blue">
+                    DeFi Development
+                  </Badge>
+                  <Badge className="bg-starknet-orange/10 text-starknet-orange">
+                    Smart Contracts
+                  </Badge>
+                  <Badge className="bg-starknet-pink/10 text-starknet-pink">
+                    Frontend Development
+                  </Badge>
                   <Badge variant="outline">Cairo Programming</Badge>
                   <Badge variant="outline">Web3 Integration</Badge>
                   <Badge variant="outline">Protocol Design</Badge>
@@ -318,15 +384,22 @@ export default function ProfilePage() {
                   <CardContent className="pt-6">
                     <div className="flex items-start space-x-4">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={review.clientAvatar || "/placeholder.svg"} alt={review.client} />
-                        <AvatarFallback>{review.client.charAt(0)}</AvatarFallback>
+                        <AvatarImage
+                          src={review.clientAvatar || "/placeholder.svg"}
+                          alt={review.client}
+                        />
+                        <AvatarFallback>
+                          {review.client.charAt(0)}
+                        </AvatarFallback>
                       </Avatar>
 
                       <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                           <div>
                             <div className="font-medium">{review.client}</div>
-                            <div className="text-sm text-muted-foreground">{review.bountyTitle}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {review.bountyTitle}
+                            </div>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -334,7 +407,9 @@ export default function ProfilePage() {
                           </div>
                         </div>
 
-                        <p className="text-muted-foreground mb-2">{review.comment}</p>
+                        <p className="text-muted-foreground mb-2">
+                          {review.comment}
+                        </p>
 
                         <div className="text-sm text-muted-foreground">
                           {new Date(review.date).toLocaleDateString()}
@@ -358,24 +433,36 @@ export default function ProfilePage() {
                   <div className="flex items-center space-x-3">
                     <div className="h-2 w-2 rounded-full bg-green-500"></div>
                     <div className="flex-1">
-                      <div className="text-sm">Completed bounty "DeFi Analytics Dashboard"</div>
-                      <div className="text-xs text-muted-foreground">2 days ago</div>
+                      <div className="text-sm">
+                        Completed bounty "DeFi Analytics Dashboard"
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        2 days ago
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-3">
                     <div className="h-2 w-2 rounded-full bg-blue-500"></div>
                     <div className="flex-1">
-                      <div className="text-sm">Applied to "Mobile Wallet Integration"</div>
-                      <div className="text-xs text-muted-foreground">5 days ago</div>
+                      <div className="text-sm">
+                        Applied to "Mobile Wallet Integration"
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        5 days ago
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-3">
                     <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
                     <div className="flex-1">
-                      <div className="text-sm">Updated portfolio with new project</div>
-                      <div className="text-xs text-muted-foreground">1 week ago</div>
+                      <div className="text-sm">
+                        Updated portfolio with new project
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        1 week ago
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -385,5 +472,5 @@ export default function ProfilePage() {
         </Tabs>
       </div>
     </div>
-  )
+  );
 }

@@ -20,38 +20,8 @@ allow-prebuilt-plugins = ["snforge_std"]
 
 # Contract definitions
 [[target.starknet-contract]]
-name = "bounty_registry"
-source = "src/bounty_registry.cairo"
-sierra = true
-casm = true
-
-[[target.starknet-contract]]
-name = "bounty_factory"
-source = "src/bounty_factory.cairo"
-sierra = true
-casm = true
-
-[[target.starknet-contract]]
-name = "bounty"
-source = "src/bounty.cairo"
-sierra = true
-casm = true
-
-[[target.starknet-contract]]
-name = "payment_processor"
-source = "src/payment_processor.cairo"
-sierra = true
-casm = true
-
-[[target.starknet-contract]]
-name = "reputation_system"
-source = "src/reputation_system.cairo"
-sierra = true
-casm = true
-
-[[target.starknet-contract]]
-name = "stark_earn"
-source = "src/stark_earn.cairo"
+name = "starkquest_minimal"
+source = "starkquest_minimal.cairo"
 sierra = true
 casm = true
 
