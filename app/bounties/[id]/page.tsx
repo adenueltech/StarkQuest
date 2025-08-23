@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,20 +10,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { PaymentModal } from "@/components/payment-modal";
+import BackButton from "@/components/back-button";
 import {
   Calendar,
   Users,
   Star,
   Clock,
-  ArrowLeft,
   ExternalLink,
   MessageSquare,
   Heart,
   Share2,
+  Loader2,
 } from "lucide-react";
+import { getBountyById } from "@/lib/services/bounty-service";
+import { toast } from "sonner";
 
-// Mock bounty detail data
-const bountyDetail = {
+// Mock bounty detail data for fallback
+const mockBountyDetail = {
   id: "1",
   title: "Build StarkNet DeFi Dashboard",
   description: `Create a comprehensive dashboard for tracking DeFi protocols on StarkNet. The dashboard should provide users with real-time insights into various DeFi protocols, including total value locked (TVL), annual percentage yields (APY), and portfolio management features.
@@ -103,16 +110,177 @@ const bountyDetail = {
 };
 
 export default function BountyDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [bountyDetail, setBountyDetail] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [isQuickApplyModalOpen, setIsQuickApplyModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchBountyDetails = async () => {
+      try {
+        setLoading(true);
+        // Try to fetch real data from the smart contracts
+        const bountyId = parseInt(id);
+        if (isNaN(bountyId)) {
+          throw new Error("Invalid bounty ID");
+        }
+        
+        const result = await getBountyById(bountyId);
+        
+        // Transform the data to match our UI structure
+        // Parsing the data returned from the smart contract
+        // Based on the Cairo contract, get_bounty_details returns:
+        // (title, description, reward_amount, deadline, token_address, status)
+        const details = result.details;
+        
+        // Extract individual values from the tuple
+        // Note: The exact parsing may need adjustment based on the actual return format
+        const title = details[0]?.toString() || "Untitled Bounty";
+        const description = details[1]?.toString() || "No description available";
+        const rewardAmount = parseInt(details[2]?.toString() || "0");
+        const deadlineTimestamp = parseInt(details[3]?.toString() || "0");
+        const tokenAddress = details[4]?.toString() || "";
+        const statusValue = details[5]?.toString() || "0";
+        
+        // Convert timestamp to readable date
+        const deadline = new Date(deadlineTimestamp * 1000).toLocaleDateString();
+        
+        // Convert status value to string
+        let status = "open";
+        switch (statusValue) {
+          case "0":
+            status = "open";
+            break;
+          case "1":
+            status = "in-progress";
+            break;
+          case "2":
+            status = "completed";
+            break;
+          case "3":
+            status = "cancelled";
+            break;
+          default:
+            status = "open";
+        }
+        
+        // Determine category and difficulty based on tags or other heuristics
+        const tags = ["Smart Contract", "Web3", "StarkNet"];
+        const category = "Development";
+        const difficulty = "Intermediate";
+        
+        const transformedData = {
+          id: id,
+          title: title,
+          description: description,
+          reward: rewardAmount,
+          currency: "STRK", // Assuming STRK token
+          category: category,
+          difficulty: difficulty,
+          deadline: deadline,
+          applicants: 5, // This would need to be fetched separately
+          status: status,
+          tags: tags,
+          poster: {
+            name: "Bounty Creator",
+            avatar: "/placeholder.svg?height=40&width=40",
+            reputation: 4.5,
+            completedBounties: 10,
+            totalRewardsGiven: rewardAmount * 2,
+          },
+          createdAt: "2024-01-01", // This would need to be fetched separately
+          applications: [
+            {
+              id: "1",
+              applicant: {
+                name: "Applicant 1",
+                avatar: "/placeholder.svg?height=32&width=32",
+                reputation: 4.8,
+                completedBounties: 15,
+              },
+              proposal: "Sample application proposal",
+              appliedAt: "2024-01-10",
+            }
+          ],
+        };
+        
+        setBountyDetail(transformedData);
+      } catch (err) {
+        console.error("Error fetching bounty details:", err);
+        setError("Failed to load bounty details. Using mock data instead.");
+        toast.error("Failed to load bounty details");
+        // Use mock data as fallback
+        setBountyDetail({
+          ...mockBountyDetail,
+          id: id
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchBountyDetails();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    toast.error(error);
+  }
+
+  if (!bountyDetail) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <BackButton fallback="/bounties" />
+          </div>
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Bounty Not Found</h2>
+            <p className="text-muted-foreground mb-6">
+              The bounty you're looking for doesn't exist or has been removed.
+            </p>
+            <Button onClick={() => window.history.back()}>Go Back</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Prepare bounty data for PaymentModal
+  const paymentBountyData = {
+    title: bountyDetail.title,
+    reward: bountyDetail.reward,
+    currency: bountyDetail.currency,
+    client: bountyDetail.poster.name
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       <div className="container mx-auto px-4 py-8">
         {/* Back Button */}
-        <Button variant="ghost" className="mb-6">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Bounties
-        </Button>
+        <div className="mb-6">
+          <BackButton fallback="/bounties" />
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Content */}
@@ -159,7 +327,7 @@ export default function BountyDetailPage() {
               <div className="flex items-center space-x-6 text-sm text-muted-foreground mb-6">
                 <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4" />
-                  <span>Due Feb 15, 2024</span>
+                  <span>Due {bountyDetail.deadline}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <Users className="h-4 w-4" />
@@ -167,12 +335,12 @@ export default function BountyDetailPage() {
                 </div>
                 <div className="flex items-center space-x-1">
                   <Clock className="h-4 w-4" />
-                  <span>Posted Jan 15, 2024</span>
+                  <span>Posted {bountyDetail.createdAt}</span>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {bountyDetail.tags.map((tag) => (
+                {bountyDetail.tags.map((tag: string) => (
                   <Badge key={tag} variant="outline" className="text-xs">
                     {tag}
                   </Badge>
@@ -199,53 +367,59 @@ export default function BountyDetailPage() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <MessageSquare className="h-5 w-5" />
-                  <span>Applications ({bountyDetail.applications.length})</span>
+                  <span>Applications ({bountyDetail.applications?.length || 0})</span>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {bountyDetail.applications.map((application, index) => (
-                  <div key={application.id}>
-                    <div className="flex items-start space-x-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage
-                          src={
-                            application.applicant.avatar || "/placeholder.svg"
-                          }
-                          alt={application.applicant.name}
-                        />
-                        <AvatarFallback>
-                          {application.applicant.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-medium">
-                            {application.applicant.name}
-                          </span>
-                          <div className="flex items-center space-x-1">
-                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                {bountyDetail.applications && bountyDetail.applications.length > 0 ? (
+                  bountyDetail.applications.map((application: any, index: number) => (
+                    <div key={application.id}>
+                      <div className="flex items-start space-x-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage
+                            src={
+                              application.applicant.avatar || "/placeholder.svg"
+                            }
+                            alt={application.applicant.name}
+                          />
+                          <AvatarFallback>
+                            {application.applicant.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-1">
+                            <span className="font-medium">
+                              {application.applicant.name}
+                            </span>
+                            <div className="flex items-center space-x-1">
+                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs text-muted-foreground">
+                                {application.applicant.reputation}
+                              </span>
+                            </div>
                             <span className="text-xs text-muted-foreground">
-                              {application.applicant.reputation}
+                              {application.applicant.completedBounties} bounties
+                              completed
                             </span>
                           </div>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            {application.proposal}
+                          </p>
                           <span className="text-xs text-muted-foreground">
-                            {application.applicant.completedBounties} bounties
-                            completed
+                            Applied {application.appliedAt}
                           </span>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {application.proposal}
-                        </p>
-                        <span className="text-xs text-muted-foreground">
-                          Applied {application.appliedAt}
-                        </span>
                       </div>
+                      {index < bountyDetail.applications.length - 1 && (
+                        <Separator className="mt-4" />
+                      )}
                     </div>
-                    {index < bountyDetail.applications.length - 1 && (
-                      <Separator className="mt-4" />
-                    )}
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-muted-foreground text-center py-4">
+                    No applications yet. Be the first to apply!
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -261,21 +435,19 @@ export default function BountyDetailPage() {
                 <div className="text-3xl font-bold text-starknet-blue mb-4">
                   {bountyDetail.reward.toLocaleString()} {bountyDetail.currency}
                 </div>
-                <PaymentModal
-                  trigger={
-                    <Button
-                      className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
-                      size="lg"
-                    >
-                      Apply for Bounty
-                    </Button>
-                  }
-                  title="Apply for Bounty"
-                  description="Submit your application and pay the application fee"
-                  amount="0.1"
-                  currency="STRK"
-                  recipient="StarkEarn Platform"
-                  onConfirm={() => console.log("Application submitted")}
+                <Button
+                  className="w-full bg-starknet-orange hover:bg-starknet-orange/90"
+                  size="lg"
+                  onClick={() => setIsApplyModalOpen(true)}
+                >
+                  Apply for Bounty
+                </Button>
+                
+                <PaymentModal 
+                  isOpen={isApplyModalOpen}
+                  onClose={() => setIsApplyModalOpen(false)}
+                  bounty={paymentBountyData}
+                  type="apply"
                 />
               </CardContent>
             </Card>
@@ -321,7 +493,7 @@ export default function BountyDetailPage() {
                       Total Rewards:
                     </span>
                     <span>
-                      {bountyDetail.poster.totalRewardsGiven.toLocaleString()}{" "}
+                      {bountyDetail.poster.totalRewardsGiven?.toLocaleString() || "0"}{" "}
                       STRK
                     </span>
                   </div>
@@ -348,18 +520,18 @@ export default function BountyDetailPage() {
                     placeholder="Write a brief proposal explaining why you're the right person for this bounty..."
                     className="min-h-[100px]"
                   />
-                  <PaymentModal
-                    trigger={
-                      <Button className="w-full bg-starknet-blue hover:bg-starknet-blue/90">
-                        Submit Application
-                      </Button>
-                    }
-                    title="Submit Application"
-                    description="Pay application fee to submit your proposal"
-                    amount="0.1"
-                    currency="STRK"
-                    recipient="StarkEarn Platform"
-                    onConfirm={() => console.log("Quick application submitted")}
+                  <Button 
+                    className="w-full bg-starknet-blue hover:bg-starknet-blue/90"
+                    onClick={() => setIsQuickApplyModalOpen(true)}
+                  >
+                    Submit Application
+                  </Button>
+                  
+                  <PaymentModal 
+                    isOpen={isQuickApplyModalOpen}
+                    onClose={() => setIsQuickApplyModalOpen(false)}
+                    bounty={paymentBountyData}
+                    type="apply"
                   />
                 </div>
               </CardContent>

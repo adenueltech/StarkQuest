@@ -302,6 +302,27 @@ export const getBountyDetails = async (bountyAddress: string) => {
   }
 };
 
+// Get bounty by ID
+export const getBountyById = async (bountyId: number) => {
+  try {
+    if (!bountyRegistry) {
+      initializeContracts();
+    }
+    
+    // Get bounty address from registry
+    const bountyAddress = await bountyRegistry?.get_bounty_address(bountyId);
+    
+    // Get bounty details
+    const details = await getBountyDetails(bountyAddress);
+    return {
+      address: bountyAddress,
+      details: details
+    };
+  } catch (error) {
+    throw new Error(`Failed to get bounty by ID: ${(error as Error).message}`);
+  }
+};
+
 // Get application
 export const getApplication = async (bountyAddress: string, applicationId: number) => {
   try {
