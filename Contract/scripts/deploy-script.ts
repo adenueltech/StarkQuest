@@ -66,7 +66,14 @@ async function deploy() {
       let contractPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.contract_class.json`);
       let casmPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.compiled_contract_class.json`);
       
-      // If the new naming convention files don't exist, try the old naming convention
+      // If the new naming convention files don't exist, try the contractName_contractName pattern
+      if (!fs.existsSync(contractPath)) {
+        console.log(`  Trying contractName_contractName pattern for ${contractName}`);
+        contractPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.contract_class.json`);
+        casmPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.compiled_contract_class.json`);
+      }
+      
+      // If that doesn't work, try the old naming convention
       if (!fs.existsSync(contractPath)) {
         console.log(`  Trying old naming convention for ${contractName}`);
         contractPath = path.resolve(__dirname, `../target/dev/${contractName}.contract_class.json`);
