@@ -39,9 +39,6 @@ async function deploy() {
     // Deployment parameters
     const CONFIG = {
         ownerAddress: ownerAddress,
-        platformFeeBasisPoints: process.env.PLATFORM_FEE_BASIS_POINTS || '200', // 2%
-        minReputationForCreation: process.env.MIN_REPUTATION_FOR_CREATION || '100',
-        minReputationForApplication: process.env.MIN_REPUTATION_FOR_APPLICATION || '50',
     };
     console.log("Configuration set:", CONFIG);
     try {
@@ -84,123 +81,29 @@ async function deploy() {
                 });
             }
         };
-        // Declare each contract class
-        console.log('Declaring bounty contract...');
-        const bountyClassHash = await declareContract('bounty');
-        console.log('Bounty contract declared:', bountyClassHash.class_hash);
-        console.log('Declaring bounty_registry contract...');
-        const registryClassHash = await declareContract('bounty_registry');
-        console.log('Bounty registry contract declared:', registryClassHash.class_hash);
-        console.log('Declaring bounty_factory contract...');
-        const factoryClassHash = await declareContract('bounty_factory');
-        console.log('Bounty factory contract declared:', factoryClassHash.class_hash);
-        console.log('Declaring payment_processor contract...');
-        const paymentProcessorClassHash = await declareContract('payment_processor');
-        console.log('Payment processor contract declared:', paymentProcessorClassHash.class_hash);
-        console.log('Declaring reputation_system contract...');
-        const reputationSystemClassHash = await declareContract('reputation_system');
-        console.log('Reputation system contract declared:', reputationSystemClassHash.class_hash);
-        console.log('Declaring stark_earn contract...');
-        const starkEarnClassHash = await declareContract('stark_earn');
-        console.log('Stark earn contract declared:', starkEarnClassHash.class_hash);
+        // Declare starkquest_minimal contract
+        console.log('Declaring starkquest_minimal contract...');
+        const starkQuestMinimalClassHash = await declareContract('starkquest_minimal');
+        console.log('StarkQuest minimal contract declared:', starkQuestMinimalClassHash.class_hash);
         console.log('   Contracts declared successfully');
-        // Step 2: Deploy contracts in order
+        // Step 2: Deploy contracts
         console.log('2. Deploying contracts...');
-        // Deploy BountyRegistry
-        console.log('Deploying BountyRegistry...');
-        const registryResponse = await account.deploy({
-            classHash: registryClassHash.class_hash,
-            constructorCalldata: CallData.compile({
-                owner: CONFIG.ownerAddress,
-            }),
+        // Deploy StarkQuest Minimal Contract
+        console.log('Deploying StarkQuest Minimal...');
+        const starkQuestMinimalResponse = await account.deploy({
+            classHash: starkQuestMinimalClassHash.class_hash,
+            constructorCalldata: CallData.compile({}),
         });
         // Handle potential array return type with type assertion
-        const registryAddress = (Array.isArray(registryResponse.contract_address)
-            ? registryResponse.contract_address[0]
-            : registryResponse.contract_address);
-        console.log(`   BountyRegistry deployed at: ${registryAddress}`);
-        // Deploy PaymentProcessor
-        console.log('Deploying PaymentProcessor...');
-        const paymentProcessorResponse = await account.deploy({
-            classHash: paymentProcessorClassHash.class_hash,
-            constructorCalldata: CallData.compile({
-                owner: CONFIG.ownerAddress,
-                platform_fee_basis_points: CONFIG.platformFeeBasisPoints,
-            }),
-        });
-        // Handle potential array return type with type assertion
-        const paymentProcessorAddress = (Array.isArray(paymentProcessorResponse.contract_address)
-            ? paymentProcessorResponse.contract_address[0]
-            : paymentProcessorResponse.contract_address);
-        console.log(`   PaymentProcessor deployed at: ${paymentProcessorAddress}`);
-        // Deploy ReputationSystem
-        console.log('Deploying ReputationSystem...');
-        const reputationSystemResponse = await account.deploy({
-            classHash: reputationSystemClassHash.class_hash,
-            constructorCalldata: CallData.compile({
-                owner: CONFIG.ownerAddress,
-                min_reputation_for_creation: CONFIG.minReputationForCreation,
-                min_reputation_for_application: CONFIG.minReputationForApplication,
-            }),
-        });
-        // Handle potential array return type with type assertion
-        const reputationSystemAddress = (Array.isArray(reputationSystemResponse.contract_address)
-            ? reputationSystemResponse.contract_address[0]
-            : reputationSystemResponse.contract_address);
-        console.log(`   ReputationSystem deployed at: ${reputationSystemAddress}`);
-        // Deploy BountyFactory
-        console.log('Deploying BountyFactory...');
-        const factoryResponse = await account.deploy({
-            classHash: factoryClassHash.class_hash,
-            constructorCalldata: CallData.compile({
-                registry_address: registryAddress,
-                bounty_class_hash: bountyClassHash.class_hash,
-                owner: CONFIG.ownerAddress,
-            }),
-        });
-        // Handle potential array return type with type assertion
-        const factoryAddress = (Array.isArray(factoryResponse.contract_address)
-            ? factoryResponse.contract_address[0]
-            : factoryResponse.contract_address);
-        console.log(`   BountyFactory deployed at: ${factoryAddress}`);
-        // Deploy StarkEarn Main Contract
-        console.log('Deploying StarkEarn...');
-        const starkEarnResponse = await account.deploy({
-            classHash: starkEarnClassHash.class_hash,
-            constructorCalldata: CallData.compile({
-                owner: CONFIG.ownerAddress,
-            }),
-        });
-        // Handle potential array return type with type assertion
-        const starkEarnAddress = (Array.isArray(starkEarnResponse.contract_address)
-            ? starkEarnResponse.contract_address[0]
-            : starkEarnResponse.contract_address);
-        console.log(`   StarkEarn deployed at: ${starkEarnAddress}`);
-        // Step 3: Initialize StarkEarn Contract
-        console.log('3. Initializing StarkEarn contract...');
-        // Initialize the StarkEarn contract with the addresses of the other contracts
-        console.log('Initializing StarkEarn with contract addresses...');
-        await account.execute({
-            contractAddress: starkEarnAddress,
-            entrypoint: 'initialize',
-            calldata: [
-                registryAddress,
-                factoryAddress,
-                paymentProcessorAddress,
-                reputationSystemAddress,
-                bountyClassHash.class_hash
-            ]
-        });
-        console.log('   StarkEarn initialized');
-        // Step 4: Update frontend configuration
-        console.log('4. Updating frontend configuration...');
+        const starkQuestMinimalAddress = (Array.isArray(starkQuestMinimalResponse.contract_address)
+            ? starkQuestMinimalResponse.contract_address[0]
+            : starkQuestMinimalResponse.contract_address);
+        console.log(`   StarkQuest Minimal deployed at: ${starkQuestMinimalAddress}`);
+        // Step 3: Update frontend configuration
+        console.log('3. Updating frontend configuration...');
         const configContent = `// Contract addresses for StarkNet
 export const CONTRACT_ADDRESSES = {
-  BOUNTY_REGISTRY: "${registryAddress}",
-  BOUNTY_FACTORY: "${factoryAddress}",
-  PAYMENT_PROCESSOR: "${paymentProcessorAddress}",
-  REPUTATION_SYSTEM: "${reputationSystemAddress}",
-  STARK_EARN: "${starkEarnAddress}",
+  STARKQUEST_MINIMAL: "${starkQuestMinimalAddress}",
 };
 
 // Network configuration
@@ -217,11 +120,7 @@ export const TOKEN_ADDRESSES = {
         console.log('Frontend configuration updated');
         console.log('\nDeployment completed successfully!');
         console.log('Deployed contract addresses:');
-        console.log(`  BountyRegistry: ${registryAddress}`);
-        console.log(`  BountyFactory: ${factoryAddress}`);
-        console.log(`  PaymentProcessor: ${paymentProcessorAddress}`);
-        console.log(`  ReputationSystem: ${reputationSystemAddress}`);
-        console.log(`  StarkEarn: ${starkEarnAddress}`);
+        console.log(`  StarkQuest Minimal: ${starkQuestMinimalAddress}`);
     }
     catch (error) {
         console.error('Deployment failed:', error);
