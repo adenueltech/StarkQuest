@@ -4,7 +4,7 @@ import starkQuestMinimalAbi from '../abis/StarkQuestMinimal.json';
 
 // Initialize provider
 const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+  nodeUrl: process.env.NEXT_PUBLIC_STARKNET_NODE_URL || 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
 });
 
 // Contract instances
@@ -252,7 +252,7 @@ export const cancelBounty = async (
 };
 
 // Get bounty details
-export const getBountyDetails = async (bountyId: number) => {
+export const getBountyById = async (bountyId: number) => {
   try {
     if (!starkQuestMinimal) {
       initializeContracts();
@@ -321,7 +321,7 @@ export const getAllBounties = async () => {
     // Get all bounty details
     const bounties = [];
     for (let i = 1; i <= bountyCount; i++) {
-      const details = await getBountyDetails(i);
+      const details = await getBountyById(i);
       bounties.push({
         id: i,
         details: details

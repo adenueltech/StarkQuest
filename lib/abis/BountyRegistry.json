@@ -1,0 +1,31 @@
+[
+  {
+    "name": "get_bounty_count",
+    "type": "function",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "count",
+        "type": "core::integer::u64"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_bounty_address",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "view"
+  }
+]

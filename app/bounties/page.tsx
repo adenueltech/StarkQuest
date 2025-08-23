@@ -1,6 +1,6 @@
 import { Header } from "@/components/header";
 import { BountyCard } from "@/components/bounty-card";
-import { SoloSearch } from "@/components/Solo-search";
+import { SoloSearch } from "@/components/advanced-search";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";

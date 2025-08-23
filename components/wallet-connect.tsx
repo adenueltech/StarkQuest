@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Separator } from "@/components/ui/separator"
 import { Wallet, ChevronDown, Copy, ExternalLink, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
 // Import your starknet service functions
-// import { connectWallet, getAccount } from "@/lib/services/starknet"
+import { Contract, RpcProvider } from "starknet"
 
 const supportedWallets = [
   {

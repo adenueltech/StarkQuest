@@ -73,11 +73,18 @@ async function deploy() {
         casmPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.compiled_contract_class.json`);
       }
       
-      // If that doesn't work, try the old naming convention
+      // If that doesn't work, try another pattern
       if (!fs.existsSync(contractPath)) {
-        console.log(`  Trying old naming convention for ${contractName}`);
+        console.log(`  Trying alternative naming pattern for ${contractName}`);
         contractPath = path.resolve(__dirname, `../target/dev/${contractName}.contract_class.json`);
         casmPath = path.resolve(__dirname, `../target/dev/${contractName}.compiled_contract_class.json`);
+      }
+      
+      // If none of the above work, try the pattern we see in the target directory
+      if (!fs.existsSync(contractPath)) {
+        console.log(`  Trying starkquest_minimal_starkquest_minimal pattern for ${contractName}`);
+        contractPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.contract_class.json`);
+        casmPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.compiled_contract_class.json`);
       }
       
       console.log(`  Contract path: ${contractPath}`);
@@ -95,23 +102,69 @@ async function deploy() {
         console.log(`  CASM file found for ${contractName}`);
         const casmJson = JSON.parse(fs.readFileSync(casmPath, 'utf-8'));
         console.log(`  Declaring ${contractName} with CASM...`);
-        return await account.declare({
-          contract: contractJson,
-          casm: casmJson,
-        });
+        try {
+          return await account.declare({
+            contract: contractJson,
+            casm: casmJson,
+          });
+        } catch (error: any) {
+          // Check if the error is due to the class already being declared
+          if (error.message && error.message.includes('already declared')) {
+            console.log(`  Class already declared, extracting class hash from error...`);
+            // Extract class hash from error message
+            // Look for the full class hash in the error message
+            const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
+            if (classHashMatch && classHashMatch[1]) {
+              const classHash = classHashMatch[1];
+              console.log(`  Using existing class hash: ${classHash}`);
+              return { class_hash: classHash, transaction_hash: null };
+            }
+          }
+          // If it's a different error, re-throw it
+          throw error;
+        }
       } else {
         // Try without CASM (might work for simple contracts)
         console.log(`   Warning: No CASM file found for ${contractName}, trying without it...`);
-        return await account.declare({
-          contract: contractJson,
-        });
+        try {
+          return await account.declare({
+            contract: contractJson,
+          });
+        } catch (error: any) {
+          // Check if the error is due to the class already being declared
+          if (error.message && error.message.includes('already declared')) {
+            console.log(`  Class already declared, extracting class hash from error...`);
+            // Extract class hash from error message
+            // Look for the full class hash in the error message
+            const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
+            if (classHashMatch && classHashMatch[1]) {
+              const classHash = classHashMatch[1];
+              console.log(`  Using existing class hash: ${classHash}`);
+              return { class_hash: classHash, transaction_hash: null };
+            }
+          }
+          // If it's a different error, re-throw it
+          throw error;
+        }
       }
     };
     
     // Declare starkquest_minimal contract
     console.log('Declaring starkquest_minimal contract...');
-    const starkQuestMinimalClassHash = await declareContract('starkquest_minimal');
-    console.log('StarkQuest minimal contract declared:', starkQuestMinimalClassHash.class_hash);
+    const starkQuestMinimalDeclareResult = await declareContract('starkquest_minimal');
+    console.log('StarkQuest minimal contract declared with transaction hash:', starkQuestMinimalDeclareResult.transaction_hash);
+    console.log('StarkQuest minimal contract class hash:', starkQuestMinimalDeclareResult.class_hash);
+    
+    // Wait for the declaration transaction to be confirmed if it's a new declaration
+    if (starkQuestMinimalDeclareResult.transaction_hash) {
+      console.log('Waiting for declaration transaction to be confirmed...');
+      await provider.waitForTransaction(starkQuestMinimalDeclareResult.transaction_hash);
+      console.log('Declaration transaction confirmed!');
+    } else {
+      console.log('Class already declared, no need to wait for transaction confirmation.');
+    }
+    
+    const starkQuestMinimalClassHash = starkQuestMinimalDeclareResult.class_hash;
     
     console.log('   Contracts declared successfully');
     
@@ -121,7 +174,7 @@ async function deploy() {
     // Deploy StarkQuest Minimal Contract
     console.log('Deploying StarkQuest Minimal...');
     const starkQuestMinimalResponse = await account.deploy({
-      classHash: starkQuestMinimalClassHash.class_hash,
+      classHash: starkQuestMinimalClassHash,
       constructorCalldata: CallData.compile({}),
     });
     
@@ -134,9 +187,38 @@ async function deploy() {
     // Step 3: Update frontend configuration
     console.log('3. Updating frontend configuration...');
     
-    const configContent = `// Contract addresses for StarkNet
+    // Read existing config file to preserve other contract addresses
+    const configPath = path.resolve(__dirname, '../../lib/config.ts');
+    let existingConfig = {
+      BOUNTY_REGISTRY: "",
+      BOUNTY_FACTORY: "",
+      PAYMENT_PROCESSOR: "",
+      REPUTATION_SYSTEM: ""
+    };
+    
+    try {
+      const configContent = fs.readFileSync(configPath, 'utf-8');
+      // Extract existing contract addresses using regex
+      const bountyRegistryMatch = configContent.match(/BOUNTY_REGISTRY:\s*["'](0x[0-9a-fA-F]+)["']/);
+      const bountyFactoryMatch = configContent.match(/BOUNTY_FACTORY:\s*["'](0x[0-9a-fA-F]+)["']/);
+      const paymentProcessorMatch = configContent.match(/PAYMENT_PROCESSOR:\s*["'](0x[0-9a-fA-F]+)["']/);
+      const reputationSystemMatch = configContent.match(/REPUTATION_SYSTEM:\s*["'](0x[0-9a-fA-F]+)["']/);
+      
+      if (bountyRegistryMatch) existingConfig.BOUNTY_REGISTRY = bountyRegistryMatch[1];
+      if (bountyFactoryMatch) existingConfig.BOUNTY_FACTORY = bountyFactoryMatch[1];
+      if (paymentProcessorMatch) existingConfig.PAYMENT_PROCESSOR = paymentProcessorMatch[1];
+      if (reputationSystemMatch) existingConfig.REPUTATION_SYSTEM = reputationSystemMatch[1];
+    } catch (error) {
+      console.log('No existing config file found or error reading it, using default empty addresses');
+    }
+    
+    const newConfigContent = `// Contract addresses for StarkNet
 export const CONTRACT_ADDRESSES = {
   STARKQUEST_MINIMAL: "${starkQuestMinimalAddress}",
+  BOUNTY_REGISTRY: "${existingConfig.BOUNTY_REGISTRY}",
+  BOUNTY_FACTORY: "${existingConfig.BOUNTY_FACTORY}",
+  PAYMENT_PROCESSOR: "${existingConfig.PAYMENT_PROCESSOR}",
+  REPUTATION_SYSTEM: "${existingConfig.REPUTATION_SYSTEM}",
 };
 
 // Network configuration

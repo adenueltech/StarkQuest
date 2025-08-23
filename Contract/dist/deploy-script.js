@@ -74,30 +74,77 @@ async function deploy() {
                 console.log(`  CASM file found for ${contractName}`);
                 const casmJson = JSON.parse(fs.readFileSync(casmPath, 'utf-8'));
                 console.log(`  Declaring ${contractName} with CASM...`);
-                return await account.declare({
-                    contract: contractJson,
-                    casm: casmJson,
-                });
+                try {
+                    return await account.declare({
+                        contract: contractJson,
+                        casm: casmJson,
+                    });
+                }
+                catch (error) {
+                    // Check if the error is due to the class already being declared
+                    if (error.message && error.message.includes('already declared')) {
+                        console.log(`  Class already declared, extracting class hash from error...`);
+                        // Extract class hash from error message
+                        // Look for the full class hash in the error message
+                        const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
+                        if (classHashMatch && classHashMatch[1]) {
+                            const classHash = classHashMatch[1];
+                            console.log(`  Using existing class hash: ${classHash}`);
+                            return { class_hash: classHash, transaction_hash: null };
+                        }
+                    }
+                    // If it's a different error, re-throw it
+                    throw error;
+                }
             }
             else {
                 // Try without CASM (might work for simple contracts)
                 console.log(`   Warning: No CASM file found for ${contractName}, trying without it...`);
-                return await account.declare({
-                    contract: contractJson,
-                });
+                try {
+                    return await account.declare({
+                        contract: contractJson,
+                    });
+                }
+                catch (error) {
+                    // Check if the error is due to the class already being declared
+                    if (error.message && error.message.includes('already declared')) {
+                        console.log(`  Class already declared, extracting class hash from error...`);
+                        // Extract class hash from error message
+                        // Look for the full class hash in the error message
+                        const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
+                        if (classHashMatch && classHashMatch[1]) {
+                            const classHash = classHashMatch[1];
+                            console.log(`  Using existing class hash: ${classHash}`);
+                            return { class_hash: classHash, transaction_hash: null };
+                        }
+                    }
+                    // If it's a different error, re-throw it
+                    throw error;
+                }
             }
         };
         // Declare starkquest_minimal contract
         console.log('Declaring starkquest_minimal contract...');
-        const starkQuestMinimalClassHash = await declareContract('starkquest_minimal');
-        console.log('StarkQuest minimal contract declared:', starkQuestMinimalClassHash.class_hash);
+        const starkQuestMinimalDeclareResult = await declareContract('starkquest_minimal');
+        console.log('StarkQuest minimal contract declared with transaction hash:', starkQuestMinimalDeclareResult.transaction_hash);
+        console.log('StarkQuest minimal contract class hash:', starkQuestMinimalDeclareResult.class_hash);
+        // Wait for the declaration transaction to be confirmed if it's a new declaration
+        if (starkQuestMinimalDeclareResult.transaction_hash) {
+            console.log('Waiting for declaration transaction to be confirmed...');
+            await provider.waitForTransaction(starkQuestMinimalDeclareResult.transaction_hash);
+            console.log('Declaration transaction confirmed!');
+        }
+        else {
+            console.log('Class already declared, no need to wait for transaction confirmation.');
+        }
+        const starkQuestMinimalClassHash = starkQuestMinimalDeclareResult.class_hash;
         console.log('   Contracts declared successfully');
         // Step 2: Deploy contracts
         console.log('2. Deploying contracts...');
         // Deploy StarkQuest Minimal Contract
         console.log('Deploying StarkQuest Minimal...');
         const starkQuestMinimalResponse = await account.deploy({
-            classHash: starkQuestMinimalClassHash.class_hash,
+            classHash: starkQuestMinimalClassHash,
             constructorCalldata: CallData.compile({}),
         });
         // Handle potential array return type with type assertion

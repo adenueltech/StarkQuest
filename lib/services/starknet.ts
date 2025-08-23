@@ -8,7 +8,7 @@ import reputationSystemAbi from '../abis/ReputationSystem.json';
 
 // Initialize provider
 const provider = new RpcProvider({
-  nodeUrl: 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
+  nodeUrl: 'https://rpc.starknet-testnet.lava.build'
 });
 
 // Contract instances

@@ -1,0 +1,177 @@
+[
+  {
+    "name": "submit_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "accept_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "application_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "submit_work",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "content",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "approve_submission",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "submission_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "cancel_bounty",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "reason",
+        "type": "core::felt252"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "get_bounty",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "title",
+        "type": "core::felt252"
+      },
+      {
+        "name": "description",
+        "type": "core::felt252"
+      },
+      {
+        "name": "reward_amount",
+        "type": "core::integer::u256"
+      },
+      {
+        "name": "deadline",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "token_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "status",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_application",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "application_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "applicant",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "timestamp",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "accepted",
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "get_submission",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "bounty_id",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "submission_id",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hunter",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "content",
+        "type": "core::felt252"
+      },
+      {
+        "name": "timestamp",
+        "type": "core::integer::u64"
+      },
+      {
+        "name": "approved",
+        "type": "core::bool"
+      }
+    ],
+    "state_mutability": "view"
+  }
+]

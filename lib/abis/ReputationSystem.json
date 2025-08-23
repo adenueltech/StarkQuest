@@ -1,0 +1,59 @@
+[
+  {
+    "name": "get_user_reputation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user_address",
+        "type": "core::starknet::contract_address::ContractAddress"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "reputation",
+        "type": "core::integer::u64"
+      }
+    ],
+    "state_mutability": "view"
+  },
+  {
+    "name": "register_user",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "initial_score",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  },
+  {
+    "name": "update_reputation",
+    "type": "function",
+    "inputs": [
+      {
+        "name": "user",
+        "type": "core::starknet::contract_address::ContractAddress"
+      },
+      {
+        "name": "is_creator",
+        "type": "core::bool"
+      },
+      {
+        "name": "is_completed",
+        "type": "core::bool"
+      },
+      {
+        "name": "quality_score",
+        "type": "core::integer::u64"
+      }
+    ],
+    "outputs": [],
+    "state_mutability": "external"
+  }
+]
