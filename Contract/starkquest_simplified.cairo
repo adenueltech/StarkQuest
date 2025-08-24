@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-// StarkQuest - Simplified Smart Contract
-// This is a simplified version of the StarkQuest smart contract system
+// StarkEarn - Simplified Smart Contract
+// This is a simplified version of the StarkEarn smart contract system
 // that combines essential functionality into a single contract
 
 #[starknet::contract]
-mod starkquest_simplified {
+mod StarkEarn_simplified {
     use starknet::ContractAddress;
     use starknet::get_contract_address;
     use starknet::storage::{StoragePointerRead, StoragePointerWrite};
@@ -163,7 +163,7 @@ mod starkquest_simplified {
     
     // External functions
     #[external(v0)]
-    impl IStarkQuestSimplified of super::IStarkQuestSimplified {
+    impl IStarkEarnSimplified of super::IStarkEarnSimplified {
         // Create a new bounty
         fn create_bounty(
             ref self: ContractState,
@@ -557,9 +557,9 @@ mod starkquest_simplified {
     }
 }
 
-// Interface for StarkQuest Simplified
+// Interface for StarkEarn Simplified
 #[starknet::interface]
-trait IStarkQuestSimplified {
+trait IStarkEarnSimplified {
     fn create_bounty(
         ref self: ContractState,
         title: felt252,
@@ -589,13 +589,13 @@ trait IStarkQuestSimplified {
         quality_score: u64
     );
     
-    fn get_bounty(self: @ContractState, bounty_id: u64) -> (felt252, felt252, u256, u64, ContractAddress, super::starkquest_simplified::BountyStatus);
+    fn get_bounty(self: @ContractState, bounty_id: u64) -> (felt252, felt252, u256, u64, ContractAddress, super::StarkEarn_simplified::BountyStatus);
     
-    fn get_application(self: @ContractState, bounty_id: u64, application_id: u64) -> super::starkquest_simplified::Application;
+    fn get_application(self: @ContractState, bounty_id: u64, application_id: u64) -> super::StarkEarn_simplified::Application;
     
-    fn get_submission(self: @ContractState, bounty_id: u64, submission_id: u64) -> super::starkquest_simplified::Submission;
+    fn get_submission(self: @ContractState, bounty_id: u64, submission_id: u64) -> super::StarkEarn_simplified::Submission;
     
-    fn get_user_reputation(self: @ContractState, user: ContractAddress) -> super::starkquest_simplified::ReputationRecord;
+    fn get_user_reputation(self: @ContractState, user: ContractAddress) -> super::StarkEarn_simplified::ReputationRecord;
     
     fn get_bounty_count(self: @ContractState) -> u64;
     

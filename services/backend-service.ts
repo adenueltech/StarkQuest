@@ -1,5 +1,5 @@
-import { eventMonitor } from './event-monitor';
-import { initializeContracts } from '../lib/services/starknet';
+import { eventMonitor } from "./event-monitor";
+import { initializeContracts } from "../lib/services/starknet";
 
 // Backend service class
 export class BackendService {
@@ -12,8 +12,8 @@ export class BackendService {
       return;
     }
 
-    console.log("Starting StarkQuest backend service...");
-    
+    console.log("Starting StarkEarn backend service...");
+
     // Initialize contracts
     try {
       initializeContracts();
@@ -33,7 +33,7 @@ export class BackendService {
     }
 
     this.isRunning = true;
-    console.log("StarkQuest backend service started successfully");
+    console.log("StarkEarn backend service started successfully");
   }
 
   // Stop the backend service
@@ -43,13 +43,13 @@ export class BackendService {
       return;
     }
 
-    console.log("Stopping StarkQuest backend service...");
-    
+    console.log("Stopping StarkEarn backend service...");
+
     // Stop event monitor
     eventMonitor.stop();
-    
+
     this.isRunning = false;
-    console.log("StarkQuest backend service stopped successfully");
+    console.log("StarkEarn backend service stopped successfully");
   }
 
   // Health check
@@ -59,8 +59,8 @@ export class BackendService {
       timestamp: new Date().toISOString(),
       services: {
         eventMonitor: "running",
-        contracts: "initialized"
-      }
+        contracts: "initialized",
+      },
     };
   }
 }
@@ -70,19 +70,20 @@ export const backendService = new BackendService();
 
 // Start the backend service if this file is run directly
 if (require.main === module) {
-  backendService.start()
+  backendService
+    .start()
     .then(() => {
       console.log("Backend service started successfully");
-      
+
       // Handle graceful shutdown
-      process.on('SIGTERM', async () => {
-        console.log('SIGTERM received, shutting down gracefully');
+      process.on("SIGTERM", async () => {
+        console.log("SIGTERM received, shutting down gracefully");
         await backendService.stop();
         process.exit(0);
       });
 
-      process.on('SIGINT', async () => {
-        console.log('SIGINT received, shutting down gracefully');
+      process.on("SIGINT", async () => {
+        console.log("SIGINT received, shutting down gracefully");
         await backendService.stop();
         process.exit(0);
       });

@@ -1,5 +1,5 @@
 [package]
-name = "starkquest"
+name = "StarkEarn"
 version = "0.1.0"
 edition = "2024_07"
 
@@ -20,8 +20,8 @@ allow-prebuilt-plugins = ["snforge_std"]
 
 # Contract definitions
 [[target.starknet-contract]]
-name = "starkquest_minimal"
-source = "starkquest_minimal.cairo"
+name = "StarkEarn_minimal"
+source = "StarkEarn_minimal.cairo"
 sierra = true
 casm = true
 

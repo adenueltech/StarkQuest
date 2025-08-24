@@ -522,7 +522,7 @@ export default function BountyDetailPage() {
             {/* Quick Apply */}
             <Card>
               <CardHeader>
-                <CardTitle>Quick Application</CardTitle>
+                <CardTitle>Submission Link</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

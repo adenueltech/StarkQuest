@@ -1,185 +1,219 @@
-// Deployment script for StarkQuest contracts
-// This script handles the deployment of all contracts in the correct order
-import { Account, RpcProvider, CallData } from 'starknet';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
+// Robust deployment script for StarkEarn contracts with connection testing
+import { Account, RpcProvider, CallData } from "starknet";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 // ES module equivalent of __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // Load environment variables
 dotenv.config();
 console.log("Environment variables loaded:");
-console.log("STARKNET_NODE_URL:", process.env.STARKNET_NODE_URL ? "SET" : "NOT SET");
+console.log(
+  "STARKNET_NODE_URL:",
+  process.env.STARKNET_NODE_URL ? "SET" : "NOT SET"
+);
 console.log("OWNER_ADDRESS:", process.env.OWNER_ADDRESS ? "SET" : "NOT SET");
 console.log("PRIVATE_KEY:", process.env.PRIVATE_KEY ? "SET" : "NOT SET");
+// Working RPC endpoints as fallbacks
+const FALLBACK_ENDPOINTS = [
+  "https://starknet-sepolia.public.blastapi.io",
+  "https://free-rpc.nethermind.io/sepolia-juno",
+  "https://starknet-sepolia.infura.io/v3/YOUR_INFURA_KEY",
+  "https://starknet-sepolia.g.alchemy.com/starknet/version/rpc/v0_8/YOUR_ALCHEMY_KEY",
+];
+async function testProvider(nodeUrl) {
+  try {
+    console.log(`Testing endpoint: ${nodeUrl}`);
+    const provider = new RpcProvider({ nodeUrl });
+    const chainId = await Promise.race([
+      provider.getChainId(),
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error("Connection timeout (5s)")), 5000)
+      ),
+    ]);
+    console.log(`✅ Connection successful! Chain ID: ${chainId}`);
+    return provider;
+  } catch (error) {
+    console.log(`❌ Connection failed: ${error.message}`);
+    return null;
+  }
+}
+async function findWorkingProvider() {
+  console.log("Finding working RPC provider...");
+  if (process.env.STARKNET_NODE_URL) {
+    const provider = await testProvider(process.env.STARKNET_NODE_URL);
+    if (provider) return provider;
+  }
+  for (const endpoint of FALLBACK_ENDPOINTS) {
+    const provider = await testProvider(endpoint);
+    if (provider) return provider;
+  }
+  throw new Error(
+    "No working RPC endpoint found. Please check your internet connection or try a different endpoint."
+  );
+}
 async function deploy() {
-    console.log("Starting StarkQuest contract deployment...");
-    // Configuration
-    console.log("Setting up provider...");
-    const provider = new RpcProvider({
-        nodeUrl: process.env.STARKNET_NODE_URL || 'https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID'
-    });
-    console.log("Provider set up successfully");
-    // These values would typically come from environment variables or a secure config
+  console.log("Starting StarkEarn contract deployment...");
+  try {
+    const provider = await findWorkingProvider();
     const ownerAddress = process.env.OWNER_ADDRESS;
     const privateKey = process.env.PRIVATE_KEY;
-    console.log("Checking required environment variables...");
     if (!ownerAddress || !privateKey) {
-        console.error('OWNER_ADDRESS and PRIVATE_KEY must be set in environment variables');
-        console.log("OWNER_ADDRESS:", ownerAddress);
-        console.log("PRIVATE_KEY:", privateKey ? "SET" : "NOT SET");
-        return;
+      console.error(
+        "OWNER_ADDRESS and PRIVATE_KEY must be set in environment variables"
+      );
+      return;
     }
     console.log("Environment variables validated");
+    // Step 3: Setup account with proper key pair
     console.log("Setting up account...");
-    const account = new Account(provider, ownerAddress, privateKey);
-    console.log("Account set up successfully");
-    // Deployment parameters
-    const CONFIG = {
-        ownerAddress: ownerAddress,
-    };
-    console.log("Configuration set:", CONFIG);
+    // In starknet.js v7+, we need to handle Argent wallets differently
+    // First, let's try to get the account class hash for Argent wallets
+    let account;
     try {
-        // Step 1: Declare contracts
-        console.log('1. Declaring contracts...');
-        // Helper function to declare contract with CASM if available
-        const declareContract = async (contractName) => {
-            console.log(`Declaring contract: ${contractName}`);
-            // Try the new naming convention first
-            let contractPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.contract_class.json`);
-            let casmPath = path.resolve(__dirname, `../target/dev/${contractName}_HelloStarknet.compiled_contract_class.json`);
-            // If the new naming convention files don't exist, try the contractName_contractName pattern
-            if (!fs.existsSync(contractPath)) {
-                console.log(`  Trying contractName_contractName pattern for ${contractName}`);
-                contractPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.contract_class.json`);
-                casmPath = path.resolve(__dirname, `../target/dev/${contractName}_${contractName}.compiled_contract_class.json`);
-            }
-            // If that doesn't work, try the old naming convention
-            if (!fs.existsSync(contractPath)) {
-                console.log(`  Trying old naming convention for ${contractName}`);
-                contractPath = path.resolve(__dirname, `../target/dev/${contractName}.contract_class.json`);
-                casmPath = path.resolve(__dirname, `../target/dev/${contractName}.compiled_contract_class.json`);
-            }
-            console.log(`  Contract path: ${contractPath}`);
-            console.log(`  CASM path: ${casmPath}`);
-            if (!fs.existsSync(contractPath)) {
-                throw new Error(`Contract file not found: ${contractPath}`);
-            }
-            const contractJson = JSON.parse(fs.readFileSync(contractPath, 'utf-8'));
-            console.log(`  Contract JSON loaded for ${contractName}`);
-            // Check if CASM file exists
-            if (fs.existsSync(casmPath)) {
-                console.log(`  CASM file found for ${contractName}`);
-                const casmJson = JSON.parse(fs.readFileSync(casmPath, 'utf-8'));
-                console.log(`  Declaring ${contractName} with CASM...`);
-                try {
-                    return await account.declare({
-                        contract: contractJson,
-                        casm: casmJson,
-                    });
-                }
-                catch (error) {
-                    // Check if the error is due to the class already being declared
-                    if (error.message && error.message.includes('already declared')) {
-                        console.log(`  Class already declared, extracting class hash from error...`);
-                        // Extract class hash from error message
-                        // Look for the full class hash in the error message
-                        const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
-                        if (classHashMatch && classHashMatch[1]) {
-                            const classHash = classHashMatch[1];
-                            console.log(`  Using existing class hash: ${classHash}`);
-                            return { class_hash: classHash, transaction_hash: null };
-                        }
-                    }
-                    // If it's a different error, re-throw it
-                    throw error;
-                }
-            }
-            else {
-                // Try without CASM (might work for simple contracts)
-                console.log(`   Warning: No CASM file found for ${contractName}, trying without it...`);
-                try {
-                    return await account.declare({
-                        contract: contractJson,
-                    });
-                }
-                catch (error) {
-                    // Check if the error is due to the class already being declared
-                    if (error.message && error.message.includes('already declared')) {
-                        console.log(`  Class already declared, extracting class hash from error...`);
-                        // Extract class hash from error message
-                        // Look for the full class hash in the error message
-                        const classHashMatch = error.message.match(/Class with hash (0x[0-9a-fA-F]+)/);
-                        if (classHashMatch && classHashMatch[1]) {
-                            const classHash = classHashMatch[1];
-                            console.log(`  Using existing class hash: ${classHash}`);
-                            return { class_hash: classHash, transaction_hash: null };
-                        }
-                    }
-                    // If it's a different error, re-throw it
-                    throw error;
-                }
-            }
-        };
-        // Declare starkquest_minimal contract
-        console.log('Declaring starkquest_minimal contract...');
-        const starkQuestMinimalDeclareResult = await declareContract('starkquest_minimal');
-        console.log('StarkQuest minimal contract declared with transaction hash:', starkQuestMinimalDeclareResult.transaction_hash);
-        console.log('StarkQuest minimal contract class hash:', starkQuestMinimalDeclareResult.class_hash);
-        // Wait for the declaration transaction to be confirmed if it's a new declaration
-        if (starkQuestMinimalDeclareResult.transaction_hash) {
-            console.log('Waiting for declaration transaction to be confirmed...');
-            await provider.waitForTransaction(starkQuestMinimalDeclareResult.transaction_hash);
-            console.log('Declaration transaction confirmed!');
+      // Try to get the class hash of the account to determine if it's an Argent wallet
+      const classHash = await provider.getClassHashAt(ownerAddress);
+      console.log(`Account class hash: ${classHash}`);
+      // Create account - for Argent wallets, we still use the same constructor
+      // but we need to ensure the private key matches the public key of the account
+      account = new Account(provider, ownerAddress, privateKey);
+    } catch (error) {
+      console.log(
+        "Could not get account class hash, creating account with provided details"
+      );
+      account = new Account(provider, ownerAddress, privateKey);
+    }
+    try {
+      console.log("Validating account setup...");
+      const nonce = await account.getNonce();
+      console.log(`✅ Account validation successful. Nonce: ${nonce}`);
+    } catch (error) {
+      if (
+        error.message.includes("argent invalid owner sig") ||
+        error.message.includes("invalid signature")
+      ) {
+        console.error(
+          "❌ Account validation failed - Private key/address mismatch"
+        );
+        console.log(
+          "🔧 Ensure PRIVATE_KEY matches OWNER_ADDRESS from ArgentX (Sepolia testnet)"
+        );
+        return;
+      }
+      throw error;
+    }
+    console.log("Account set up successfully");
+    // Step 4: Declare contract helper
+    const declareContract = async (contractName) => {
+      console.log(`Declaring contract: ${contractName}`);
+      const patterns = [
+        `${contractName}_HelloStarknet`,
+        `${contractName}_${contractName}`,
+        contractName,
+        `StarkEarn_minimal_StarkEarn_minimal`,
+      ];
+      let contractPath = "";
+      let casmPath = "";
+      let found = false;
+      for (const pattern of patterns) {
+        contractPath = path.resolve(
+          __dirname,
+          `../target/dev/${pattern}.contract_class.json`
+        );
+        casmPath = path.resolve(
+          __dirname,
+          `../target/dev/${pattern}.compiled_contract_class.json`
+        );
+        if (fs.existsSync(contractPath)) {
+          found = true;
+          break;
         }
-        else {
-            console.log('Class already declared, no need to wait for transaction confirmation.');
+      }
+      if (!found)
+        throw new Error(`Contract file not found for ${contractName}`);
+      const contractJson = JSON.parse(fs.readFileSync(contractPath, "utf-8"));
+      if (fs.existsSync(casmPath)) {
+        const casmJson = JSON.parse(fs.readFileSync(casmPath, "utf-8"));
+        try {
+          return await account.declare({
+            contract: contractJson,
+            casm: casmJson,
+          });
+        } catch (error) {
+          if (error.message.includes("already declared")) {
+            const match = error.message.match(
+              /Class with hash (0x[0-9a-fA-F]+)/
+            );
+            if (match && match[1])
+              return { class_hash: match[1], transaction_hash: null };
+          }
+          throw error;
         }
-        const starkQuestMinimalClassHash = starkQuestMinimalDeclareResult.class_hash;
-        console.log('   Contracts declared successfully');
-        // Step 2: Deploy contracts
-        console.log('2. Deploying contracts...');
-        // Deploy StarkQuest Minimal Contract
-        console.log('Deploying StarkQuest Minimal...');
-        const starkQuestMinimalResponse = await account.deploy({
-            classHash: starkQuestMinimalClassHash,
-            constructorCalldata: CallData.compile({}),
-        });
-        // Handle potential array return type with type assertion
-        const starkQuestMinimalAddress = (Array.isArray(starkQuestMinimalResponse.contract_address)
-            ? starkQuestMinimalResponse.contract_address[0]
-            : starkQuestMinimalResponse.contract_address);
-        console.log(`   StarkQuest Minimal deployed at: ${starkQuestMinimalAddress}`);
-        // Step 3: Update frontend configuration
-        console.log('3. Updating frontend configuration...');
-        const configContent = `// Contract addresses for StarkNet
+      } else {
+        try {
+          return await account.declare({ contract: contractJson });
+        } catch (error) {
+          if (error.message.includes("already declared")) {
+            const match = error.message.match(
+              /Class with hash (0x[0-9a-fA-F]+)/
+            );
+            if (match && match[1])
+              return { class_hash: match[1], transaction_hash: null };
+          }
+          throw error;
+        }
+      }
+    };
+    // Declare and deploy
+    const declareResult = await declareContract("StarkEarn_minimal");
+    console.log(
+      "StarkEarn minimal contract declared with transaction hash:",
+      declareResult.transaction_hash
+    );
+    console.log(
+      "StarkEarn minimal contract class hash:",
+      declareResult.class_hash
+    );
+    if (declareResult.transaction_hash) {
+      console.log("Waiting for declaration transaction confirmation...");
+      await provider.waitForTransaction(declareResult.transaction_hash);
+      console.log("✅ Declaration confirmed!");
+    }
+    console.log("Deploying StarkEarn Minimal...");
+    const deployResponse = await account.deploy({
+      classHash: declareResult.class_hash,
+      constructorCalldata: CallData.compile({}),
+    });
+    const deployedAddress = Array.isArray(deployResponse.contract_address)
+      ? deployResponse.contract_address[0]
+      : deployResponse.contract_address;
+    console.log(`✅ StarkEarn Minimal deployed at: ${deployedAddress}`);
+    // Update frontend config
+    const configPath = path.resolve(__dirname, "../../lib/config.ts");
+    const newConfig = `// Contract addresses for StarkNet
 export const CONTRACT_ADDRESSES = {
-  STARKQUEST_MINIMAL: "${starkQuestMinimalAddress}",
+  StarkEarn_MINIMAL: "${deployedAddress}",
+  BOUNTY_REGISTRY: "${deployedAddress}",
+  BOUNTY_FACTORY: "${deployedAddress}",
+  PAYMENT_PROCESSOR: "${deployedAddress}",
+  REPUTATION_SYSTEM: "${deployedAddress}",
 };
 
-// Network configuration
 export const NETWORK = "goerli";
 
-// Token addresses
 export const TOKEN_ADDRESSES = {
   STRK: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
   ETH: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
 };
 `;
-        console.log('Writing config to ../../lib/config.ts');
-        fs.writeFileSync(path.resolve(__dirname, '../../lib/config.ts'), configContent);
-        console.log('Frontend configuration updated');
-        console.log('\nDeployment completed successfully!');
-        console.log('Deployed contract addresses:');
-        console.log(`  StarkQuest Minimal: ${starkQuestMinimalAddress}`);
-    }
-    catch (error) {
-        console.error('Deployment failed:', error);
-    }
+    fs.writeFileSync(configPath, newConfig);
+    console.log("✅ Frontend configuration updated");
+    console.log("🎉 Deployment completed successfully!");
+  } catch (error) {
+    console.error("💥 Deployment failed:", error);
+  }
 }
-// Always run deployment when this script is executed directly
-console.log("Running deployment...");
+console.log("Running robust deployment...");
 deploy();
-export default deploy;

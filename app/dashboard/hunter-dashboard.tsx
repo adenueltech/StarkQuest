@@ -278,20 +278,9 @@ function HunterDashboard() {
                         Last updated:{" "}
                         {new Date(bounty.lastUpdate).toLocaleDateString()}
                       </span>
-                      <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" asChild>
-                          <Link href={`/bounties/${bounty.id}`}>
-                            <MessageSquare className="mr-2 h-4 w-4" />
-                            Message Client
-                          </Link>
-                        </Button>
-                        <Button
-                          size="sm"
-                          className="bg-starknet-blue hover:bg-starknet-blue/90"
-                        >
-                          Update Progress
-                        </Button>
-                      </div>
+                      <span className="text-sm text-muted-foreground">
+                        {bounty.progress}% complete
+                      </span>
                     </div>
                   </CardContent>
                 </Card>

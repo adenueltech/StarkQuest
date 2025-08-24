@@ -1,6 +1,6 @@
-# StarkQuest Deployment Guide
+# StarkEarn Deployment Guide
 
-This guide will help you deploy the StarkQuest smart contracts and configure the application.
+This guide will help you deploy the StarkEarn smart contracts and configure the application.
 
 ## Prerequisites
 

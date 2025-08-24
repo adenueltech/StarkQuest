@@ -1,6 +1,6 @@
-# StarkQuest Frontend Integration Guide
+# StarkEarn Frontend Integration Guide
 
-This guide provides instructions for integrating the StarkQuest smart contracts with the frontend application.
+This guide provides instructions for integrating the StarkEarn smart contracts with the frontend application.
 
 ## Prerequisites
 

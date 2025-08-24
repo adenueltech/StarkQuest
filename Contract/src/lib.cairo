@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-// Main entry point for the StarkQuest contract
+// Main entry point for the StarkEarn contract
 
 // Export the main contract module
-mod starkquest_minimal;
+mod StarkEarn_minimal;

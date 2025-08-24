@@ -23,11 +23,11 @@ StarkEarn is a decentralized bounty platform built on StarkNet that connects pro
 
 The StarkEarn smart contract system now consists of a single contract:
 
-1. **StarkQuest Minimal** - A simplified contract that handles all bounty functionality
+1. **StarkEarn Minimal** - A simplified contract that handles all bounty functionality
 
 ## Core Contracts
 
-### StarkQuest Minimal
+### StarkEarn Minimal
 
 A simplified contract that combines all functionality into a single contract with the following features:
 
@@ -278,13 +278,13 @@ event PaymentProcessed {
 
 ### Deployment Steps
 
-1. Deploy the StarkQuest Minimal contract
+1. Deploy the StarkEarn Minimal contract
 
 ### Example Deployment Script
 
 ```bash
-# Deploy StarkQuest Minimal
-starknet deploy --contract StarkQuestMinimal.json
+# Deploy StarkEarn Minimal
+starknet deploy --contract StarkEarnMinimal.json
 ```
 
 ## Testing
@@ -327,21 +327,21 @@ To integrate with the frontend, developers should:
 
 ```javascript
 import { Contract, Account } from "starknet";
-import starkQuestMinimalAbi from "./abis/StarkQuestMinimal.json";
+import StarkEarnMinimalAbi from "./abis/StarkEarnMinimal.json";
 
 // Initialize contract
-const starkQuestMinimal = new Contract(
-  starkQuestMinimalAbi,
-  starkQuestMinimalAddress,
+const StarkEarnMinimal = new Contract(
+  StarkEarnMinimalAbi,
+  StarkEarnMinimalAddress,
   provider
 );
 
 // Read data
-const bountyCount = await starkQuestMinimal.get_bounty_count();
+const bountyCount = await StarkEarnMinimal.get_bounty_count();
 
 // Write data
 const { transaction_hash } = await account.execute({
-  contractAddress: starkQuestMinimalAddress,
+  contractAddress: StarkEarnMinimalAddress,
   entrypoint: "create_bounty",
   calldata: [title, description, rewardAmount, deadline, tokenAddress],
 });
@@ -370,7 +370,7 @@ provider
   .getEvents({
     from_block: "latest",
     to_block: "latest",
-    address: starkQuestMinimalAddress,
+    address: StarkEarnMinimalAddress,
     keys: [["BountyCreated"]],
   })
   .then((events) => {

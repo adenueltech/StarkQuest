@@ -1,10 +1,11 @@
-# StarkQuest Backend Implementation Guide
+# StarkEarn Backend Implementation Guide
 
-This guide provides instructions for implementing the backend services for the StarkQuest platform.
+This guide provides instructions for implementing the backend services for the StarkEarn platform.
 
 ## Overview
 
-The StarkQuest backend serves several critical functions:
+The StarkEarn backend serves several critical functions:
+
 1. Event monitoring and indexing
 2. User profile management
 3. Search indexing
@@ -26,7 +27,9 @@ import { CONTRACT_ADDRESSES } from "../config";
 import { indexBountyCreated, indexApplicationSubmitted } from "./indexer";
 
 const provider = new RpcProvider({
-  nodeUrl: process.env.STARKNET_RPC_URL || "https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID"
+  nodeUrl:
+    process.env.STARKNET_RPC_URL ||
+    "https://starknet-goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID",
 });
 
 export class EventListener {
@@ -43,12 +46,18 @@ export class EventListener {
     try {
       // Get current block number
       const currentBlock = await provider.getBlock("latest");
-      
+
       // Process events from last processed block to current block
       if (currentBlock.block_number > this.lastProcessedBlock) {
-        await this.processBountyEvents(this.lastProcessedBlock, currentBlock.block_number);
-        await this.processApplicationEvents(this.lastProcessedBlock, currentBlock.block_number);
-        
+        await this.processBountyEvents(
+          this.lastProcessedBlock,
+          currentBlock.block_number
+        );
+        await this.processApplicationEvents(
+          this.lastProcessedBlock,
+          currentBlock.block_number
+        );
+
         // Update last processed block
         this.lastProcessedBlock = currentBlock.block_number;
       }
@@ -64,7 +73,7 @@ export class EventListener {
         address: CONTRACT_ADDRESSES.BOUNTY_FACTORY,
         keys: [["BountyCreated"]],
         from_block: { block_number: fromBlock },
-        to_block: { block_number: toBlock }
+        to_block: { block_number: toBlock },
       });
 
       // Process each event
@@ -83,7 +92,7 @@ export class EventListener {
         address: CONTRACT_ADDRESSES.BOUNTY_REGISTRY,
         keys: [["ApplicationSubmitted"]],
         from_block: { block_number: fromBlock },
-        to_block: { block_number: toBlock }
+        to_block: { block_number: toBlock },
       });
 
       // Process each event
@@ -119,8 +128,8 @@ export async function indexBountyCreated(event: any) {
     // Get bounty details from contract
     const provider = getProvider(); // Implement this function
     const bountyContract = new Contract(bountyAbi, bountyAddress, provider);
-    
-    const [title, description, rewardAmount, deadline, tokenAddress, status] = 
+
+    const [title, description, rewardAmount, deadline, tokenAddress, status] =
       await bountyContract.get_bounty_details();
 
     // Index bounty in database
@@ -135,8 +144,8 @@ export async function indexBountyCreated(event: any) {
         deadline: new Date(deadline.toString() * 1000),
         tokenAddress: tokenAddress.toString(),
         status: status.toString(),
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     });
 
     console.log(`Indexed bounty ${bountyId}`);
@@ -156,8 +165,8 @@ export async function indexApplicationSubmitted(event: any) {
       data: {
         applicant,
         timestamp: new Date(timestamp * 1000),
-        bountyId: event.data[2] ? parseInt(event.data[2]) : null
-      }
+        bountyId: event.data[2] ? parseInt(event.data[2]) : null,
+      },
     });
 
     console.log(`Indexed application from ${applicant}`);
@@ -188,7 +197,7 @@ export class UserService {
           updatedAt: new Date()
         }
       });
-      
+
       return user;
     } catch (error) {
       throw new Error(`Failed to create user: ${error}`);
@@ -200,7 +209,7 @@ export class UserService {
       const user = await prisma.user.findUnique({
         where: { walletAddress }
       });
-      
+
       return user;
     } catch (error) {
       throw new Error(`Failed to get user: ${error}`);
@@ -216,7 +225,7 @@ export class UserService {
           updatedAt: new Date()
         }
       });
-      
+
       return user;
     } catch (error) {
       throw new Error(`Failed to update user: ${error}`);
@@ -229,3 +238,4 @@ export class UserService {
         where: {
           OR: [
             { creator: walletAddress },
+```
