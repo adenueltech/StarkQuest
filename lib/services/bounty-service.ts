@@ -1,6 +1,6 @@
 import { Contract, Account, RpcProvider, cairo, CallData } from "starknet";
 import { CONTRACT_ADDRESSES } from "../config";
-import StarkEarnMinimalAbi from "../abis/StarkEarnMinimal.json";
+import StarkEarnMinimalAbi from "../abis/StarkQuestMinimal.json";
 
 // Initialize provider
 const provider = new RpcProvider({

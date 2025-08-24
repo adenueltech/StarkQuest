@@ -177,7 +177,7 @@ export function AuthForm({ mode }: AuthFormProps) {
       setShowWalletModal(false);
 
       // Trigger auto sign-in with wallet
-      await loginWithWallet(account.address, walletName);
+      await loginWithWallet();
     } catch (error: any) {
       console.error("Failed to connect wallet:", error);
 
