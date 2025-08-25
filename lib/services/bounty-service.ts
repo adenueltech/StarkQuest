@@ -75,9 +75,10 @@ export const createBounty = async (
   }
 
   try {
-    // Convert string to felt
-    const titleFelt = cairo.felt(title);
-    const descriptionFelt = cairo.felt(description);
+    // Convert string to felt (handle Cairo 31 char limit)
+    // For longer strings, we truncate to 31 characters as the contract expects short strings
+    const titleFelt = cairo.felt(title.length <= 31 ? title : title.substring(0, 31));
+    const descriptionFelt = cairo.felt(description.length <= 31 ? description : description.substring(0, 31));
     
     // Get the correct token address based on the asset
     let tokenAddress: string;
@@ -188,8 +189,8 @@ export const submitWork = async (bountyId: number, content: string) => {
   }
 
   try {
-    // Convert content to felt
-    const contentFelt = cairo.felt(content);
+    // Convert content to felt (handle Cairo 31 char limit)
+    const contentFelt = cairo.felt(content.length <= 31 ? content : content.substring(0, 31));
 
     // Call the contract
     const { transaction_hash } = await account.execute({
@@ -250,8 +251,8 @@ export const cancelBounty = async (bountyId: number, reason: string) => {
   }
 
   try {
-    // Convert reason to felt
-    const reasonFelt = cairo.felt(reason);
+    // Convert reason to felt (handle Cairo 31 char limit)
+    const reasonFelt = cairo.felt(reason.length <= 31 ? reason : reason.substring(0, 31));
 
     // Call the contract
     const { transaction_hash } = await account.execute({

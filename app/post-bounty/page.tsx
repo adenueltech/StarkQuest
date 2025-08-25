@@ -65,6 +65,13 @@ export default function PostBountyPage() {
         return;
       }
       
+      // Validate title length (Cairo contract limitation)
+      if (title.length > 31) {
+        toast.error("Title must be 31 characters or less due to smart contract limitations");
+        setIsSubmitting(false);
+        return;
+      }
+      
       // Convert deadline to timestamp
       const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000);
       const now = Math.floor(Date.now() / 1000);
@@ -139,6 +146,14 @@ export default function PostBountyPage() {
                         onChange={(e) => setTitle(e.target.value)}
                         required
                       />
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {title.length}/31 characters
+                        {title.length > 31 && (
+                          <span className="text-red-500 ml-2">
+                            Title too long - will be truncated
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -411,6 +426,7 @@ export default function PostBountyPage() {
                   <p>• Set realistic deadlines and rewards</p>
                   <p>• Include examples or references when possible</p>
                   <p>• Respond promptly to applicant questions</p>
+                  <p className="text-starknet-orange font-medium">• Title limited to 31 characters due to smart contract constraints</p>
                 </CardContent>
               </Card>
             </div>
