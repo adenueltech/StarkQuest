@@ -1,4 +1,15 @@
+## ⚠️ Heads up!
+You may see a "Dangerous site" warning when visiting our free Vercel preview link.  
+This is because the app is currently hosted on a temporary Vercel domain (not yet our official custom domain).  
+👉 To continue:
+- Click **"Details"**  
+- Then click **"Visit this unsafe site"** (Chrome wording may vary)
+⚡ Don’t worry — StarkEarn is safe.  
+Once we move to our main domain, this warning will disappear.
 # StarkEarn - Decentralized Bounty Platform
+
+
+
 
 StarkEarn is a decentralized bounty platform built on StarkNet that connects developers, designers, and other professionals with organizations and individuals who need work done. This platform leverages StarkNet's scalability and security to create a trustless environment for bounty creation, fulfillment, and payment.
 
