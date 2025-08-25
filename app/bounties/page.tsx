@@ -4,6 +4,7 @@ import { SoloSearch } from "@/components/advanced-search";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 // Mock bounty data
 const bounties = [
@@ -18,7 +19,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-15",
     applicants: 12,
-    status: "open",
+    status: "open" as const,
     tags: ["React", "TypeScript", "DeFi", "StarkNet"],
     poster: {
       name: "StarkDeFi Protocol",
@@ -37,7 +38,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-10",
     applicants: 8,
-    status: "open",
+    status: "open" as const,
     tags: ["UI/UX", "Figma", "NFT", "Web Design"],
     poster: {
       name: "StarkArt Collective",
@@ -56,7 +57,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-20",
     applicants: 5,
-    status: "open",
+    status: "open" as const,
     tags: ["Cairo", "Tutorial", "Documentation", "Education"],
     poster: {
       name: "StarkNet Foundation",
@@ -75,7 +76,7 @@ const bounties = [
     difficulty: "team",
     deadline: "2024-02-12",
     applicants: 15,
-    status: "in-progress",
+    status: "in-progress" as const,
     tags: ["Cairo", "Gas Optimization", "AMM", "Smart Contracts"],
     poster: {
       name: "SwapStark",
@@ -94,7 +95,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-18",
     applicants: 6,
-    status: "open",
+    status: "open" as const,
     tags: ["Branding", "Logo Design", "Brand Guidelines", "DeFi"],
     poster: {
       name: "YieldStark",
@@ -113,7 +114,7 @@ const bounties = [
     difficulty: "team",
     deadline: "2024-03-01",
     applicants: 9,
-    status: "open",
+    status: "open" as const,
     tags: ["React Native", "Mobile", "Wallet", "StarkNet"],
     poster: {
       name: "MobileStark",
@@ -137,9 +138,11 @@ export default function BountiesPage() {
               Discover opportunities to contribute to the StarkNet ecosystem
             </p>
           </div>
-          <Button className="mt-4 md:mt-0 bg-starknet-orange hover:bg-starknet-orange/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Create Bounty
+          <Button className="mt-4 md:mt-0 bg-starknet-orange hover:bg-starknet-orange/90" asChild>
+            <Link href="/post-bounty">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Bounty
+            </Link>
           </Button>
         </div>
 

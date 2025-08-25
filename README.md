@@ -1,8 +1,8 @@
-# StarkQuest - Decentralized Bounty Platform
+# StarkEarn - Decentralized Bounty Platform
 
-StarkQuest is a decentralized bounty platform built on StarkNet that connects developers, designers, and other professionals with organizations and individuals who need work done. This platform leverages StarkNet's scalability and security to create a trustless environment for bounty creation, fulfillment, and payment.
+StarkEarn is a decentralized bounty platform built on StarkNet that connects developers, designers, and other professionals with organizations and individuals who need work done. This platform leverages StarkNet's scalability and security to create a trustless environment for bounty creation, fulfillment, and payment.
 
-![StarkQuest Banner](public/logo.jpg)
+![StarkEarn Banner](public/logo.jpg)
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ StarkQuest is a decentralized bounty platform built on StarkNet that connects de
 
 ## Overview
 
-StarkQuest revolutionizes how bounties are created, managed, and fulfilled by leveraging the power of StarkNet. The platform provides a secure, transparent, and efficient way for project creators to find skilled contributors and for contributors to discover rewarding opportunities.
+StarkEarn revolutionizes how bounties are created, managed, and fulfilled by leveraging the power of StarkNet. The platform provides a secure, transparent, and efficient way for project creators to find skilled contributors and for contributors to discover rewarding opportunities.
 
 ### How It Works
 
@@ -44,7 +44,7 @@ StarkQuest revolutionizes how bounties are created, managed, and fulfilled by le
 
 ## Architecture
 
-StarkQuest follows a three-tier architecture:
+StarkEarn follows a three-tier architecture:
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌──────────────────┐
@@ -83,9 +83,9 @@ StarkQuest follows a three-tier architecture:
 
 ## Smart Contracts
 
-The StarkQuest smart contract system consists of a simplified single contract approach:
+The StarkEarn smart contract system consists of a simplified single contract approach:
 
-### StarkQuest Minimal
+### StarkEarn Minimal
 
 A consolidated contract that handles all bounty functionality:
 
@@ -149,8 +149,8 @@ For detailed backend implementation instructions, see [Backend Guide](docs/backe
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/starkquest.git
-   cd starkquest
+   git clone https://github.com/your-username/StarkEarn.git
+   cd StarkEarn
    ```
 
 2. Install dependencies:
@@ -232,7 +232,7 @@ snforge test
 
 ## Contributing
 
-We welcome contributions to StarkQuest! Here's how you can help:
+We welcome contributions to StarkEarn! Here's how you can help:
 
 ### How to Contribute
 
@@ -246,8 +246,8 @@ We welcome contributions to StarkQuest! Here's how you can help:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/starkquest.git
-   cd starkquest
+   git clone https://github.com/your-username/StarkEarn.git
+   cd StarkEarn
    ```
 
 2. Install dependencies:
@@ -311,8 +311,8 @@ MIT License
 
 ## Support
 
-For questions about StarkQuest:
+For questions about StarkEarn:
 
-- GitHub Issues: https://github.com/your-username/starkquest/issues
-- Discord: https://discord.gg/StarkQuest
-- Email: support@starkquest.io
+- GitHub Issues: https://github.com/your-username/StarkEarn/issues
+- Discord: https://discord.gg/StarkEarn
+- Email: support@StarkEarn.io
