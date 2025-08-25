@@ -148,6 +148,8 @@ const mockBounties: BountyData[] = [
   },
 ];
 
+// fff
+
 export default function BountiesPage() {
   const [bounties, setBounties] = useState<BountyData[]>(mockBounties);
   const [loading, setLoading] = useState(true);
