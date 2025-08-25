@@ -25,76 +25,74 @@ import { useAuth } from "@/contexts/auth-context";
 import Link from "next/link";
 
 // Mock dashboard data for hunters
-const hunterDashboardData = {
-  user: {
-    name: "Alex Chen",
-    username: "alex_chen",
-    avatar: "/placeholder.svg?height=60&width=60",
-    reputation: 4.9,
-    completedBounties: 23,
-    totalEarned: 45000,
-  },
-  stats: {
-    activeBounties: 2,
-    pendingApplications: 5,
-    totalEarnings: 45000,
-    avgRating: 4.9,
-    completionRate: 96,
-    responseTime: 2,
-  },
-  activeBounties: [
-    {
-      id: "1",
-      title: "Build Mobile Wallet Integration",
-      client: "MobileStark",
-      reward: 4000,
-      Asset: "STRK",
-      deadline: "2024-03-01",
-      progress: 65,
-      status: "in-progress",
-      lastUpdate: "2024-01-20",
-    },
-    {
-      id: "2",
-      title: "Optimize Smart Contract Gas Usage",
-      client: "SwapStark",
-      reward: 3000,
-      Asset: "STRK",
-      deadline: "2024-02-12",
-      progress: 30,
-      status: "in-progress",
-      lastUpdate: "2024-01-18",
-    },
-  ],
-  pendingApplications: [
-    {
-      id: "1",
-      title: "Create Brand Identity for DeFi Protocol",
-      client: "YieldStark",
-      reward: 1500,
-      Asset: "STRK",
-      appliedAt: "2024-01-19",
-      status: "pending",
-    },
-    {
-      id: "2",
-      title: "Write StarkNet Tutorial Series",
-      client: "StarkNet Foundation",
-      reward: 1200,
-      Asset: "STRK",
-      appliedAt: "2024-01-17",
-      status: "pending",
-    },
-  ],
-  recentEarnings: [
-    { date: "2024-01-10", amount: 2500, bounty: "DeFi Analytics Dashboard" },
-    { date: "2023-12-20", amount: 3200, bounty: "NFT Marketplace Contract" },
-    { date: "2023-11-15", amount: 1800, bounty: "Yield Farming Protocol UI" },
-  ],
+// In a real implementation, this data would come from the blockchain or backend
+const mockStats = {
+  activeBounties: 2,
+  pendingApplications: 5,
+  totalEarnings: 45000,
+  avgRating: 4.9,
+  completionRate: 96,
+  responseTime: 2,
 };
+
+const mockActiveBounties = [
+  {
+    id: "1",
+    title: "Build Mobile Wallet Integration",
+    client: "MobileStark",
+    reward: 4000,
+    Asset: "STRK",
+    deadline: "2024-03-01",
+    progress: 65,
+    status: "in-progress",
+    lastUpdate: "2024-01-20",
+  },
+  {
+    id: "2",
+    title: "Optimize Smart Contract Gas Usage",
+    client: "SwapStark",
+    reward: 3000,
+    Asset: "STRK",
+    deadline: "2024-02-12",
+    progress: 30,
+    status: "in-progress",
+    lastUpdate: "2024-01-18",
+  },
+];
+
+const mockPendingApplications = [
+  {
+    id: "1",
+    title: "Create Brand Identity for DeFi Protocol",
+    client: "YieldStark",
+    reward: 1500,
+    Asset: "STRK",
+    appliedAt: "2024-01-19",
+    status: "pending",
+  },
+  {
+    id: "2",
+    title: "Write StarkNet Tutorial Series",
+    client: "StarkNet Foundation",
+    reward: 1200,
+    Asset: "STRK",
+    appliedAt: "2024-01-17",
+    status: "pending",
+  },
+];
+
+const mockRecentEarnings = [
+  { date: "2024-01-10", amount: 2500, bounty: "DeFi Analytics Dashboard" },
+  { date: "2023-12-20", amount: 3200, bounty: "NFT Marketplace Contract" },
+  { date: "2023-11-15", amount: 1800, bounty: "Yield Farming Protocol UI" },
+];
 
 function HunterDashboard() {
   const { user } = useAuth();
+
+  // Use real user data or fallback to mock data for display
+  const displayName = user?.username || user?.email || user?.walletAddress || "User";
+  const displayUsername = user?.username || (user?.email ? user.email.split("@")[0] : "user");
 
   return (
     <div className="min-h-screen bg-background">
@@ -106,19 +104,19 @@ function HunterDashboard() {
           <div className="flex items-center space-x-4 mb-4 md:mb-0">
             <Avatar className="h-16 w-16">
               <AvatarImage
-                src={hunterDashboardData.user.avatar || "/placeholder.svg"}
-                alt={hunterDashboardData.user.name}
+                src={user?.avatar || "/placeholder.svg"}
+                alt={displayName}
               />
               <AvatarFallback className="text-lg">
-                {hunterDashboardData.user.name.charAt(0)}
+                {displayName.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div>
               <h1 className="text-2xl font-bold">
-                Welcome back, {hunterDashboardData.user.name}!
+                Welcome back, {displayName}!
               </h1>
               <p className="text-muted-foreground">
-                @{hunterDashboardData.user.username}
+                @{displayUsername}
               </p>
             </div>
           </div>
@@ -146,7 +144,7 @@ function HunterDashboard() {
               <div className="flex items-center space-x-2">
                 <Target className="h-4 w-4 text-starknet-orange" />
                 <div className="text-2xl font-bold">
-                  {hunterDashboardData.stats.activeBounties}
+                  {mockStats.activeBounties}
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">Active Bounties</p>
@@ -158,7 +156,7 @@ function HunterDashboard() {
               <div className="flex items-center space-x-2">
                 <Clock className="h-4 w-4 text-starknet-orange" />
                 <div className="text-2xl font-bold">
-                  {hunterDashboardData.stats.pendingApplications}
+                  {mockStats.pendingApplications}
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -172,7 +170,7 @@ function HunterDashboard() {
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-4 w-4 text-starknet-pink" />
                 <div className="text-2xl font-bold">
-                  {hunterDashboardData.stats.totalEarnings.toLocaleString()}
+                  {mockStats.totalEarnings.toLocaleString()}
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -186,7 +184,7 @@ function HunterDashboard() {
               <div className="flex items-center space-x-2">
                 <Star className="h-4 w-4 text-yellow-400" />
                 <div className="text-2xl font-bold">
-                  {hunterDashboardData.stats.avgRating}
+                  {mockStats.avgRating}
                 </div>
               </div>
               <p className="text-xs text-muted-foreground">Average Rating</p>
@@ -220,7 +218,7 @@ function HunterDashboard() {
             </div>
 
             <div className="grid gap-6">
-              {hunterDashboardData.activeBounties.map((bounty) => (
+              {mockActiveBounties.map((bounty) => (
                 <Card key={bounty.id}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -298,7 +296,7 @@ function HunterDashboard() {
             </div>
 
             <div className="grid gap-4">
-              {hunterDashboardData.pendingApplications.map((application) => (
+              {mockPendingApplications.map((application) => (
                 <Card key={application.id}>
                   <CardContent className="pt-6">
                     <div className="flex items-start justify-between mb-4">
@@ -342,7 +340,7 @@ function HunterDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {hunterDashboardData.recentEarnings.map((earning, index) => (
+                  {mockRecentEarnings.map((earning, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-between"
@@ -370,7 +368,7 @@ function HunterDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <div className="text-2xl font-bold text-starknet-orange">
-                      {hunterDashboardData.stats.totalEarnings.toLocaleString()}{" "}
+                      {mockStats.totalEarnings.toLocaleString()}{" "}
                       STRK
                     </div>
                     <div className="text-sm text-muted-foreground">
@@ -380,8 +378,8 @@ function HunterDashboard() {
                   <div>
                     <div className="text-2xl font-bold text-starknet-orange">
                       {Math.round(
-                        hunterDashboardData.stats.totalEarnings /
-                          hunterDashboardData.user.completedBounties
+                        mockStats.totalEarnings /
+                          23
                       ).toLocaleString()}{" "}
                       STRK
                     </div>
@@ -418,7 +416,7 @@ function HunterDashboard() {
                       <div className="flex items-center space-x-2">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="text-lg font-semibold">
-                          {hunterDashboardData.user.reputation}
+                          {4.9}
                         </span>
                       </div>
                     </div>
@@ -428,7 +426,7 @@ function HunterDashboard() {
                         Completed Bounties
                       </div>
                       <div className="text-lg font-semibold">
-                        {hunterDashboardData.user.completedBounties}
+                        {23}
                       </div>
                     </div>
 
@@ -437,7 +435,7 @@ function HunterDashboard() {
                         Success Rate
                       </div>
                       <div className="text-lg font-semibold">
-                        {hunterDashboardData.stats.completionRate}%
+                        {mockStats.completionRate}%
                       </div>
                     </div>
                   </div>
@@ -448,7 +446,7 @@ function HunterDashboard() {
                         Response Time
                       </div>
                       <div className="text-lg font-semibold">
-                        {hunterDashboardData.stats.responseTime} hours
+                        {mockStats.responseTime} hours
                       </div>
                     </div>
 

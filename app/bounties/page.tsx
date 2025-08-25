@@ -1,3 +1,5 @@
+"use client";
+
 import { Header } from "@/components/header";
 import { BountyCard } from "@/components/bounty-card";
 import { SoloSearch } from "@/components/advanced-search";
@@ -5,9 +7,31 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getAllBounties } from "@/lib/services/bounty-service";
+import { toast } from "sonner";
 
-// Mock bounty data
-const bounties = [
+interface BountyData {
+  id: string;
+  title: string;
+  description: string;
+  reward: number;
+  Asset: string;
+  category: string;
+  difficulty: string;
+  deadline: string;
+  applicants: number;
+  status: "open" | "in-progress" | "completed";
+  tags: string[];
+  poster: {
+    name: string;
+    avatar: string;
+    reputation: number;
+  };
+}
+
+// Mock bounty data as fallback
+const mockBounties: BountyData[] = [
   {
     id: "1",
     title: "Build StarkNet DeFi Dashboard",
@@ -19,7 +43,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-15",
     applicants: 12,
-    status: "open" as const,
+    status: "open",
     tags: ["React", "TypeScript", "DeFi", "StarkNet"],
     poster: {
       name: "StarkDeFi Protocol",
@@ -38,7 +62,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-10",
     applicants: 8,
-    status: "open" as const,
+    status: "open",
     tags: ["UI/UX", "Figma", "NFT", "Web Design"],
     poster: {
       name: "StarkArt Collective",
@@ -57,7 +81,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-20",
     applicants: 5,
-    status: "open" as const,
+    status: "open",
     tags: ["Cairo", "Tutorial", "Documentation", "Education"],
     poster: {
       name: "StarkNet Foundation",
@@ -76,7 +100,7 @@ const bounties = [
     difficulty: "team",
     deadline: "2024-02-12",
     applicants: 15,
-    status: "in-progress" as const,
+    status: "in-progress",
     tags: ["Cairo", "Gas Optimization", "AMM", "Smart Contracts"],
     poster: {
       name: "SwapStark",
@@ -95,7 +119,7 @@ const bounties = [
     difficulty: "Solo",
     deadline: "2024-02-18",
     applicants: 6,
-    status: "open" as const,
+    status: "open",
     tags: ["Branding", "Logo Design", "Brand Guidelines", "DeFi"],
     poster: {
       name: "YieldStark",
@@ -114,7 +138,7 @@ const bounties = [
     difficulty: "team",
     deadline: "2024-03-01",
     applicants: 9,
-    status: "open" as const,
+    status: "open",
     tags: ["React Native", "Mobile", "Wallet", "StarkNet"],
     poster: {
       name: "MobileStark",
@@ -125,6 +149,59 @@ const bounties = [
 ];
 
 export default function BountiesPage() {
+  const [bounties, setBounties] = useState<BountyData[]>(mockBounties);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBounties = async () => {
+      try {
+        const bountyData = await getAllBounties();
+        // Transform the data to match the BountyData interface
+        const transformedBounties = bountyData.map((bounty: any, index: number) => ({
+          id: (index + 1).toString(),
+          title: bounty.details?.title || "Untitled Bounty",
+          description: bounty.details?.description || "No description provided",
+          reward: parseInt(bounty.details?.reward_amount?.toString() || "0"),
+          Asset: "STRK", // Default to STRK for now
+          category: "Development", // Default category
+          difficulty: "Solo", // Default difficulty
+          deadline: new Date(parseInt(bounty.details?.deadline?.toString() || "0") * 1000).toISOString(),
+          applicants: 0, // Default applicants count
+          status: "open" as const, // Default status
+          tags: ["StarkNet", "Smart Contract"], // Default tags
+          poster: {
+            name: "Anonymous", // Default poster name
+            avatar: "/placeholder.svg?height=40&width=40",
+            reputation: 0, // Default reputation
+          },
+        }));
+        setBounties(transformedBounties);
+      } catch (error) {
+        console.error("Error fetching bounties:", error);
+        toast.error("Failed to load bounties from blockchain, showing mock data instead");
+        // Fallback to mock data if fetch fails
+        setBounties(mockBounties);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBounties();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="text-lg">Loading bounties...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

@@ -1,5 +1,5 @@
 import { Contract, Account, RpcProvider, cairo, CallData } from "starknet";
-import { CONTRACT_ADDRESSES } from "../config";
+import { CONTRACT_ADDRESSES, TOKEN_ADDRESSES } from "../config";
 import StarkEarnMinimalAbi from "../abis/StarkQuestMinimal.json";
 
 // Initialize provider
@@ -64,7 +64,7 @@ export const createBounty = async (
   description: string,
   rewardAmount: string,
   deadline: number,
-  tokenAddress: string
+  asset: string
 ) => {
   if (!account) {
     throw new Error("Wallet not connected");
@@ -78,6 +78,20 @@ export const createBounty = async (
     // Convert string to felt
     const titleFelt = cairo.felt(title);
     const descriptionFelt = cairo.felt(description);
+    
+    // Get the correct token address based on the asset
+    let tokenAddress: string;
+    switch (asset.toLowerCase()) {
+      case "strk":
+        tokenAddress = TOKEN_ADDRESSES.STRK;
+        break;
+      case "eth":
+        tokenAddress = TOKEN_ADDRESSES.ETH;
+        break;
+      default:
+        tokenAddress = TOKEN_ADDRESSES.STRK; // Default to STRK
+    }
+    
     const tokenAddressFelt = cairo.felt(tokenAddress);
 
     // Convert reward amount to uint256
